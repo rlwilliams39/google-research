@@ -73,9 +73,9 @@ if __name__ == '__main__':
     setup_treelib(cmd_args)
     assert cmd_args.blksize < 0  # assume graph is not that large, otherwise model parallelism is needed
 
-    with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
-        train_graphs = cp.load(f)
-    train_graphs = nx.read_gpickle(os.path.join(cmd_args.data_dir, 'Group202A.dat'))
+    #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
+    #    train_graphs = cp.load(f)
+    train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')
     print("train", train_graphs)
     [TreeLib.InsertGraph(g) for g in train_graphs]
 

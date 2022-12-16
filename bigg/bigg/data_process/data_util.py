@@ -163,6 +163,11 @@ def create_graphs(graph_type, noise=10.0, seed=1234):
         n_nodes = int(graph_type[2:]) if graph_type != 'ba' else 100
         for i in range(n_nodes - 50, n_nodes + 50):
             graphs.append(nx.barabasi_albert_graph(i, 2))
+    elif 'yeast' in graph_type:
+        cwd = os.getcwd()
+        os.chdir("/content/drive/MyDrive/Projects/Data/Bigg-Data")
+        graphs = nx.read_gpickle("Yeast.dat")
+        os.chdir(cwd)
     else:
         # ADD GRAN to your pythonpath
         from utils.data_helper import create_graphs as gran_create

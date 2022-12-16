@@ -14,7 +14,7 @@
 
 #!/bin/bash
 
-g_type=lobster
+g_type=yeast
 ordering=DFS
 
 save_dir=../../data/$g_type-$ordering

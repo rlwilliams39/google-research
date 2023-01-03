@@ -28,7 +28,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
-        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
+        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
 
     # to be customized
@@ -72,11 +72,27 @@ class BiggWithEdgeLen(RecurTreeGen):
             else return the edge_feats as it is
         """
         h, _ = state
-        pred_edge_len = self.edgelen_pred(h)
+        mean, lvar = self.edgelen_pred(h)
+        var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
+        
         if edge_feats is None:
             ll = 0
-            edge_feats = pred_edge_len
+            edge_feats = torch.FloatTensor([[np.random.normal(mean, var**0.5)]])
         else:
-            ll = -(edge_feats - pred_edge_len) ** 2
-            ll = torch.sum(ll) / 10.0  # need to balance the likelihood between graph structures and features
+            ### Update log likelihood with weight prediction
+            logw_obs = np.log(edge_feats)
+            
+            ## diff_sq = (mu - logw)^2
+            diff_sq = torch.square(torch.sub(mean, logw_obs))
+            
+            ## diff_sq2 = v^-1*diff_sq
+            diff_sq2 = torch.div(diff_sq, var)
+            
+            ## log_var = log(v)
+            log_var = torch.log(var)
+            
+            ## add to ll
+            ll = ll - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - torch.tensor(logw_obs + 0.5 * np.log(2*np.pi))
+            
+            ll = torch.sum(ll)  
         return ll, edge_feats

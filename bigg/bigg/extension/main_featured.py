@@ -76,6 +76,7 @@ if __name__ == '__main__':
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)
     train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')
+    print(len(train_graphs))
     for i in range(10):
         print(train_graphs[i].edges(data=True))
     

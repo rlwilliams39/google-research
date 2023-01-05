@@ -76,9 +76,6 @@ if __name__ == '__main__':
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)
     train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Test.dat')
-    print(len(train_graphs))
-    for i in range(10):
-        print(train_graphs[i].edges(data=True))
     
     #print("train", train_graphs)
     [TreeLib.InsertGraph(g) for g in train_graphs]
@@ -112,7 +109,6 @@ if __name__ == '__main__':
             node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            print("edge_feats", edge_feats)
             ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=edge_feats)
             loss = -ll / num_nodes
             loss.backward()

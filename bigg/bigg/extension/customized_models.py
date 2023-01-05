@@ -74,6 +74,9 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         params = self.edgelen_pred(h)
         print(params)
+        A = torch.tensor[[1, 0]]
+        w = torch.mul(params, A)
+        print(w)
         #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
         
         if edge_feats is None:

@@ -76,14 +76,16 @@ if __name__ == '__main__':
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)
     train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')
+        for g in train_graphs:
+        print(g.edges(data=True))
+    
     #print("train", train_graphs)
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
-    for g in train_graphs:
-        print(g.edges(data=True))
+    
     list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     

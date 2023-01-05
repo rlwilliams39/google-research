@@ -72,9 +72,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             else return the edge_feats as it is
         """
         h, _ = state
-        vals = self.edgelen_pred(h)
-        mean, lvar = [t[0] for t in vals], [torch.add(torch.nn.functional.softplus(t[1], beta = 1), 1e-6) for t in vals]
-        print(mean, lvar)
+        params = self.edgelen_pred(h)
         #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
         
         if edge_feats is None:

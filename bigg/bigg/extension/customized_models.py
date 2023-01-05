@@ -83,7 +83,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             logw_obs = torch.log(edge_feats)
             
             ## diff_sq = (mu - logw)^2
-            diff_sq = torch.square(torch.sub([t[0] for t in params], logw_obs))
+            diff_sq = torch.square(torch.tensor(torch.sub([t[0] for t in params]), logw_obs))
             
             ## diff_sq2 = v^-1*diff_sq
             diff_sq2 = torch.div(diff_sq, var)

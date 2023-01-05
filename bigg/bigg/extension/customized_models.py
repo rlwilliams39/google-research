@@ -73,10 +73,6 @@ class BiggWithEdgeLen(RecurTreeGen):
         """
         h, _ = state
         params = self.edgelen_pred(h)
-        print(params)
-        A = torch.tensor[[1, 0]]
-        w = torch.mul(params, A)
-        print(w)
         #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
         
         if edge_feats is None:
@@ -87,7 +83,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             logw_obs = torch.log(edge_feats)
             
             ## diff_sq = (mu - logw)^2
-            diff_sq = torch.square(torch.sub(mean, logw_obs))
+            diff_sq = torch.square(torch.sub([t[0] for t in params], logw_obs))
             
             ## diff_sq2 = v^-1*diff_sq
             diff_sq2 = torch.div(diff_sq, var)

@@ -109,6 +109,7 @@ if __name__ == '__main__':
 
             node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
+            print("edge feats given", edge_feats)
             
             ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=edge_feats)
             loss = -ll / num_nodes

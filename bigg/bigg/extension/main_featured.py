@@ -86,7 +86,7 @@ if __name__ == '__main__':
     
     list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
-    print(list_node_feats)
+    print("edge feats", list_edge_feats)
     
     #print(edge_feats, list_edge_feats)
 

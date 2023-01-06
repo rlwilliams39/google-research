@@ -78,6 +78,7 @@ if __name__ == '__main__':
     train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Test.dat')
     
     #print("train", train_graphs)
+    setup_treelib(cmd_args)
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])

@@ -83,6 +83,7 @@ class _tree_lib(object):
         self.device = config.device
         self.num_graphs = 0
         self.graph_stats = []
+        print("HELLO")
 
     def TotalTreeNodes(self):
         return self.lib.TotalTreeNodes()

@@ -33,6 +33,7 @@ from collections import OrderedDict
 from bigg.common.configs import cmd_args, set_device
 from bigg.extension.customized_models import BiggWithEdgeLen
 from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
+from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 
 
 def get_node_feats(g):

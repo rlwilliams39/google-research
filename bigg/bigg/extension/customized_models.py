@@ -84,11 +84,15 @@ class BiggWithEdgeLen(RecurTreeGen):
         else:
             ### Update log likelihood with weight prediction
             logw_obs = torch.log(edge_feats)
-            print("edge feats: ", edge_feats)
-            print("params: ", params)
-            ##
-            mean = torch.tensor([t[0] for t in params])
-            lvar = torch.tensor([t[1] for t in params])
+            
+            k = len(params)
+            y = torch.tensor([0]).repeat(k)
+            z = 1 - y
+            print("params", params)
+            mean = params.gather(1, y.view(-1, 1)).squeeze()
+            lvar = params.gather(1, z.view(-1, 1)).squeeze()
+            print("mean", mean)
+            print("lvar", lvar)
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
             
             ## diff_sq = (mu - logw)^2

@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
-    os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
+    #os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):

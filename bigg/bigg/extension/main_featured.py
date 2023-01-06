@@ -119,7 +119,7 @@ if __name__ == '__main__':
                 gen_graphs.append(pred_g)
         for g in gen_graphs:
             print("edges:", g.edges(data=True))
-        os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results')
+        os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
@@ -129,7 +129,7 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
-    os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results')
+    os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):

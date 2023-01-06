@@ -102,7 +102,7 @@ if __name__ == '__main__':
         num_node_dist = get_node_dist(train_graphs)
         
         #gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
-        print('# gt graphs', len(gt_graphs))
+        #print('# gt graphs', len(gt_graphs))
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):

@@ -99,6 +99,7 @@ if __name__ == '__main__':
     if cmd_args.phase != 'train':
         # get num nodes dist
         num_node_dist = get_node_dist(train_graphs)
+        
         #gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
         print('# gt graphs', len(gt_graphs))
         gen_graphs = []

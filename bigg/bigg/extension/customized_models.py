@@ -75,6 +75,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         params = self.edgelen_pred(h)
         print(params)
+        print(edge_feats)
         
         if edge_feats is None:
             ll = 0

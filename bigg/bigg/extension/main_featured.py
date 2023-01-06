@@ -89,8 +89,42 @@ if __name__ == '__main__':
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
-
+    
+    if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
+        print('loading from', cmd_args.model_dump)
+        model.load_state_dict(torch.load(cmd_args.model_dump))
+    
     # debug_model(model, train_graphs[0], list_node_feats[0], list_edge_feats[0])
+    #########################################################################################################
+    if cmd_args.phase != 'train':
+        # get num nodes dist
+        num_node_dist = get_node_dist(train_graphs)
+        #gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
+        print('# gt graphs', len(gt_graphs))
+        gen_graphs = []
+        with torch.no_grad():
+            for _ in tqdm(range(cmd_args.num_test_gen)):
+                num_nodes = np.argmax(np.random.multinomial(1, num_node_dist))
+                _, pred_edges, _, _, pred_edge_feats = model(len(train_graphs[0]))
+                weighted_edges = []
+                for e, w in zip(pred_edges, pred_edge_feats):
+                    assert e[0] > e[1]
+                    w = w.item()
+                    w = np.round(w, 4)
+                    edge = (e[0], e[1], w)
+                    weighted_edges.append(edge)
+                pred_g = nx.Graph()
+                pred_g.add_weighted_edges_from(weighted_edges)
+                gen_graphs.append(pred_g)
+        for g in gen_graphs:
+            print("edges:", g.edges(data=True))
+        os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results')
+        print('saving graphs')
+        with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
+            cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
+        print('evaluating')
+        sys.exit()
+    #########################################################################################################
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
@@ -119,7 +153,9 @@ if __name__ == '__main__':
                 optimizer.step()
                 optimizer.zero_grad()
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
-        _, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
-        print(pred_edges)
-        print(pred_node_feats)
-        print(pred_edge_feats)
+            
+        torch.save(model.state_dict(), os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results/', 'epoch-%d.ckpt' % (epoch + 1)))
+        #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
+        #print(pred_edges)
+        #print(pred_node_feats)
+        #print(pred_edge_feats)

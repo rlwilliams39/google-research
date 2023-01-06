@@ -73,6 +73,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             else return the edge_feats as it is
         """
         h, _ = state
+        print("egde feats", edge_feats)
         params = self.edgelen_pred(h)
         
         if edge_feats is None:

@@ -86,9 +86,7 @@ if __name__ == '__main__':
     
     list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
-    print("edge feats", list_edge_feats)
     
-    #print(edge_feats, list_edge_feats)
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
 
@@ -109,7 +107,6 @@ if __name__ == '__main__':
 
             node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
-            print("edge feats given", edge_feats)
             
             ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=edge_feats)
             loss = -ll / num_nodes

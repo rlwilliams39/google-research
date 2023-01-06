@@ -129,6 +129,7 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
+    os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results')
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
@@ -154,8 +155,8 @@ if __name__ == '__main__':
                 optimizer.step()
                 optimizer.zero_grad()
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
-            
-        torch.save(model.state_dict(), os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/Results/', 'epoch-%d.ckpt' % (epoch + 1)))
+        
+        torch.save(model.state_dict(), os.path.join('epoch-%d.ckpt' % (epoch + 1)))
         #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
         #print(pred_edges)
         #print(pred_node_feats)

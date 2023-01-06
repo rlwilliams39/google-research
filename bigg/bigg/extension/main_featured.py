@@ -157,7 +157,7 @@ if __name__ == '__main__':
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
         
         print('saving')
-        torch.save(model.state_dict(), os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', 'epoch-%d.ckpt' % (epoch + 1)))
+        torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
         #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
         #print(pred_edges)
         #print(pred_node_feats)

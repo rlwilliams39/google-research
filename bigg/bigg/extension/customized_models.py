@@ -31,6 +31,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
         self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        self.edge_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim) ## ADDED
 
     # to be customized
     def embed_node_feats(self, node_feats):
@@ -89,11 +90,9 @@ class BiggWithEdgeLen(RecurTreeGen):
             k = len(params)
             y = torch.tensor([0]).repeat(k)
             z = 1 - y
-            #print("params", params)
+            
             mean = params.gather(1, y.view(-1, 1)).squeeze()
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
-            #print("mean", mean)
-            #print("lvar", lvar)
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
             
             ## diff_sq = (mu - logw)^2
@@ -108,5 +107,8 @@ class BiggWithEdgeLen(RecurTreeGen):
             ## add to ll
             ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
             
-            ll = torch.sum(ll)  
-        return ll, edge_feats
+            ll = torch.sum(ll)
+        
+        state_update = self.embed_node_feats(torch.log(edge_feats)) 
+        new_state = self.edge_state_update(state_update, state)
+        return new_state, ll, edge_feats

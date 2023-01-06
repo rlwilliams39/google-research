@@ -120,7 +120,6 @@ if __name__ == '__main__':
                 gen_graphs.append(pred_g)
         for g in gen_graphs:
             print("edges:", g.edges(data=True))
-        os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)

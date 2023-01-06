@@ -445,11 +445,11 @@ class RecurTreeGen(nn.Module):
             else:
                 if self.has_edge_feats:
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
-                    edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
+                    edge_state, edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    edge_embed = self.embed_edge_feats(torch.log(cur_feats))
+                    #edge_embed = self.embed_edge_feats(torch.log(cur_feats))
+                    return ll, edge_state, 1, cur_feats
                     #return ll, (edge_embed, edge_embed), 1, cur_feats
-                    return ll, (edge_embed, edge_embed), 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:
@@ -659,7 +659,7 @@ class RecurTreeGen(nn.Module):
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
-                edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
+                edge_state, edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break

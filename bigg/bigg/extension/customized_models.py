@@ -80,13 +80,12 @@ class BiggWithEdgeLen(RecurTreeGen):
             pred_mean = params[0][0].item()
             pred_lvar = params[0][1]
             pred_var = torch.add(torch.nn.functional.softplus(pred_lvar, beta = 1), 1e-6).item()
-            print(params)
             edge_feats = torch.FloatTensor([np.random.normal(pred_mean, pred_var**0.5)])
-            print(edge_feats)
         else:
             ### Update log likelihood with weight prediction
             logw_obs = torch.log(edge_feats)
-            
+            print("edge feats: ", edge_feats)
+            print("params: ", params)
             ##
             mean = torch.tensor([t[0] for t in params])
             lvar = torch.tensor([t[1] for t in params])

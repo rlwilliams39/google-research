@@ -76,10 +76,9 @@ if __name__ == '__main__':
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)
     train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Test.dat')
-    print(train_graphs)
     
     #print("train", train_graphs)
-    [TreeLib.InsertGraph(g) for g in train_graphs]
+    #[TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes

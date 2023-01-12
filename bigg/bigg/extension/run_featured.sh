@@ -39,5 +39,4 @@ python main_featured.py \
   -batch_size $bsize \
   -num_epochs 1000 \
   -gpu -1 \
-  -file_name $file_name \
   $@

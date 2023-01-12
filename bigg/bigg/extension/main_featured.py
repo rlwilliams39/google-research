@@ -147,13 +147,14 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
+        
         #gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
         #print('# gt graphs', len(gt_graphs))
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist))
-                _, pred_edges, _, _, pred_edge_feats = model(len(train_graphs[0]))
+                _, pred_edges, _, _, pred_edge_feats = model(num_nodes)
                 weighted_edges = []
                 for e, w in zip(pred_edges, pred_edge_feats):
                     assert e[0] > e[1]

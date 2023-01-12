@@ -78,9 +78,11 @@ if __name__ == '__main__':
     #    train_graphs = cp.load(f)
     #train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
     #train_graphs = nx.readwrite.read_gpickle()
-    path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
-    with open(path, 'rb') as f:
-        train_graphs = cp.load(f)
+    
+    if cmd_args.phase == 'train':
+        path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
+        with open(path, 'rb') as f:
+            train_graphs = cp.load(f)
     
     
     #print("train", train_graphs)
@@ -134,7 +136,7 @@ if __name__ == '__main__':
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
-    #os.chdir('/content/drive/MyDrive/Projects/Data/Bigg-Data/')
+    
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):

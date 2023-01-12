@@ -154,6 +154,7 @@ if __name__ == '__main__':
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist))
+                print(num_nodes)
                 _, pred_edges, _, _, pred_edge_feats = model(num_nodes)
                 weighted_edges = []
                 for e, w in zip(pred_edges, pred_edge_feats):

@@ -79,10 +79,10 @@ if __name__ == '__main__':
     #train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
     #train_graphs = nx.readwrite.read_gpickle()
     
-    if cmd_args.phase == 'train':
-        path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
-        with open(path, 'rb') as f:
-            train_graphs = cp.load(f)
+    
+    path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
+    with open(path, 'rb') as f:
+        train_graphs = cp.load(f)
     
     
     #print("train", train_graphs)

@@ -78,6 +78,7 @@ if __name__ == '__main__':
     #    train_graphs = cp.load(f)
     #train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
     #train_graphs = nx.readwrite.read_gpickle()
+    print(cmd_args.file_name)
     path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
     with open(path, 'rb') as f:
         train_graphs = pickle.load(f)

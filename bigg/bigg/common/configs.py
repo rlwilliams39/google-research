@@ -25,7 +25,7 @@ import torch
 cmd_opt = argparse.ArgumentParser(description='Argparser for grecur', allow_abbrev=False)
 cmd_opt.add_argument('-save_dir', default='.', help='result output root')
 cmd_opt.add_argument('-file_name', default='.', help='file name to be loaded') ### ADDED
-cmd_opt.add_argument('-gen_graph', default='0', help='whether we want to generate graphs after training') ### ADDED
+cmd_opt.add_argument('-gen_graphs', default='0_', help='whether we want to generate graphs after training') ### ADDED
 cmd_opt.add_argument('-data_dir', default='.', help='data dir')
 cmd_opt.add_argument('-eval_folder', default=None, help='data eval_dir')
 cmd_opt.add_argument('-train_method', default='full', help='full/stage')

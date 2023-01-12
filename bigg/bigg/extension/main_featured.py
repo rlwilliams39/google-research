@@ -128,7 +128,7 @@ if __name__ == '__main__':
         for g in gen_graphs:
             print("edges:", g.edges(data=True))
         print('saving graphs')
-        with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
+        with open(cmd_args.file_name + cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('evaluating')
         sys.exit()

@@ -111,5 +111,5 @@ class BiggWithEdgeLen(RecurTreeGen):
         
         state_update = self.embed_node_feats(torch.log(edge_feats)) 
         new_state = self.edge_state_update(state_update, state)
-        #return new_state, ll, edge_feats
+        return new_state, ll, edge_feats
         return ll, edge_feats

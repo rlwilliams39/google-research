@@ -76,8 +76,8 @@ if __name__ == '__main__':
 
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)
-    train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
-    train_graphs = nx.read_gpickle(os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name))
+    #train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
+    train_graphs = nx.readwrite.read_gpickle(os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name))
     
     
     #print("train", train_graphs)

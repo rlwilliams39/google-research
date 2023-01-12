@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #train_graphs = nx.readwrite.read_gpickle()
     path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
     with open(path, 'rb') as f:
-        train_graphs = pickle.load(f)
+        train_graphs = cp.load(f)
     
     
     #print("train", train_graphs)

@@ -454,7 +454,7 @@ class RecurTreeGen(nn.Module):
                     ### ME
                     edge_embed = self.embed_edge_feats(torch.log(cur_feats))
                     state = self.edge_state_update(edge_embed, state)
-                    return ll, (stat[0], state[1]), 1, cur_feats
+                    return ll, (state[0], state[1]), 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:
@@ -665,6 +665,9 @@ class RecurTreeGen(nn.Module):
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
+                
+                #### ME
+                
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break

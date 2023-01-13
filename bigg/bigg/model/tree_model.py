@@ -445,10 +445,10 @@ class RecurTreeGen(nn.Module):
             else:
                 if self.has_edge_feats:
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
-                    edge_state, edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
+                    new_state, edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    #edge_embed = self.embed_edge_feats(torch.log(cur_feats))
-                    return ll, edge_state, 1, cur_feats
+                    edge_embed = self.embed_edge_feats(cur_feats)
+                    return ll, new_state, 1, cur_feats
                     #return ll, (edge_embed, edge_embed), 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None

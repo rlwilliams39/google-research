@@ -109,7 +109,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             ll = torch.sum(ll)
         
-        state_update = self.embed_edge_feats(torch.log(edge_feats)) 
-        new_state = self.edge_state_update(state_update, state)
-        return new_state, ll, edge_feats
+        #state_update = self.embed_edge_feats(torch.log(edge_feats)) 
+        #state = self.edge_state_update(state_update, state)
+        #return new_state, ll, edge_feats
         return ll, edge_feats

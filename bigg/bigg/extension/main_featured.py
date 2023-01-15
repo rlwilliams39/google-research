@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #train_graphs = nx.readwrite.read_gpickle()
     
     
-    path = os.path.join('/content/drive/MyDrive/Projects/Data/Bigg-Data/', cmd_args.file_name)
+    path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
-                num_nodes = np.argmax(np.random.multinomial(1, num_node_dist))
+                num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, _, pred_edge_feats = model(num_nodes)
                 weighted_edges = []
                 for e, w in zip(pred_edges, pred_edge_feats):

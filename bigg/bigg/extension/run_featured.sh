@@ -38,5 +38,5 @@ python main_featured.py \
   -has_node_feats=True \
   -batch_size $bsize \
   -num_epochs 1000 \
-  -gpu -1 \
+  -gpu 1 \
   $@

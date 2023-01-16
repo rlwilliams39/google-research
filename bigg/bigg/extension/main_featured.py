@@ -121,7 +121,7 @@ if __name__ == '__main__':
                 for e, w in zip(pred_edges, pred_edge_feats):
                     assert e[0] > e[1]
                     w = w.item()
-                    w = np.round(np.exp(w), 4)
+                    w = np.round(w, 4)
                     edge = (e[0], e[1], w)
                     weighted_edges.append(edge)
                 pred_g = nx.Graph()

@@ -102,7 +102,7 @@ if __name__ == '__main__':
     print(cmd_args.model_dump)
     print(os.path.isfile(cmd_args.model_dump))
     
-    if cmd_args.model_dump is not None: #and os.path.isfile(cmd_args.model_dump):
+    if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
         print('loading from', cmd_args.model_dump)
         model.load_state_dict(torch.load(cmd_args.model_dump))
     

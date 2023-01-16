@@ -447,7 +447,7 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    edge_embed = self.embed_edge_feats(cur_feats)
+                    edge_embed = self.embed_edge_feats(torch.log(cur_feats))
                     return ll, (edge_embed, edge_embed), 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
@@ -582,7 +582,7 @@ class RecurTreeGen(nn.Module):
         if self.has_node_feats:
             node_feats = self.embed_node_feats(node_feats)
         if self.has_edge_feats:
-            edge_feats = self.embed_edge_feats(edge_feats)
+            edge_feats = self.embed_edge_feats(torch.log(edge_feats))
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -645,7 +645,7 @@ class RecurTreeGen(nn.Module):
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats
         if self.has_edge_feats:
-            edge_feats_embed = self.embed_edge_feats(edge_feats)
+            edge_feats_embed = self.embed_edge_feats(torch.log(edge_feats))
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)

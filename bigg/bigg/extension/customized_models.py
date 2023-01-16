@@ -87,27 +87,26 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### Update log likelihood with weight prediction
             logw_obs = torch.log(edge_feats)
             
-            #k = len(params)
-            #y = torch.tensor([0]).repeat(k)
-            #z = 1 - y
+            k = len(params)
+            y = torch.tensor([0]).repeat(k).to(device)
+            z = 1 - y
             
-            #mean = params.gather(1, y.view(-1, 1)).squeeze()
-            #lvar = params.gather(1, z.view(-1, 1)).squeeze()
-            #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
+            mean = params.gather(1, y.view(-1, 1)).squeeze()
+            lvar = params.gather(1, z.view(-1, 1)).squeeze()
+            var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
             
             ## diff_sq = (mu - logw)^2
-            #diff_sq = torch.square(torch.sub(mean, logw_obs))
+            diff_sq = torch.square(torch.sub(mean, logw_obs))
             
             ## diff_sq2 = v^-1*diff_sq
-            #diff_sq2 = torch.div(diff_sq, var)
+            diff_sq2 = torch.div(diff_sq, var)
             
             ## log_var = log(v)
-            #log_var = torch.log(var)
+            log_var = torch.log(var)
             
             ## add to ll
-            #ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
-            ll = 0
-            #ll = torch.sum(ll)
+            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
+            ll = torch.sum(ll)
         
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 
         #state = self.edge_state_update(state_update, state)

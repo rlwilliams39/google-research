@@ -76,6 +76,9 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         params = self.edgelen_pred(h)
         
+        print("features", edge_feats)
+        print("parameters", params)
+        
         if edge_feats is None:
             ll = 0
             #edge_feats = None
@@ -87,8 +90,6 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
-            print("features", edge_feats)
-            print("parameters", params)
             
             logw_obs = torch.log(edge_feats)
             

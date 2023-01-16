@@ -88,7 +88,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             logw_obs = torch.log(edge_feats)
             
             k = len(params)
-            y = torch.tensor([0]).repeat(k).to(device)
+            y = torch.tensor([0]).repeat(k).to('cuda')
             z = 1 - y
             
             mean = params.gather(1, y.view(-1, 1)).squeeze()

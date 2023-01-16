@@ -85,6 +85,9 @@ class BiggWithEdgeLen(RecurTreeGen):
             edge_feats = torch.FloatTensor([[np.exp(np.random.normal(pred_mean, pred_var**0.5))]])
         else:
             ### Update log likelihood with weight prediction
+            ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
+            ### NOTE: find more efficient way of doing this
+            
             logw_obs = torch.log(edge_feats)
             
             k = len(params)

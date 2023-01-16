@@ -99,8 +99,6 @@ if __name__ == '__main__':
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
     
-    print(cmd_args.model_dump)
-    print(os.path.isfile(cmd_args.model_dump))
     
     if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
         print('loading from', cmd_args.model_dump)
@@ -123,7 +121,7 @@ if __name__ == '__main__':
                 for e, w in zip(pred_edges, pred_edge_feats):
                     assert e[0] > e[1]
                     w = w.item()
-                    w = np.round(w, 4)
+                    w = np.round(np.exp(w), 4)
                     edge = (e[0], e[1], w)
                     weighted_edges.append(edge)
                 pred_g = nx.Graph()

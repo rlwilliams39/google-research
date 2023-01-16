@@ -93,7 +93,7 @@ if __name__ == '__main__':
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
     print(train_graphs[0].edges(data=True))
     
-    list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
+    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
@@ -152,10 +152,10 @@ if __name__ == '__main__':
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
-            node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            #node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=edge_feats)
+            ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats=edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

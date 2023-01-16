@@ -87,6 +87,8 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
+            print("features", edge_feats)
+            print("parameters", params)
             
             logw_obs = torch.log(edge_feats)
             
@@ -97,6 +99,9 @@ class BiggWithEdgeLen(RecurTreeGen):
             mean = params.gather(1, y.view(-1, 1)).squeeze()
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
+            
+            print(mean)
+            print(lvar)
             
             ## diff_sq = (mu - logw)^2
             diff_sq = torch.square(torch.sub(mean, logw_obs))

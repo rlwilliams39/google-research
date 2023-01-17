@@ -34,7 +34,10 @@ from bigg.data_process.data_util import create_graphs, get_graph_data
 
 cmd_opt = argparse.ArgumentParser(description='Argparser for syn_gen')
 cmd_opt.add_argument('--g_type', default=None, type=str, help='graph type')
-cmd_opt.add_argument('--file_name', type=str, help='graph type')
+cmd_opt.add_argument('--file_name', type=str, help='file name')
+cmd_opt.add_argument('--data_dir', type=str, help='directory of data')
+cmd_opt.add_argument('--save_dir', type=str, help='where to save')
+
 
 local_args, _ = cmd_opt.parse_known_args()
 #local_args = cmd_opt.parse_args()

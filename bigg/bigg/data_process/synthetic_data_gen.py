@@ -38,7 +38,7 @@ cmd_opt.add_argument('--file_name', type=str, help='graph type')
 
 #local_args, _ = cmd_opt.parse_known_args()
 local_args = cmd_opt.parse_args()
-
+print(local_args)
 
 if __name__ == '__main__':
     cmd_args.__dict__.update(local_args.__dict__)

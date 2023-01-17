@@ -33,60 +33,129 @@ def get_node_map(nodelist, shift=0):
     return node_map
 
 
-def apply_order(G, nodelist, order_only):
+def apply_order(G, nodelist, order_only, leaflist = None):
     if order_only:
         return nodelist
-    g = nx.relabel_nodes(G, get_node_map(nodelist))
+    
+    if leaflist is not None:
+        #nodes then leaves
+        #nodelist = nodelist + leaflist
+        #leaves then nodes
+        nodelist = leaflist + nodelist + [0]
+    
+    node_map = get_node_map(nodelist)
+    g = nx.relabel_nodes(G, node_map)
+    
     e_list = []
-    for e in g.edges():
-        if e[0] > e[1]:
-            e_list.append((e[1], e[0]))
+    #for e in g.edges():
+    #    if e[0] > e[1]:
+    #        e_list.append((e[1], e[0]))
+    #    else:
+    #        e_list.append(e)
+    
+    for node1, node2, data in g.edges.data():
+        if node1 > node2:
+            e_list.append((node2, node1, data['weight']))
         else:
-            e_list.append(e)
+            e_list.append((node1, node2, data['weight']))
+            
     g = nx.Graph()
     g.add_nodes_from(list(range(len(G))))
-    g.add_edges_from(sorted(e_list))
+    g.add_weighted_edges_from(sorted(e_list))
     return g
 
 
+
 def get_graph_data(G, node_order, order_only=False):
+    G = G.to_undirected()
     out_list = []
     orig_node_labels = sorted(list(G.nodes()))
     orig_map = {}
     for i, x in enumerate(orig_node_labels):
         orig_map[x] = i
     G = nx.relabel_nodes(G, orig_map)
-
+    
     if node_order == 'default':
         out_list.append(apply_order(G, list(range(len(G))), order_only))
+    
+    if node_order == 'by_time': 
+        def order_tree(G, find_leaves= False):
+            leaves = [x for x in G.nodes() if G.degree(x)==1 and x!=0]
+            nodes = [x for x in G.nodes() if x not in leaves and x!=0]
+            both = leaves+nodes
+            dist = []
+        
+            def length_iterator(path):
+                if len(path) == 0 or path == "None":
+                    return(0)
+                else:
+                    for node in path:
+                        z = G.nodes[node]['length']
+                        path.pop(0)
+                        return(z + length_iterator(path))
+        
+            if find_leaves:
+                Z = leaves
+        
+            else:
+                Z = nodes
+            
+            for val in Z:
+                if val == 0:
+                    path = "None"
+                else: 
+                    i=0
+                    for y in nx.all_simple_paths(G, source=0, target=val):
+                        if i == 1:
+                            print("ERROR: MULTIPLE PATHS DETECTED")
+                            break
+                        path = y 
+                        i = i+1     
+                dist.append(length_iterator(path))
+            A = np.array(dist)
+            B = np.array(Z)
+            inds = A.argsort()
+            ordered = list(B[inds])
+            return(ordered)
+        
+        node_list_time = order_tree(G)
+        leaf_list_time = [x for x in G.nodes() if G.degree(x)==1 and x!=0]
+        leaf_list_time = sorted(leaf_list_time)
+        out_list.append(apply_order(G, node_list_time, order_only, leaflist = leaf_list_time))
+    
     else:
         if node_order == 'DFS' or node_order == 'BFS':
             ### BFS & DFS from largest-degree node
             CGs = [G.subgraph(c) for c in nx.connected_components(G)]
-
+            
             # rank connected componets from large to small size
             CGs = sorted(CGs, key=lambda x: x.number_of_nodes(), reverse=True)
-
+            
             node_list_bfs = []
             node_list_dfs = []
+            
             for ii in range(len(CGs)):
                 node_degree_list = [(n, d) for n, d in CGs[ii].degree()]
                 degree_sequence = sorted(
                     node_degree_list, key=lambda tt: tt[1], reverse=True)
-
                 bfs_tree = nx.bfs_tree(CGs[ii], source=degree_sequence[0][0])
                 node_list_bfs += list(bfs_tree.nodes())
                 dfs_tree = nx.dfs_tree(CGs[ii], source=degree_sequence[0][0])
                 node_list_dfs += list(dfs_tree.nodes())
-
+            
             if node_order == 'BFS':
+                #print(node_list_bfs)
+                node_list_bfs[0], node_list_bfs[1] = node_list_bfs[1], node_list_bfs[0]
+                #print(node_list_bfs)
                 out_list.append(apply_order(G, node_list_bfs, order_only))
             if node_order == 'DFS':
+                node_list_dfs[0], node_list_dfs[1] = node_list_dfs[1], node_list_dfs[0]
+                ƒ(node_list_dfs)
                 out_list.append(apply_order(G, node_list_dfs, order_only))
-
+    
     if len(out_list) == 0:
         out_list = [apply_order(G, list(range(len(G))), order_only)]
-
+    
     return out_list
 
 
@@ -164,7 +233,7 @@ def create_graphs(graph_type, noise=10.0, seed=1234):
         for i in range(n_nodes - 50, n_nodes + 50):
             graphs.append(nx.barabasi_albert_graph(i, 2))
     elif 'yeast' in graph_type:
-        cwd = os.getcwd()
+        #cwd = os.getcwd()
         os.chdir("/content/drive/MyDrive/Projects/Data/Bigg-Data")
         graphs = nx.read_gpickle("Yeast.dat")
         os.chdir(cwd)

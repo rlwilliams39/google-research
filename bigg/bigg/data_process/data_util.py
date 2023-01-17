@@ -150,7 +150,7 @@ def get_graph_data(G, node_order, order_only=False):
                 out_list.append(apply_order(G, node_list_bfs, order_only))
             if node_order == 'DFS':
                 node_list_dfs[0], node_list_dfs[1] = node_list_dfs[1], node_list_dfs[0]
-                ƒ(node_list_dfs)
+                #print(node_list_dfs)
                 out_list.append(apply_order(G, node_list_dfs, order_only))
     
     if len(out_list) == 0:

@@ -15,7 +15,7 @@
 #!/bin/bash
 
 g_type=yeast
-ordering=DFS
+ordering=default
 
 save_dir=../../data/$g_type-$ordering
 data_dir=../../data

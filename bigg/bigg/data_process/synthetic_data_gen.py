@@ -48,7 +48,7 @@ if __name__ == '__main__':
     random.seed(cmd_args.seed)
     np.random.seed(cmd_args.seed)
     
-    
+    print(cmd_args.g_type)
     if cmd_args.g_type == 'Phylo':
         print(cmd_args.data_dir)
         print(cmd_args.file_name)

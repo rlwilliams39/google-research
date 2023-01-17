@@ -41,6 +41,8 @@ if __name__ == '__main__':
     
     
     if cmd_args.g_type == 'Phylo':
+        print(cmd_args.data_dir)
+        print(cmd_args.file_name)
         path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
         with open(path, 'rb') as f:
             graphs = cp.load(f)

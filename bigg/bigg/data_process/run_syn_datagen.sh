@@ -26,4 +26,3 @@ ordering=DFS
 python synthetic_data_gen.py \
   -g_type $g_type \
   -node_order $ordering \
-  -file_name $file_name \

@@ -20,9 +20,9 @@ ordering=DFS
 save_dir=../../data/$g_type-$ordering
 data_dir=../../data
 
-#if [ ! -e $save_dir ]; then
-#  mkdir -p $save_dir
-#fi
+if [ ! -e $save_dir ]; then
+  mkdir -p $save_dir
+fi
 
 python synthetic_data_gen.py \
   -save_dir $save_dir \
@@ -30,3 +30,4 @@ python synthetic_data_gen.py \
   -node_order $ordering \
   -data_dir $data_dir \
   -file_name $file_name \
+  $@

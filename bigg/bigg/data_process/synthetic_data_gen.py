@@ -16,6 +16,9 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
+
+import cmd
+from copyreg import pickle
 # pylint: skip-file
 
 import os
@@ -25,7 +28,6 @@ import random
 import numpy as np
 import pickle as cp
 import argparse
-import cmd
 from tqdm import tqdm
 from bigg.common.configs import cmd_args
 from bigg.data_process.data_util import create_graphs, get_graph_data

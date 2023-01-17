@@ -30,7 +30,9 @@ from bigg.common.configs import cmd_args
 from bigg.data_process.data_util import create_graphs, get_graph_data
 
 cmd_opt = argparse.ArgumentParser(description='Argparser for syn_gen')
+cmd_opt.add_argument('-data_dir', default=None, type=str, help ='directory of data')
 cmd_opt.add_argument('-g_type', default=None, type=str, help='graph type')
+cmd_opt.add_argument('-g_name', default=None, type=str, help='graph name')
 
 local_args, _ = cmd_opt.parse_known_args()
 
@@ -38,7 +40,17 @@ if __name__ == '__main__':
     cmd_args.__dict__.update(local_args.__dict__)
     random.seed(cmd_args.seed)
     np.random.seed(cmd_args.seed)
-    graphs = create_graphs(cmd_args.g_type)
+    
+    path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
+    if cmd_args.g_type == 'Phylo':
+        with open(path, 'rb') as f:
+            graphs = cp.load(f)
+    
+    else:
+        graphs = create_graphs(cmd_args.g_type)
+    
+    
+    
     num_graphs = len(graphs)
     num_train = int(float(num_graphs) * cmd_args.train_ratio)
     num_dev = int(float(num_graphs) * cmd_args.dev_ratio)

@@ -39,8 +39,9 @@ if __name__ == '__main__':
     random.seed(cmd_args.seed)
     np.random.seed(cmd_args.seed)
     
-    path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
+    
     if cmd_args.g_type == 'Phylo':
+        path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
         with open(path, 'rb') as f:
             graphs = cp.load(f)
     

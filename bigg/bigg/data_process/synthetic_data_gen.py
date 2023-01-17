@@ -36,7 +36,7 @@ from bigg.data_process.data_util import create_graphs, get_graph_data
 #local_args, _ = cmd_opt.parse_known_args()
 
 if __name__ == '__main__':
-    cmd_args.__dict__.update(local_args.__dict__)
+    #cmd_args.__dict__.update(local_args.__dict__)
     random.seed(cmd_args.seed)
     np.random.seed(cmd_args.seed)
     

@@ -80,7 +80,7 @@ if __name__ == '__main__':
     #train_graphs = nx.readwrite.read_gpickle()
     
     
-    path = os.path.join(cmd_args.data_dir, cmd_args.file_name)
+    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase)
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     

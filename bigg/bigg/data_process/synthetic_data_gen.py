@@ -39,8 +39,8 @@ cmd_opt.add_argument('--data_dir', type=str, help='directory of data')
 cmd_opt.add_argument('--save_dir', type=str, help='where to save')
 
 
-local_args, _ = cmd_opt.parse_known_args()
-#local_args = cmd_opt.parse_args()
+#local_args, _ = cmd_opt.parse_known_args()
+local_args = cmd_opt.parse_args()
 print(local_args)
 
 if __name__ == '__main__':

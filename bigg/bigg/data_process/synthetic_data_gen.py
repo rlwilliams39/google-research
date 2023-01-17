@@ -25,14 +25,15 @@ import random
 import numpy as np
 import pickle as cp
 import argparse
+import cmd
 from tqdm import tqdm
 from bigg.common.configs import cmd_args
 from bigg.data_process.data_util import create_graphs, get_graph_data
 
-cmd_opt = argparse.ArgumentParser(description='Argparser for syn_gen')
-cmd_opt.add_argument('-g_type', default=None, type=str, help='graph type')
+#cmd_opt = argparse.ArgumentParser(description='Argparser for syn_gen')
+#cmd_opt.add_argument('-g_type', default=None, type=str, help='graph type')
 
-local_args, _ = cmd_opt.parse_known_args()
+#local_args, _ = cmd_opt.parse_known_args()
 
 if __name__ == '__main__':
     cmd_args.__dict__.update(local_args.__dict__)

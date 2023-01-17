@@ -83,10 +83,7 @@ if __name__ == '__main__':
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase)
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
-        print(train_graphs)
     
-    
-    #print("train", train_graphs)
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])

@@ -24,7 +24,6 @@ ordering=DFS
 #fi
 
 python synthetic_data_gen.py \
-  -save_dir $save_dir \
   -g_type $g_type \
   -node_order $ordering \
   -data_dir $data_dir \

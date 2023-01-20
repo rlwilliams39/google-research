@@ -379,7 +379,7 @@ class RecurTreeGen(nn.Module):
         if args.use_weight_state:
             print("Hello")
                 
-        use_weight_state = True
+        use_weight_state = False
         self.use_weight_state = False
         
         if use_weight_state:

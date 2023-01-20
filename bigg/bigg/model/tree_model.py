@@ -378,20 +378,13 @@ class RecurTreeGen(nn.Module):
             if args.share_param:
                 self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
                 self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
-                
-                def cell_w_update(self, x, y, lv):
-                    cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
-                    return cell(x, y)
-                    
-                def e2w_cell(self, x, y, lv):
-                    cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
-                    return cell(x, y)
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
         else:
             self.tree_pos_enc = lambda x: 0
-
+    
+    
     def cell_topdown(self, x, y, lv):
         cell = self.m_cell_topdown if self.share_param else self.cell_topdown_modules[lv]
         return cell(x, y)
@@ -423,7 +416,16 @@ class RecurTreeGen(nn.Module):
         if prob >= 0.5:
             p += self.greedy_frac
         return p
-
+    
+    if self.use_weight_state:
+        def cell_w_update(self, x, y, lv):
+            cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
+            return cell(x, y)
+        
+        def e2w_cell(self, x, y, lv):
+            cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
+            return cell(x, y)
+    
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
         if tree_node.is_root:

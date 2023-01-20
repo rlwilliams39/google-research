@@ -377,11 +377,11 @@ class RecurTreeGen(nn.Module):
         
         use_weight_state = False
         print("Using Weight State?", use_weight_state)
-        if use_weight_state:
-            self.use_weight_state = True
-            self.weight_state = FenwickTree(args)
-            self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
-            self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
+        #if use_weight_state:
+        #    self.use_weight_state = True
+        #    self.weight_state = FenwickTree(args)
+        #    self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        #    self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)

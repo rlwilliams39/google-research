@@ -416,8 +416,8 @@ class RecurTreeGen(nn.Module):
         if prob >= 0.5:
             p += self.greedy_frac
         return p
-    
-    if args.use_weight_state:
+    print("Hello", self.use_weight_state)
+    if self.use_weight_state:
         def cell_w_update(self, x, y, lv):
             cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
             return cell(x, y)

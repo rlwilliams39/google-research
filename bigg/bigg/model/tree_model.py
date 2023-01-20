@@ -551,7 +551,7 @@ class RecurTreeGen(nn.Module):
             weight_state = None
         
         print("weight state", weight_state)
-        print("HELLO")
+        print("HELLO", self.use_weight_state)
         if num_nodes is None:
             num_nodes = node_end
         pbar = range(node_start, node_end)

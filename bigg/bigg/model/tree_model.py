@@ -375,7 +375,11 @@ class RecurTreeGen(nn.Module):
         self.row_tree = FenwickTree(args)
         
         print("TEST", args.use_weight_state)
-        use_weight_state = False
+        
+        if args.use_weight_state:
+            print("Hello Hello")
+                
+        use_weight_state = True
         self.use_weight_state = False
         
         if use_weight_state:

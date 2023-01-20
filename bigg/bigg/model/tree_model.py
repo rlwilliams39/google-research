@@ -732,6 +732,8 @@ class RecurTreeGen(nn.Module):
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break
             cur_states = (cur_states[0][is_nonleaf], cur_states[1][is_nonleaf])
+            if self.use_weight_state:
+                cur_weight_state = (cur_weight_state[0][is_nonleaf], cur_weight_state[1][is_nonleaf])
             left_logits = self.pred_has_left(cur_states[0], lv)
             has_left, num_left = TreeLib.GetChLabel(-1, lv)
             left_update = self.topdown_left_embed[has_left] + self.tree_pos_enc(num_left)

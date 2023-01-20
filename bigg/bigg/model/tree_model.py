@@ -545,8 +545,9 @@ class RecurTreeGen(nn.Module):
         controller_state = self.row_tree()
         
         weight_state = None
-        print("WHY", self.use_weight_state)
-        if self.use_weight_state:
+        
+        if self.use_weight_state == True:
+            print("HELL NO")
             self.weight_state.reset(list_weight_states)
             weight_state = self.weight_state() ###
             

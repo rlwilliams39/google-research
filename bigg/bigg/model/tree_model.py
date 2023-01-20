@@ -352,8 +352,6 @@ class RecurTreeGen(nn.Module):
             self.m_cell_topdown = nn.LSTMCell(args.embed_dim, args.embed_dim)
             self.m_cell_topright = nn.LSTMCell(args.embed_dim, args.embed_dim)
             
-            self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
-            self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
         else:
             fn_pred = lambda: MLP(args.embed_dim, [2 * args.embed_dim, 1])
             fn_tree_cell = lambda: BinaryTreeLSTMCell(args.embed_dim)
@@ -375,9 +373,19 @@ class RecurTreeGen(nn.Module):
             self.cell_topdown_modules, self.cell_topright_modules = [nn.ModuleList(l) for l in lstm_cell_modules]
             self.lr2p_cell = fn_tree_cell()
         self.row_tree = FenwickTree(args)
-        self.use_weight_state = False#args.use_weight_state
-        if self.use_weight_state:
+        use_weight_state = False
+        self.use_weight_state = False
+        if use_weight_state:
             self.weight_state = FenwickTree(args)
+            self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+            self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
+            def cell_w_update(self, x, y, lv):
+                cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
+                return cell(x, y)
+                
+            def e2w_cell(self, x, y, lv):
+                cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
+                return cell(x, y)
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
@@ -417,13 +425,6 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
     
-    def cell_w_update(self, x, y, lv):
-        cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
-        return cell(x, y)
-    
-    def e2w_cell(self, x, y, lv):
-        cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
-        return cell(x, y)
     
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub

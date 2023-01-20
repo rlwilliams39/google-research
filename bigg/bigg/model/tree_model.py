@@ -713,7 +713,8 @@ class RecurTreeGen(nn.Module):
                     edge_of_lv = TreeLib.GetEdgeOf(lv)
                     edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     target_feats = edge_feats[edge_of_lv]
-                    print(cur_weight_state)
+                    print("current weight state", cur_weight_state)
+                    print("current states", cur_states)
                     TEST = (cur_weight_state[0][~is_nonleaf], cur_weight_state[1][~is_nonleaf])
                     #print("current weight state", cur_weight_state)
                     #print("edge state", edge_state)

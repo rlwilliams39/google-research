@@ -683,8 +683,6 @@ class RecurTreeGen(nn.Module):
                                                                            list_node_starts, num_nodes, list_col_ranges)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         
-        if self.use_weight_state:
-            weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         
         
         if self.has_node_feats:
@@ -696,6 +694,11 @@ class RecurTreeGen(nn.Module):
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
+        
+        if self.use_weight_state:
+            weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
+            cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
+            
 
         lv = 0
         while True:
@@ -707,7 +710,6 @@ class RecurTreeGen(nn.Module):
                     edge_of_lv = TreeLib.GetEdgeOf(lv)
                     edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     target_feats = edge_feats[edge_of_lv]
-                    cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
                     cur_weight_state = self.cell_w_update(edge_feats_embed, cur_weight_state, lv) 
                     cur_weight_state = (cur_weight_state[0][~is_nonleaf], cur_weight_state[1][~is_nonleaf])
                     

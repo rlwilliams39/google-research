@@ -525,7 +525,7 @@ class RecurTreeGen(nn.Module):
                 edge_feats = torch.cat(pred_edge_feats, dim=0)
             return ll, summary_state, num_left + num_right, edge_feats, weight_state
 
-    def forward(self, node_end, edge_list=None, node_feats=None, edge_feats=None, node_start=0, list_states=[], lb_list=None, ub_list=None, col_range=None, num_nodes=None, display=False, weight_state=None):
+    def forward(self, node_end, edge_list=None, node_feats=None, edge_feats=None, node_start=0, list_states=[], lb_list=None, ub_list=None, col_range=None, num_nodes=None, display=False, weight_state=None, list_weight_states = []):
         pos = 0
         total_ll = 0.0
         edges = []
@@ -533,7 +533,8 @@ class RecurTreeGen(nn.Module):
         controller_state = self.row_tree()
         
         if self.use_weight_state:
-            weight_state = self.weight_state ###
+            self.weight_state.reset(list_states)
+            weight_state = self.weight_state() ###
         
         if num_nodes is None:
             num_nodes = node_end

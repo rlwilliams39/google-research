@@ -696,7 +696,8 @@ class RecurTreeGen(nn.Module):
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
         
         if self.use_weight_state:
-            weight_state = self.weight_state.reset([])
+            self.weight_state.reset([])
+            weight_state = self.weight_state()
             #weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
             #cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
             #print(cur_weight_state)

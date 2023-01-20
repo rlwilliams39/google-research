@@ -384,6 +384,7 @@ class RecurTreeGen(nn.Module):
         #    self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
         print("")
         print("")
+        print("Trying to fix")
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)

@@ -372,6 +372,7 @@ class RecurTreeGen(nn.Module):
             self.cell_topdown_modules, self.cell_topright_modules = [nn.ModuleList(l) for l in lstm_cell_modules]
             self.lr2p_cell = fn_tree_cell()
         self.row_tree = FenwickTree(args)
+        self.use_weight_state = args.use_weight_state
         if args.use_weight_state:
             self.weight_state = FenwickTree(args)
             self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
@@ -448,7 +449,7 @@ class RecurTreeGen(nn.Module):
                 return ll, self.bit_rep_net(tree_node.bits_rep, tree_node.n_cols), 1, None, None
             else:
                 if self.has_edge_feats:
-                    if args.use_weight_state:
+                    if self.use_weight_state:
                         topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
                         edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
                         ll = ll + edge_ll
@@ -531,7 +532,7 @@ class RecurTreeGen(nn.Module):
         self.row_tree.reset(list_states)
         controller_state = self.row_tree()
         
-        if args.use_weight_state:
+        if self.use_weight_state:
             weight_state = self.weight_state ###
         
         if num_nodes is None:
@@ -574,7 +575,7 @@ class RecurTreeGen(nn.Module):
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
-            if args.use_weight_state:
+            if self.use_weight_state:
                 weight_state = self.weight_state(cur_weight_state)
             edges += [(i, x) for x in col_sm.indices]
             total_ll = total_ll + ll

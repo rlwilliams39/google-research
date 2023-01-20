@@ -383,6 +383,7 @@ class RecurTreeGen(nn.Module):
         #    self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         #    self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
         print("")
+        print("")
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)

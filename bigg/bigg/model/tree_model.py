@@ -373,11 +373,20 @@ class RecurTreeGen(nn.Module):
             self.lr2p_cell = fn_tree_cell()
         self.row_tree = FenwickTree(args)
         self.use_weight_state = args.use_weight_state
-        print(args.use_weight_state)
         if args.use_weight_state:
             self.weight_state = FenwickTree(args)
-            self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
-
+            if args.share_param:
+                self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+                self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
+                
+                def cell_w_update(self, x, y, lv):
+                    cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
+                    return cell(x, y)
+                    
+                def e2w_cell(self, x, y, lv):
+                    cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
+                    return cell(x, y)
+        
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
         else:

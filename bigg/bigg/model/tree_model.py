@@ -431,7 +431,6 @@ class RecurTreeGen(nn.Module):
     
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
-        print("HELLO ALERT")
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
 
@@ -678,9 +677,16 @@ class RecurTreeGen(nn.Module):
     def forward_train(self, graph_ids, node_feats=None, edge_feats=None,
                       list_node_starts=None, num_nodes=-1, prev_rowsum_states=[None, None], list_col_ranges=None):
         ll = 0.0
+        
+        ## Here is creating state variables / updating them? Need to do this with weight state.
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
+        
+        if self.use_weight_state:
+            weight_state = self.weight_state()
+        
+        
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats
@@ -694,12 +700,23 @@ class RecurTreeGen(nn.Module):
         lv = 0
         while True:
             is_nonleaf = TreeLib.QueryNonLeaf(lv)
+            
+            ### Edit to change to using weight state in some way...
             if self.has_edge_feats:
-                edge_of_lv = TreeLib.GetEdgeOf(lv)
-                edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
-                target_feats = edge_feats[edge_of_lv]
-                edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
-                ll = ll + edge_ll
+                if self.use_weight_state:
+                    edge_of_lv = TreeLib.GetEdgeOf(lv)
+                    edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
+                    target_feats = edge_feats[edge_of_lv]
+                    weight_state = self.e2w_cell(edge_state, weight_state, tree_node.depth)
+                    weight_state = self.cell_w_update(edge_embed, weight_state, tree_node.depth)
+                    edge_ll, _ = self.predict_edge_feats(weight_state, target_feats)
+                    ll = ll + edge_ll
+                else:
+                    edge_of_lv = TreeLib.GetEdgeOf(lv)
+                    edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
+                    target_feats = edge_feats[edge_of_lv]
+                    edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
+                    ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break
             cur_states = (cur_states[0][is_nonleaf], cur_states[1][is_nonleaf])

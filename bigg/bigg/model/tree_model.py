@@ -462,6 +462,7 @@ class RecurTreeGen(nn.Module):
                 if self.has_edge_feats:
                     if self.use_weight_state:
                         topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
+                        cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                         edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
                         ll = ll + edge_ll
                         edge_embed =  self.embed_edge_feats(torch.log(cur_feats))

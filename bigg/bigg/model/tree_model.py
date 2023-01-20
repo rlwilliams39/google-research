@@ -707,6 +707,8 @@ class RecurTreeGen(nn.Module):
                     edge_of_lv = TreeLib.GetEdgeOf(lv)
                     edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     target_feats = edge_feats[edge_of_lv]
+                    print("edge_state", edge_state)
+                    print("weight_state", weight_state)
                     weight_state = self.e2w_cell(edge_state, weight_state, lv) #######
                     weight_state = self.cell_w_update(edge_embed, weight_state, lv) ########
                     edge_ll, _ = self.predict_edge_feats(weight_state, target_feats)

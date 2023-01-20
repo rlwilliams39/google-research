@@ -697,7 +697,7 @@ class RecurTreeGen(nn.Module):
         
         if self.use_weight_state:
             weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
-            cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
+            #cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
             #print(cur_weight_state)
             #print(edge_feats_embed)
             #cur_weight_state = self.cell_w_update(edge_feats_embed, cur_weight_state, 0) 
@@ -713,13 +713,13 @@ class RecurTreeGen(nn.Module):
                     edge_of_lv = TreeLib.GetEdgeOf(lv)
                     edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     target_feats = edge_feats[edge_of_lv]
-                    cur_weight_state = (cur_weight_state[0][~is_nonleaf], cur_weight_state[1][~is_nonleaf])
+                    TEST = (cur_weight_state[0][~is_nonleaf], cur_weight_state[1][~is_nonleaf])
                     #print("current weight state", cur_weight_state)
                     #print("edge state", edge_state)
                     #print("edge_feats_embed", edge_feats_embed)
-                    cur_weight_state = self.e2w_cell(edge_state, cur_weight_state, lv) #######
+                    topdown_state = self.e2w_cell(edge_state, TEST, lv) #######
                     #######
-                    edge_ll, _ = self.predict_edge_feats(cur_weight_state, target_feats)
+                    edge_ll, _ = self.predict_edge_feats(topdown_state, target_feats)
                     ll = ll + edge_ll
                 else:
                     edge_of_lv = TreeLib.GetEdgeOf(lv)

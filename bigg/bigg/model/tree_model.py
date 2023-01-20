@@ -700,7 +700,7 @@ class RecurTreeGen(nn.Module):
             cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
             print(cur_weight_state)
             print(edge_feats_embed)
-            cur_weight_state = self.cell_w_update(edge_feats_embed, cur_weight_state, lv) 
+            cur_weight_state = self.cell_w_update(edge_feats_embed, cur_weight_state, 0) 
             
 
         lv = 0

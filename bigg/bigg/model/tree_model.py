@@ -462,7 +462,7 @@ class RecurTreeGen(nn.Module):
                 return ll, self.bit_rep_net(tree_node.bits_rep, tree_node.n_cols), 1, None, None
             else:
                 if self.has_edge_feats:
-                    if self.use_weight_state == True:
+                    if self.use_weight_state:
                         topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
                         cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                         edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
@@ -548,7 +548,7 @@ class RecurTreeGen(nn.Module):
         
         weight_state = None
         
-        if self.use_weight_state == True:
+        if self.use_weight_state:
             self.weight_state.reset(list_weight_states)
             weight_state = self.weight_state() ###
             
@@ -593,7 +593,7 @@ class RecurTreeGen(nn.Module):
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
-            if self.use_weight_state == True:
+            if self.use_weight_state:
                 weight_state = self.weight_state(cur_weight_state)
             edges += [(i, x) for x in col_sm.indices]
             total_ll = total_ll + ll

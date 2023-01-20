@@ -547,7 +547,6 @@ class RecurTreeGen(nn.Module):
         weight_state = None
         
         if self.use_weight_state == True:
-            print("HELL NO")
             self.weight_state.reset(list_weight_states)
             weight_state = self.weight_state() ###
             
@@ -592,7 +591,7 @@ class RecurTreeGen(nn.Module):
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
-            if self.use_weight_state:
+            if self.use_weight_state == True:
                 weight_state = self.weight_state(cur_weight_state)
             edges += [(i, x) for x in col_sm.indices]
             total_ll = total_ll + ll

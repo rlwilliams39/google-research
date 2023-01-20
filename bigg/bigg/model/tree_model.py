@@ -375,8 +375,8 @@ class RecurTreeGen(nn.Module):
             self.cell_topdown_modules, self.cell_topright_modules = [nn.ModuleList(l) for l in lstm_cell_modules]
             self.lr2p_cell = fn_tree_cell()
         self.row_tree = FenwickTree(args)
-        self.use_weight_state = args.use_weight_state
-        if args.use_weight_state:
+        self.use_weight_state = False#args.use_weight_state
+        if self.use_weight_state:
             self.weight_state = FenwickTree(args)
         
         if args.tree_pos_enc:

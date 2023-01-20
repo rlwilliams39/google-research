@@ -79,6 +79,8 @@ cmd_opt.add_argument('-display', default=False, type=eval, help='display progres
 
 cmd_opt.add_argument('-has_edge_feats', default=False, type=eval, help='has edge features?')
 cmd_opt.add_argument('-has_node_feats', default=False, type=eval, help='has node features?')
+cmd_opt.add_argument('-use_weight_state', default=False, type=eval, help='use a separate weight state?')
+
 
 cmd_args, _ = cmd_opt.parse_known_args()
 

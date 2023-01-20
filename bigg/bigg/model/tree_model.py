@@ -684,7 +684,7 @@ class RecurTreeGen(nn.Module):
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         
         if self.use_weight_state:
-            weight_state = self.weight_state()
+            weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         
         
         if self.has_node_feats:

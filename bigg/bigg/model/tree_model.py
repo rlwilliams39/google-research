@@ -697,7 +697,7 @@ class RecurTreeGen(nn.Module):
         
         if self.use_weight_state:
             weight_state, next_states = self.weight_state.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
-            #cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
+            cur_weight_state = (weight_state[0][has_ch], weight_state[1][has_ch])
             #print(cur_weight_state)
             #print(edge_feats_embed)
             #cur_weight_state = self.cell_w_update(edge_feats_embed, cur_weight_state, 0) 

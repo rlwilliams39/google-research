@@ -705,6 +705,7 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 if self.use_weight_state:
                     edge_of_lv = TreeLib.GetEdgeOf(lv)
+                    print("cur_states", cur_states)
                     edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     target_feats = edge_feats[edge_of_lv]
                     print("edge_state", edge_state)

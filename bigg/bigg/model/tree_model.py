@@ -417,7 +417,7 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
     
-    if self.use_weight_state:
+    if args.use_weight_state:
         def cell_w_update(self, x, y, lv):
             cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
             return cell(x, y)

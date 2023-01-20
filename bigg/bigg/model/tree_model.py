@@ -431,6 +431,7 @@ class RecurTreeGen(nn.Module):
     
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
+        print("HELLO ALERT")
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
 

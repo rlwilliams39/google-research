@@ -545,13 +545,13 @@ class RecurTreeGen(nn.Module):
         controller_state = self.row_tree()
         
         if self.use_weight_state:
+            print("HELL NO")
             self.weight_state.reset(list_weight_states)
             weight_state = self.weight_state() ###
         else:
+            print("HELLO")
             weight_state = None
         
-        print("weight state", weight_state)
-        print("HELLO", self.use_weight_state)
         if num_nodes is None:
             num_nodes = node_end
         pbar = range(node_start, node_end)

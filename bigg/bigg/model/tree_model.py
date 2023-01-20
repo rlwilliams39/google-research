@@ -377,7 +377,7 @@ class RecurTreeGen(nn.Module):
         print("TEST", args.use_weight_state)
         
         if args.use_weight_state:
-            print("Hello Hello")
+            print("Hello")
                 
         use_weight_state = True
         self.use_weight_state = False
@@ -387,13 +387,6 @@ class RecurTreeGen(nn.Module):
             self.weight_state = FenwickTree(args)
             self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
             self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
-            def cell_w_update(self, x, y, lv):
-                cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
-                return cell(x, y)
-                
-            def e2w_cell(self, x, y, lv):
-                cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
-                return cell(x, y)
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
@@ -433,6 +426,13 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
     
+    def cell_w_update(self, x, y, lv):
+        cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
+        return cell(x, y)
+        
+    def e2w_cell(self, x, y, lv):
+        cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
+        return cell(x, y)
     
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub

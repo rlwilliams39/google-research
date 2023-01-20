@@ -36,7 +36,6 @@ python main_featured.py \
   -bits_compress 0 \
   -has_edge_feats=True \
   -has_node_feats=True \
-  -use_weight_state=False \
   -batch_size $bsize \
   -num_epochs 1000 \
   -gpu 1 \

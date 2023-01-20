@@ -379,10 +379,10 @@ class RecurTreeGen(nn.Module):
         if args.use_weight_state:
             print("Hello")
                 
-        use_weight_state = False
+        #use_weight_state = False
         self.use_weight_state = False
         
-        if use_weight_state:
+        if args.use_weight_state:
             self.use_weight_state = True
             self.weight_state = FenwickTree(args)
             self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)

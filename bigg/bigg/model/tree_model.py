@@ -382,9 +382,9 @@ class RecurTreeGen(nn.Module):
         #    self.weight_state = FenwickTree(args)
         #    self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         #    self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
-        print("")
-        print("")
-        print("Trying to fix")
+        #print("")
+        #print("")
+        #print("Trying to fix")
         
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
@@ -424,13 +424,13 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
     
-    def cell_w_update(self, x, y, lv):
-        cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
-        return cell(x, y)
+    #def cell_w_update(self, x, y, lv):
+    #    cell = self.m_cell_w_update if self.share_param else self.cell_w_update_modules[lv]
+    #    return cell(x, y)
         
-    def e2w_cell(self, x, y, lv):
-        cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
-        return cell(x, y)
+    #def e2w_cell(self, x, y, lv):
+    #    cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
+    #    return cell(x, y)
     
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
@@ -468,13 +468,15 @@ class RecurTreeGen(nn.Module):
             else:
                 if self.has_edge_feats:
                     if self.use_weight_state:
-                        topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
-                        cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
-                        edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
-                        ll = ll + edge_ll
-                        edge_embed =  self.embed_edge_feats(torch.log(cur_feats))
-                        weight_state = self.cell_w_update(edge_embed, weight_state, tree_node.depth)
-                        return ll, (edge_embed, edge_embed), 1, cur_feats, weight_state## Would I need to change this?
+                        print("ERROR. WEIGHT STATE SHOULD NOT BE USED")
+                        break
+                        #topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
+                        #cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
+                        #edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
+                        #ll = ll + edge_ll
+                        #edge_embed =  self.embed_edge_feats(torch.log(cur_feats))
+                        #weight_state = self.cell_w_update(edge_embed, weight_state, tree_node.depth)
+                        #return ll, (edge_embed, edge_embed), 1, cur_feats, weight_state## Would I need to change this?
                     else:
                         cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                         edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
@@ -551,11 +553,11 @@ class RecurTreeGen(nn.Module):
         self.row_tree.reset(list_states)
         controller_state = self.row_tree()
         
-        weight_state = None
+        #weight_state = None
         
-        if self.use_weight_state:
-            self.weight_state.reset(list_weight_states)
-            weight_state = self.weight_state() ###
+        #if self.use_weight_state:
+        #    self.weight_state.reset(list_weight_states)
+        #    weight_state = self.weight_state() ###
             
         
         if num_nodes is None:
@@ -598,8 +600,8 @@ class RecurTreeGen(nn.Module):
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
-            if self.use_weight_state:
-                weight_state = self.weight_state(cur_weight_state)
+            #if self.use_weight_state:
+            #    weight_state = self.weight_state(cur_weight_state)
             edges += [(i, x) for x in col_sm.indices]
             total_ll = total_ll + ll
 
@@ -787,7 +789,8 @@ class RecurTreeGen(nn.Module):
             ### Edit to change to using weight state in some way...
             if self.has_edge_feats:
                 if self.use_weight_state:
-                    print("hello")
+                    print("ERROR: SHOULD NOT BE USING WEIGHT STATE")
+                    break
                     #edge_of_lv = TreeLib.GetEdgeOf(lv)
                     #edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                     #target_feats = edge_feats[edge_of_lv]

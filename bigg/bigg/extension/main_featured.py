@@ -169,7 +169,7 @@ if __name__ == '__main__':
                 if skip_train and 1-idx:
                     print("SKIPPING TRAIN")
                     continue
-                print(names[0])
+                print(names[idx])
                 graphs = collect_graphs[idx]
                 
                 assert len(graphs) > 0
@@ -215,8 +215,7 @@ if __name__ == '__main__':
                 xbar = np.round(xbar, 4)
                 s = np.round(s, 4)
                 
-                if idx == 0:
-                    print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
+                print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
                 results = [dist, xbar, n1_lo, n1_up, s, slo, sup, within_sd, wlo, wup]
                 print(results)
         sys.exit()

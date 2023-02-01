@@ -76,49 +76,67 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         params = self.edgelen_pred(h)
         
+        ## GAMMA:
+        params = torch.nn.functional.softplus(params, beta = 1)
+        
         #print("features", edge_feats)
         #print("parameters", params)
         
         if edge_feats is None:
             ll = 0
             #edge_feats = None
-            pred_mean = params[0][0].item()
-            pred_lvar = params[0][1]
+            ##pred_mean = params[0][0].item()
+            #pred_lvar = params[0][1]
             #pred_var = torch.add(torch.nn.functional.softplus(pred_lvar, beta = 1), 1e-6).item()
-            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1)
-            edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
-            edge_feats = torch.exp(edge_feats)
+            #pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1)
+            #edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
+            #edge_feats = torch.exp(edge_feats)
+            
+            ## GAMMA DISTRIBUTION DRAW
+            pred_a = params[0][0].item()
+            pred_b = params[0][1].item()
+            edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, pred_b)]])
+            edge_feats = torch.log(edge_feats)
+            
         else:
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
             
-            logw_obs = torch.log(edge_feats)
             
+            logw_obs = torch.log(edge_feats)
             k = len(params)
             y = torch.tensor([0]).repeat(k).to('cuda')
             z = 1 - y
             
-            mean = params.gather(1, y.view(-1, 1)).squeeze()
-            lvar = params.gather(1, z.view(-1, 1)).squeeze()
+            ## MEAN AND VARIANCE OF LOGNORMAL
+            #mean = params.gather(1, y.view(-1, 1)).squeeze()
+            #lvar = params.gather(1, z.view(-1, 1)).squeeze()
             #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
-            var = torch.nn.functional.softplus(lvar, beta = 1)
+            #var = torch.nn.functional.softplus(lvar, beta = 1)
             #print(mean)
             #print(lvar)
             
             ## diff_sq = (mu - logw)^2
-            diff_sq = torch.square(torch.sub(mean, logw_obs))
+            #diff_sq = torch.square(torch.sub(mean, logw_obs))
             
             ## diff_sq2 = v^-1*diff_sq
-            diff_sq2 = torch.div(diff_sq, var)
+            #diff_sq2 = torch.div(diff_sq, var)
             
             ## log_var = log(v)
-            log_var = torch.log(var)
+            #log_var = torch.log(var)
             
             ## add to ll
-            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
+            #ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
+            #ll = torch.sum(ll)
+            
+            ## ALPHA AND BETA OF GAMMA
+            a = params.gather(1, y.view(-1, 1)).squeeze()
+            b = params.gather(1, z.view(-1, 1)).squeeze()
+            
+            ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.div(edge_feats, b) - torch.mul(a, torch.log(b)) - torch.lgamma(a)
             ll = torch.sum(ll)
-        
+            
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 
         #state = self.edge_state_update(state_update, state)
         #return new_state, ll, edge_feats

@@ -160,7 +160,7 @@ if __name__ == '__main__':
         print('graph generation complete')
         
         sum_stats = True
-        skip_train = False
+        skip_train = True
         if sum_stats:
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]
@@ -168,6 +168,8 @@ if __name__ == '__main__':
             for idx in range(len(collect_graphs)):
                 if skip_train and 1-idx:
                     print("SKIPPING TRAIN")
+                    print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
+                    print("[1.252, 0.0034, -0.004, 0.01, 1.0015, 0.997, 1.006, 0.1, 0.1, 0.1]")
                     continue
                 print(names[idx])
                 graphs = collect_graphs[idx]

@@ -152,8 +152,11 @@ if __name__ == '__main__':
                 pred_g = nx.Graph()
                 pred_g.add_weighted_edges_from(weighted_edges)
                 gen_graphs.append(pred_g)
+        counter = 0
         for g in gen_graphs:
-            print("edges:", g.edges(data=True))
+            if counter <= 100:
+                print("edges:", g.edges(data=True))
+                counter += 1
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)

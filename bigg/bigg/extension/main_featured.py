@@ -181,7 +181,7 @@ if __name__ == '__main__':
                 T_within_var = []
                 for T in graphs:
                     T_weights = []
-                    if len(T.edges() != 6)
+                    if len(T.edges()) != 6:
                         print("TREE SKIPPED")
                         continue
                     for (n1, n2, w) in T.edges(data = True):

@@ -104,7 +104,7 @@ if __name__ == '__main__':
     #train_graphs = nx.readwrite.read_gpickle()
     
     
-    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase)
+    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
@@ -132,7 +132,9 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
-        gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
+        path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
+        with open(path, 'rb') as f:
+            gt_graphs = cp.load(f)
         print('# gt graphs', len(gt_graphs))
         gen_graphs = []
         with torch.no_grad():

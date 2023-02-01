@@ -188,6 +188,7 @@ if __name__ == '__main__':
                         print("TREE SKIPPED")
                         continue
                     for (n1, n2, w) in T.edges(data = True):
+                        w['weight'] = np.exp(w['weight'])
                         if n1+n2 == 1 and n1*n2 == 0:
                             n1_weights.append(np.log(w['weight']))
                             K = np.log(w['weight'])

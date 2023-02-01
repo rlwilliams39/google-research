@@ -36,6 +36,30 @@ from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 
 
+def dist_met(train, test, N = 10000, swap = True, scale = False):
+    n = len(train)
+    m = len(test)
+    assert min(n,m) > 0
+    s = 0
+    skip = 0
+    for i in range(N):
+        kn = np.random.randint(0, n)
+        km = np.random.randint(0, m)
+        train_g =  nx.to_numpy_matrix(train[kn])
+        test_g = nx.to_numpy_matrix(test[km])
+        if swap:
+            train_g[:, [1, 0]] = train_g[:, [0, 1]]
+            train_g[[1, 0], :] = train_g[[0, 1], :]
+        if train_g.shape == test_g.shape:
+            k = 1 + scale * (len(np.nonzero(train_g)[0])/2 - 1)
+            s += np.sqrt(np.sum(np.square(train_g-test_g)) / k)
+        else:
+            skip += 1
+    assert N > skip
+    return(0.5 * s / (N - skip))
+
+
+
 def get_node_feats(g):
     length = []
     for i, (idx, feat) in enumerate(g.nodes(data=True)):
@@ -108,8 +132,8 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
-        #gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
-        #print('# gt graphs', len(gt_graphs))
+        gt_graphs = load_graphs(os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % cmd_args.phase))
+        print('# gt graphs', len(gt_graphs))
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
@@ -131,6 +155,63 @@ if __name__ == '__main__':
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('graph generation complete')
+        
+        sum_stats = True:
+        if sum_stats:
+            print("Generating Summary Statistics...")
+            collect_graphs = [train_graphs, gen_graphs]
+            names = ['TRAINING', 'GEN GRAPHS']
+            for idx in range(len(college_graphs)):
+                print(names[0])
+                graphs = collect_graphs[idx]
+                
+                assert len(graphs) > 0
+                dist = np.round(dist_met(graphs, gt_graphs, N = 200000, swap = bool(idx), scale = True), 3)
+                
+                n1_weights = []
+                T_within_var = []
+                for T in graphs:
+                    T_weights = []
+                    skip = False
+                    for (n1, n2, w) in T.edges(data = True):
+                        if (n1, n2) not in [(0, 1), (0, 2), (2, 3), (2, 4), (1, 0)]:
+                            skip = True
+                        if n1+n2 == 1 and n1*n2 == 0:
+                            n1_weights.append(np.log(w['weight']))
+                            K = np.log(w['weight'])
+                        else: 
+                            T_weights.append(np.log(w['weight']))
+                    if not skip and len(T_weights) == 3 and K < 100:
+                        T_within_var.append(np.var(T_weights, ddof = 1))
+                xbar = np.mean(n1_weights)
+                s = np.std(n1_weights, ddof = 1)
+                n = len(n1_weights)
+                
+                n1_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
+                n1_up = np.round(xbar + 1.96 * s / n**0.5, 3)
+                
+                slo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
+                sup = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
+                
+                #print(T_within_var)
+                within_var_mean = np.mean(T_within_var)
+                #print(within_var_mean)
+                within_lo = within_var_mean - 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
+                within_up = within_var_mean + 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
+                
+                within_sd = np.round(within_var_mean**0.5, 3)
+                wlo = np.round(np.sqrt(within_lo), 3)
+                wup = np.round(np.sqrt(within_up), 3)
+                
+                within_sd = np.round(within_sd, 3)
+    
+                xbar = np.round(xbar, 4)
+                s = np.round(s, 4)
+                
+                if idx == 0:
+                    print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
+                results = [dist, xbar, n1_lo, n1_up, s, slo, sup, within_sd, wlo, wup]
+                print(results)
         sys.exit()
     #########################################################################################################
     

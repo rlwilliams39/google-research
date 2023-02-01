@@ -156,7 +156,7 @@ if __name__ == '__main__':
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('graph generation complete')
         
-        sum_stats = True:
+        sum_stats = True
         if sum_stats:
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]

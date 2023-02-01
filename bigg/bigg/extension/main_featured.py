@@ -160,7 +160,7 @@ if __name__ == '__main__':
         print('graph generation complete')
         
         sum_stats = True
-        skip_train = False
+        skip_train = True
         if sum_stats:
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]

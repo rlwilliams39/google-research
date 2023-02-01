@@ -96,7 +96,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             pred_a = params[0][0].item()
             pred_b = params[0][1].item()
             edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, pred_b)]])
-            edge_feats = torch.log(edge_feats)
+            #edge_feats = torch.log(edge_feats)
             
         else:
             ### Update log likelihood with weight prediction

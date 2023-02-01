@@ -172,7 +172,7 @@ if __name__ == '__main__':
                 if skip_train and 1-idx:
                     print("SKIPPING TRAIN")
                     print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
-                    print("[1.595, -0.0175, -0.039, 0.004, 0.9993, 0.984, 1.015, 0.1, 0.099, 0.1]")
+                    print("[1.597, 1.6142, 1.567, 1.661, 2.1561, 2.123, 2.19, 0.273, 0.24, 0.303]")
                     continue
                 print(names[idx])
                 graphs = collect_graphs[idx]

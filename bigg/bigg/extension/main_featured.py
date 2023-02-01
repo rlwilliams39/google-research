@@ -34,6 +34,7 @@ from bigg.common.configs import cmd_args, set_device
 from bigg.extension.customized_models import BiggWithEdgeLen
 from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
+from scipy.stats.distributions import chi2
 
 
 def dist_met(train, test, N = 10000, swap = True, scale = False):
@@ -159,11 +160,15 @@ if __name__ == '__main__':
         print('graph generation complete')
         
         sum_stats = True
+        skip_train = False
         if sum_stats:
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]
             names = ['TRAINING', 'GEN GRAPHS']
             for idx in range(len(collect_graphs)):
+                if skip_train and 1-idx:
+                    print("SKIPPING TRAIN")
+                    continue
                 print(names[0])
                 graphs = collect_graphs[idx]
                 

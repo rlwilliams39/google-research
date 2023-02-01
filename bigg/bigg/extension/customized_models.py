@@ -29,7 +29,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
-        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 2]) ## Changed
+        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         self.edge_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim) ## ADDED
 
@@ -95,7 +95,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             ## GAMMA DISTRIBUTION DRAW
             pred_a = params[0][0].item()
             pred_b = params[0][1].item()
-            edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, pred_b)]])
+            edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, 1/pred_b)]])
             
         else:
             ### Update log likelihood with weight prediction
@@ -133,7 +133,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             a = params.gather(1, y.view(-1, 1)).squeeze()
             b = params.gather(1, z.view(-1, 1)).squeeze()
             
-            ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.div(edge_feats, b) - torch.mul(a, torch.log(b)) - torch.lgamma(a)
+            ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
             ll = torch.sum(ll)
             
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 

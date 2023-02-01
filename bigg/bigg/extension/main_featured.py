@@ -181,17 +181,16 @@ if __name__ == '__main__':
                 T_within_var = []
                 for T in graphs:
                     T_weights = []
-                    skip = False
+                    if len(T.edges() != 6)
+                        print("TREE SKIPPED")
+                        continue
                     for (n1, n2, w) in T.edges(data = True):
-                        if (n1, n2) not in [(0, 1), (0, 2), (2, 3), (2, 4), (1, 0)]:
-                            skip = True
                         if n1+n2 == 1 and n1*n2 == 0:
                             n1_weights.append(np.log(w['weight']))
                             K = np.log(w['weight'])
                         else: 
                             T_weights.append(np.log(w['weight']))
-                    if not skip and len(T_weights) == 3 and K < 100:
-                        T_within_var.append(np.var(T_weights, ddof = 1))
+                    T_within_var.append(np.var(T_weights, ddof = 1))
                 xbar = np.mean(n1_weights)
                 s = np.std(n1_weights, ddof = 1)
                 n = len(n1_weights)

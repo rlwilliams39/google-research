@@ -163,7 +163,7 @@ if __name__ == '__main__':
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]
             names = ['TRAINING', 'GEN GRAPHS']
-            for idx in range(len(college_graphs)):
+            for idx in range(len(collect_graphs)):
                 print(names[0])
                 graphs = collect_graphs[idx]
                 

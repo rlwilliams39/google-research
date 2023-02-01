@@ -193,8 +193,8 @@ if __name__ == '__main__':
                             n1_weights.append(np.log(w['weight']))
                             K = np.log(w['weight'])
                         else: 
-                            if w['weight'] < 1e-6:
-                                w['weight'] = 1e-4
+                            #if w['weight'] < 1e-6:
+                            #    w['weight'] = 1e-4
                             T_weights.append(np.log(w['weight']))
                     T_within_var.append(np.var(T_weights, ddof = 1))
                 xbar = np.mean(n1_weights)

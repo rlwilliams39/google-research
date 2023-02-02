@@ -180,50 +180,61 @@ if __name__ == '__main__':
                 assert len(graphs) > 0
                 dist = np.round(dist_met(graphs, gt_graphs, N = 200000, swap = bool(idx), scale = True), 3)
                 
-                n1_weights = []
-                T_within_var = []
+                weights = []
+                tree_var = []
+                tree_mean = []
                 for T in graphs:
                     T_weights = []
                     if len(T.edges()) != 6:
                         print("TREE SKIPPED")
                         continue
                     for (n1, n2, w) in T.edges(data = True):
-                        w['weight'] = np.exp(w['weight'])
-                        if n1+n2 == 1 and n1*n2 == 0:
-                            n1_weights.append(np.log(w['weight']))
-                            K = np.log(w['weight'])
-                        else: 
-                            #if w['weight'] < 1e-6:
-                            #    w['weight'] = 1e-4
-                            T_weights.append(np.log(w['weight']))
-                    T_within_var.append(np.var(T_weights, ddof = 1))
-                xbar = np.mean(n1_weights)
-                s = np.std(n1_weights, ddof = 1)
-                n = len(n1_weights)
+                        T_weights.append(w['weight'])
+                        weights.append(w['weight'])
+                    tree_var.append(np.var(T_weights, ddof = 1))
+                    tree_mean.append(np.mean(T_weights))
                 
-                n1_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
-                n1_up = np.round(xbar + 1.96 * s / n**0.5, 3)
+                xbar = np.mean(weights)
+                s = np.std(weights, ddof = 1)
+                n = len(weights)
                 
-                slo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
-                sup = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
+                mu_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
+                mu_up = np.round(xbar + 1.96 * s / n**0.5, 3)
+                
+                s_lo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
+                s_up = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
+                
+                mean_tree_var = np.mean(tree_var)
+                tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
+                tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
+                
+                #xbar = np.mean(n1_weights)
+                #s = np.std(n1_weights, ddof = 1)
+                #n = len(n1_weights)
+                
+                #n1_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
+                #n1_up = np.round(xbar + 1.96 * s / n**0.5, 3)
+                
+                #slo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
+                #sup = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
                 
                 #print(T_within_var)
-                within_var_mean = np.mean(T_within_var)
+                #within_var_mean = np.mean(T_within_var)
                 #print(within_var_mean)
-                within_lo = within_var_mean - 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
-                within_up = within_var_mean + 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
+                #within_lo = within_var_mean - 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
+                #within_up = within_var_mean + 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
                 
-                within_sd = np.round(within_var_mean**0.5, 3)
-                wlo = np.round(np.sqrt(within_lo), 3)
-                wup = np.round(np.sqrt(within_up), 3)
+                #within_sd = np.round(within_var_mean**0.5, 3)
+                #wlo = np.round(np.sqrt(within_lo), 3)
+                #wup = np.round(np.sqrt(within_up), 3)
                 
-                within_sd = np.round(within_sd, 3)
+                #within_sd = np.round(within_sd, 3)
     
-                xbar = np.round(xbar, 4)
-                s = np.round(s, 4)
+                #xbar = np.round(xbar, 4)
+                #s = np.round(s, 4)
                 
-                print("dist, n1_mean, n1_lo, n1_up, n1_sd, sd_lo, sd_up, within_sd, w_lo, w_up")
-                results = [dist, xbar, n1_lo, n1_up, s, slo, sup, within_sd, wlo, wup]
+                print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
+                results = [dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
                 print(results)
         sys.exit()
     #########################################################################################################

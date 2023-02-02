@@ -183,10 +183,11 @@ if __name__ == '__main__':
                 weights = []
                 tree_var = []
                 tree_mean = []
+                num_skip = 0
                 for T in graphs:
                     T_weights = []
                     if len(T.edges()) != 6:
-                        print("TREE SKIPPED")
+                        num_skip += 1
                         continue
                     for (n1, n2, w) in T.edges(data = True):
                         T_weights.append(w['weight'])
@@ -232,7 +233,7 @@ if __name__ == '__main__':
     
                 #xbar = np.round(xbar, 4)
                 #s = np.round(s, 4)
-                
+                print("NUMBER SKIPPED: ", num_skip)
                 print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
                 results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
                 print(results)

@@ -234,7 +234,7 @@ if __name__ == '__main__':
                 #s = np.round(s, 4)
                 
                 print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
-                results = [dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
+                results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
                 print(results)
         sys.exit()
     #########################################################################################################

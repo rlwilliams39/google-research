@@ -26,7 +26,7 @@ class BiggWithEdgeLen(RecurTreeGen):
 
     def __init__(self, args):
         super().__init__(args)
-        self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
+        self.edgelen_encoding = MLP(1, [3 * args.embed_dim, 2 * args.embed_dim, args.embed_dim])
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
         self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2], nonlinearity = 'elu', act_last = 'softplus') ## Changed

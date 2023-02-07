@@ -483,8 +483,8 @@ class RecurTreeGen(nn.Module):
                         ll = ll + edge_ll
                         #edge_embed = self.embed_edge_feats(torch.log(cur_feats))
                         edge_embed = self.embed_edge_feats(cur_feats)
-                        edge_embed = self.edge_state_update(edge_embed, state)
-                        return ll, edge_embed, 1, cur_feats, None
+                        #edge_embed = self.edge_state_update(edge_embed, state)
+                        return ll, (edge_embed, edge_embed), 1, cur_feats, None
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None, None
         else:

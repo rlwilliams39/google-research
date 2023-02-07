@@ -26,7 +26,7 @@ class BiggWithEdgeLen(RecurTreeGen):
 
     def __init__(self, args):
         super().__init__(args)
-        self.edgelen_encoding = MLP(1, [3 * args.embed_dim, 2 * args.embed_dim, args.embed_dim])
+        self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 1])
         self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2], nonlinearity = 'elu', act_last = 'softplus') ## Changed
@@ -37,8 +37,11 @@ class BiggWithEdgeLen(RecurTreeGen):
     def embed_node_feats(self, node_feats):
         return self.nodelen_encoding(node_feats)
 
-    def embed_edge_feats(self, edge_feats):
-        return self.edgelen_encoding(edge_feats)
+    def embed_edge_feats(self, edge_feats, state=None):
+        edge_embedding = self.edgelen_encoding(edge_feats)
+        if state is not None:
+            edge_embedding = self.edge_state_update(edge_embedding, state)
+        return edge_embedding
 
     def predict_node_feats(self, state, node_feats=None):
         """

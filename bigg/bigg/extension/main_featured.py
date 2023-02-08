@@ -241,6 +241,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     # debug_model(model, train_graphs[0], list_node_feats[0], list_edge_feats[0])
+    serialized = True
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
@@ -259,7 +260,34 @@ if __name__ == '__main__':
             #node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats=edge_feats)
+            
+            if serialized:
+                for ind in batch_indices:
+                    g = train_graphs[ind]
+                    n = len(g)
+                    m = len(g.edges())
+                    
+                    ### Obtaining edge list 
+                    edgelist = []
+                    for e in g.edges():
+                        if e[0] < e[1]:
+                            e = (e[1], e[0])
+                        edgelist.append((e[0], e[1]))
+                    edgelist.sort(key = lambda x: x[0])
+                    
+                    ### Obtaining weights list
+                    weightdict = dict()
+                    for node1, node2, data in g.edges(data=True):
+                        if node1 < node2:
+                            e = (node2, node1)
+                        else:
+                            e = (node1, node2)
+                        weightdict[e] = data['weight']
+                    
+                    ### Compute log likelihood, loss
+                    ll, _, _, _ = model(node_end = n, edge_list = edgelist, weights = weightdict)
+            else:
+                ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats=edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

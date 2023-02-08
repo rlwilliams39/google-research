@@ -432,7 +432,7 @@ class RecurTreeGen(nn.Module):
     #    cell = self.m_e2w_cell if self.share_param else self.e2w_modules[lv]
     #    return cell(x, y)
     
-    def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
+    def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
         assert lb <= ub
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
@@ -467,24 +467,13 @@ class RecurTreeGen(nn.Module):
                 return ll, self.bit_rep_net(tree_node.bits_rep, tree_node.n_cols), 1, None, None
             else:
                 if self.has_edge_feats:
-                    #if self.use_weight_state:
-                        #print("ERROR. WEIGHT STATE SHOULD NOT BE USED")
-                        #break
-                        #topdown_test = self.e2w_cell(state, weight_state, tree_node.depth)
-                        #cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
-                        #edge_ll, cur_feats = self.predict_edge_feats(topdown_test, cur_feats)
-                        #ll = ll + edge_ll
-                        #edge_embed =  self.embed_edge_feats(torch.log(cur_feats))
-                        #weight_state = self.cell_w_update(edge_embed, weight_state, tree_node.depth)
-                        #return ll, (edge_embed, edge_embed), 1, cur_feats, weight_state## Would I need to change this?
-                    if True:#else:
-                        cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
-                        edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
-                        ll = ll + edge_ll
-                        #edge_embed = self.embed_edge_feats(torch.log(cur_feats))
-                        edge_embed = self.embed_edge_feats(cur_feats)
-                        #edge_embed = self.edge_state_update(edge_embed, state)
-                        return ll, (edge_embed, edge_embed), 1, cur_feats, None
+                    cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
+                    edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
+                    ll = ll + edge_ll
+                    #edge_embed = self.embed_edge_feats(torch.log(cur_feats))
+                    edge_embed = self.embed_edge_feats(cur_feats)
+                    #edge_embed = self.edge_state_update(edge_embed, state)
+                    return ll, (edge_embed, edge_embed), 1, cur_feats, None
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None, None
         else:

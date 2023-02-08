@@ -97,6 +97,13 @@ class BiggWithEdgeLen(RecurTreeGen):
             pred_b = params[0][1].item()
             edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, 1/pred_b)]])
             
+            
+            ## Testing alternate parameterization
+            pred_a = params[0][0].item()
+            pred_mu = params[0][1].item()
+            r = np.random.gamma(pred_a, 1/pred_a)
+            edge_feats = torch.FloatTensor([[r * pred_mu]])
+            
         else:
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
@@ -133,8 +140,11 @@ class BiggWithEdgeLen(RecurTreeGen):
             ## ALPHA AND BETA OF GAMMA
             a = params.gather(1, y.view(-1, 1)).squeeze()
             b = params.gather(1, z.view(-1, 1)).squeeze()
+            r = torch.div(edge_feats, b)
             
-            ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
+            #ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
+            diff_sq = torch.square(torch.sub(b, edge_feats))
+            ll = torch.mul(torch.sub(a, 1), r) - torch.mul(r, a) + torch.mul(a, torch.log(a)) - torch.lgamma(a) - 0.5*torch.log(diff_sq)
             ll = torch.sum(ll)
             
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 

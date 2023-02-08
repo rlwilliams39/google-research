@@ -291,8 +291,8 @@ if __name__ == '__main__':
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
-            #node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
-            edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
+            node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
             
             if serialized:

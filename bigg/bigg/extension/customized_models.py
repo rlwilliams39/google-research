@@ -80,7 +80,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             mean = params.gather(1, y.view(-1, 1)).squeeze()
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-9)
-            var = torch.nn.functional.softplus(lvar, beta = 1)
+            #var = torch.nn.functional.softplus(lvar, beta = 1)
             
             ## diff_sq = (mu - logw)^2
             diff_sq = torch.square(torch.sub(mean, logw_obs))

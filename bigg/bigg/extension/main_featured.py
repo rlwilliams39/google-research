@@ -175,17 +175,25 @@ if __name__ == '__main__':
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
-                _, pred_edges, _, _, pred_edge_feats = model(num_nodes)
-                weighted_edges = []
-                for e, w in zip(pred_edges, pred_edge_feats):
-                    assert e[0] > e[1]
-                    w = w.item()
-                    w = np.round(w, 4)
-                    edge = (e[0], e[1], w)
-                    weighted_edges.append(edge)
-                pred_g = nx.Graph()
-                pred_g.add_weighted_edges_from(weighted_edges)
-                gen_graphs.append(pred_g)
+                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
+                
+                if has_node_feats:
+                    pred_g = nx.Graph()
+                    pred_g.add_nodes_from(range(num_nodes))
+                    print(pred_node_feats)
+                    sys.exit()
+                
+                else:
+                    weighted_edges = []
+                    for e, w in zip(pred_edges, pred_edge_feats):
+                        assert e[0] > e[1]
+                        w = w.item()
+                        w = np.round(w, 4)
+                        edge = (e[0], e[1], w)
+                        weighted_edges.append(edge)
+                    pred_g = nx.Graph()
+                    pred_g.add_weighted_edges_from(weighted_edges)
+                    gen_graphs.append(pred_g)
         counter = 0
         for g in gen_graphs:
             if counter <= 100:

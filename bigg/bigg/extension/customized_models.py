@@ -144,7 +144,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             #ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
             diff_sq = torch.square(torch.sub(b, edge_feats))
-            ll = torch.mul(torch.sub(a, 1), r) - torch.mul(r, a) + torch.mul(a, torch.log(a)) - torch.lgamma(a) - 0.5*torch.log(diff_sq)
+            ll = torch.mul(torch.sub(a, 1), r) - torch.mul(r, a) + torch.mul(a, torch.log(a)) - torch.lgamma(a) - 0.5*torch.sqrt(diff_sq)
             ll = torch.sum(ll)
             
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 

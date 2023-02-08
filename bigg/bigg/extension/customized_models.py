@@ -58,6 +58,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         #state_update = self.embed_node_feats(pred_node_len) if node_feats is None else self.embed_node_feats(node_feats)
         #new_state = self.node_state_update(state_update, state)
         if node_feats is None:
+            ll = 0
             pred_mean = params[0][0].item()
             pred_lvar = params[0][1]
             pred_var = torch.add(torch.nn.functional.softplus(pred_lvar, beta = 1), 1e-6).item()

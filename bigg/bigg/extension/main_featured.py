@@ -135,21 +135,23 @@ if __name__ == '__main__':
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
+    
+    ########################################################################
     has_node_feats = True
     if has_node_feats:
         train_graphs = feature_fixer(train_graphs)
     print(train_graphs[0].nodes(data=True))
-    sys.exit()
+    ########################################################################
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
-    print(train_graphs[0].edges(data=True))
+    #print(train_graphs[0].edges(data=True))
     
-    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
-    list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
+    list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
+    #list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
@@ -319,7 +321,7 @@ if __name__ == '__main__':
                     ### Compute log likelihood, loss
                     ll, _, _, _ = model(node_end = n, edge_list = edgelist, weights = weightdict)
             else:
-                ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats=edge_feats)
+                ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=None)#edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

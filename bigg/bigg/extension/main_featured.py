@@ -300,6 +300,8 @@ if __name__ == '__main__':
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
             node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            print(node_feats)
+            sys.exit()
             #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
             

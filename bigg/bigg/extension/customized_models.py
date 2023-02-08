@@ -97,8 +97,8 @@ class BiggWithEdgeLen(RecurTreeGen):
             ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
             ll = torch.sum(ll)
         
-        #state_update = self.embed_node_feats(torch.log(node_feats)) if node_feats is None else self.embed_node_feats(torch.log(node_feats))
-        new_state = state#self.node_state_update(state_update, state)
+        state_update = self.embed_node_feats(torch.log(node_feats)) if node_feats is None else self.embed_node_feats(torch.log(node_feats))
+        new_state = self.node_state_update(state_update, state)
         return new_state, ll, node_feats
 
     def predict_edge_feats(self, state, edge_feats=None):

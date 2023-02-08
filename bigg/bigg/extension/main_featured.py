@@ -59,7 +59,7 @@ def dist_met(train, test, N = 10000, swap = True, scale = False):
     assert N > skip
     return(0.5 * s / (N - skip))
 
-def feature_fixer(graphs, root = 10):#1e-6):
+def feature_fixer(graphs, root = 1e-6):#1e-6):
     ## Input: graphs with weighted edges
     ## Output: graphs with weighted nodes, weights corresponding to child edge
     new_graphs = []

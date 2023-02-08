@@ -56,10 +56,40 @@ class BiggWithEdgeLen(RecurTreeGen):
         state_update = self.embed_node_feats(pred_node_len) if node_feats is None else self.embed_node_feats(node_feats)
         new_state = self.node_state_update(state_update, state)
         if node_feats is None:
-            ll = 0
-            node_feats = pred_node_len
+            pred_mean = params[0][0].item()
+            pred_lvar = params[0][1]
+            pred_var = torch.add(torch.nn.functional.softplus(pred_lvar, beta = 1), 1e-6).item()
+            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1)
+            node_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
+            node_feats = torch.exp(edge_feats)
         else:
-            ll = -(node_feats - pred_node_len) ** 2
+            ### Update log likelihood with weight prediction
+            ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
+            ### NOTE: find more efficient way of doing this
+            
+            
+            logw_obs = torch.log(node_feats)
+            k = len(params)
+            y = torch.tensor([0]).repeat(k).to('cuda')
+            #y = torch.tensor([0]).repeat(k)
+            z = 1 - y
+            
+            ## MEAN AND VARIANCE OF LOGNORMAL
+            mean = params.gather(1, y.view(-1, 1)).squeeze()
+            lvar = params.gather(1, z.view(-1, 1)).squeeze()
+            var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-9)
+            var = torch.nn.functional.softplus(lvar, beta = 1)
+            
+            ## diff_sq = (mu - logw)^2
+            diff_sq = torch.square(torch.sub(mean, logw_obs))
+            
+            ## diff_sq2 = v^-1*diff_sq
+            diff_sq2 = torch.div(diff_sq, var)
+            
+            log_var = torch.log(var)
+            
+            ## add to ll
+            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
             ll = torch.sum(ll)
         return new_state, ll, node_feats
 

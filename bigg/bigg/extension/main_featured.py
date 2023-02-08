@@ -59,7 +59,34 @@ def dist_met(train, test, N = 10000, swap = True, scale = False):
     assert N > skip
     return(0.5 * s / (N - skip))
 
-
+def feature_fixer(graphs, root = 1e-6):
+    ## Input: graphs with weighted edges
+    ## Output: graphs with weighted nodes, weights corresponding to child edge
+    new_graphs = []
+    for g in graphs:
+        g_new = nx.Graph()
+        g_new.add_nodes_from(sorted(g.nodes()))
+        edges = []
+        for (e1, e2, w) in g.edges(data = True):
+            g_new.add_edge(e1, e2)
+            g_new.nodes[e2]['length'] = w['weight']
+        g_new.nodes[0]['length'] = root ##np.nan (will change to NAN soon)
+        new_graphs.append(g_new)
+    return new_graphs
+    
+def reconstructor(graphs):
+    ## Input: graphs with weighted nodes
+    ## Output: graphs with weighted edges
+    new_graphs = []
+    for g in graphs:
+        g_new = nx.Graph()
+        g_new.add_nodes_from(sorted(g.nodes()))
+        weighted_edges = []
+        for (e1, e2) in g.edges():
+            w = g.nodes[e2]['length']
+            g_new.add_weighted_edges_from([(e1, e2, w)])
+        new_graphs.append(g_new)
+    return new_graphs
 
 def get_node_feats(g):
     length = []
@@ -108,6 +135,11 @@ if __name__ == '__main__':
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
+    
+    if self.has_node_feats:
+        train_graphs = feature_fixer(train_graphs)
+    print(train_graphs[0].nodes(data=True))
+    sys.exit()
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 

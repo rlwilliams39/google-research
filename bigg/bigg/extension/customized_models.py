@@ -80,6 +80,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             ## MEAN AND VARIANCE OF LOGNORMAL
             mean = params.gather(1, y.view(-1, 1)).squeeze()
+            print(mean)
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-9)
             #var = torch.nn.functional.softplus(lvar, beta = 1)

@@ -303,7 +303,7 @@ if __name__ == '__main__':
             node_feats = node_feats[1:]
             
             print(node_feats)
-            sys.exit()
+            #sys.exit()
             #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
             

@@ -497,7 +497,7 @@ class RecurTreeGen(nn.Module):
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)
-                ll, left_state, num_left, left_edge_feats, weight_state = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats, weight_state)
+                ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
                 pred_edge_feats.append(left_edge_feats)
             else:
                 left_state = self.get_empty_state()
@@ -524,7 +524,7 @@ class RecurTreeGen(nn.Module):
             topdown_state = self.cell_topright(self.topdown_right_embed[[int(has_right)]], topdown_state, tree_node.depth)
 
             if has_right:  # has edge in right child
-                ll, right_state, num_right, right_edge_feats, weight_state = self.gen_row(ll, topdown_state, tree_node.rch, col_sm, rlb, rub, edge_feats, weight_state)
+                ll, right_state, num_right, right_edge_feats = self.gen_row(ll, topdown_state, tree_node.rch, col_sm, rlb, rub, edge_feats)
                 pred_edge_feats.append(right_edge_feats)
             else:
                 right_state = self.get_empty_state()
@@ -535,7 +535,7 @@ class RecurTreeGen(nn.Module):
                 summary_state = self.lr2p_cell(left_state, right_state)
             if self.has_edge_feats:
                 edge_feats = torch.cat(pred_edge_feats, dim=0)
-            return ll, summary_state, num_left + num_right, edge_feats, weight_state
+            return ll, summary_state, num_left + num_right, edge_feats
 
     def forward(self, node_end, edge_list=None, node_feats=None, edge_feats=None, node_start=0, list_states=[], lb_list=None, ub_list=None, col_range=None, num_nodes=None, display=False, weight_state=None, list_weight_states = []):
         pos = 0
@@ -583,7 +583,7 @@ class RecurTreeGen(nn.Module):
                 target_edge_feats = None if edge_feats is None else edge_feats[len(edges) : len(edges) + len(col_sm)]
             else:
                 target_edge_feats = None
-            ll, cur_state, _, target_edge_feats, cur_weight_state = self.gen_row(0, controller_state, cur_row.root, col_sm, lb, ub, target_edge_feats, weight_state)
+            ll, cur_state, _, target_edge_feats = self.gen_row(0, controller_state, cur_row.root, col_sm, lb, ub, target_edge_feats)
             if target_edge_feats is not None and target_edge_feats.shape[0]:
                 list_pred_edge_feats.append(target_edge_feats)
             if self.has_node_feats:

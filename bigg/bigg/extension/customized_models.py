@@ -51,7 +51,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             and, if node_feats is None, then return the prediction of node_feats
             else return the node_feats as it is
         """
-        print(node_feats)
+        #print(node_feats)
         h, _ = state
         params = self.nodelen_pred(h)
         

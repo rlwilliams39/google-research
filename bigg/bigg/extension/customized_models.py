@@ -52,7 +52,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             else return the node_feats as it is
         """
         h, _ = state
-        params = self.edgelen_pred(h)
+        params = self.nodelen_pred(h)
         
         #pred_node_len = self.nodelen_pred(h)
         #state_update = self.embed_node_feats(pred_node_len) if node_feats is None else self.embed_node_feats(node_feats)

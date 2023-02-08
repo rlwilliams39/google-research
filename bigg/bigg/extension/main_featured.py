@@ -151,6 +151,10 @@ if __name__ == '__main__':
     #print(train_graphs[0].edges(data=True))
     
     list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
+    
+    for x in list_node_feats:
+        x.pop(0)
+    
     #list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
@@ -354,9 +358,7 @@ if __name__ == '__main__':
         
         
         
-        
-        
-        
+                
         
         
         

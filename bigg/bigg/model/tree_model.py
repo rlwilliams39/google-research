@@ -576,7 +576,7 @@ class RecurTreeGen(nn.Module):
             if target_edge_feats is not None and target_edge_feats.shape[0]:
                 list_pred_edge_feats.append(target_edge_feats)
             if self.has_node_feats:
-                target_feat_embed = self.embed_node_feats(target_node_feats)
+                target_feat_embed = self.embed_node_feats(torch.log(target_node_feats))
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
@@ -602,7 +602,7 @@ class RecurTreeGen(nn.Module):
         # embed trees
         all_ids = TreeLib.PrepareTreeEmbed()
         if self.has_node_feats:
-            node_feats = self.embed_node_feats(node_feats)
+            node_feats = self.embed_node_feats(torch.log(node_feats))
         if self.has_edge_feats:
             #edge_feats = self.embed_edge_feats(torch.log(edge_feats))
             edge_feats = self.embed_edge_feats(edge_feats)

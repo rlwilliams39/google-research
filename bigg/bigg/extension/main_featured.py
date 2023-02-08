@@ -135,8 +135,9 @@ if __name__ == '__main__':
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
-    
+    print("HELLO 1")
     if self.has_node_feats:
+        print("HELLO 2")
         train_graphs = feature_fixer(train_graphs)
     print(train_graphs[0].nodes(data=True))
     sys.exit()

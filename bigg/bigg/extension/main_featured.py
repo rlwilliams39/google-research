@@ -150,11 +150,7 @@ if __name__ == '__main__':
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
     #print(train_graphs[0].edges(data=True))
     
-    list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]
-    
-    for x in list_node_feats:
-        x.pop(0)
-    
+    list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]    
     #list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
@@ -304,6 +300,8 @@ if __name__ == '__main__':
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
             node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            node_feats = node_feats[1:]
+            
             print(node_feats)
             sys.exit()
             #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)

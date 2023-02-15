@@ -228,7 +228,7 @@ if __name__ == '__main__':
                 num_skip = 0
                 for T in graphs:
                     T_weights = []
-                    if len(T.edges()) != 6:
+                    if len(T.edges()) != 4:
                         num_skip += 1
                         continue
                     for (n1, n2, w) in T.edges(data = True):
@@ -278,7 +278,7 @@ if __name__ == '__main__':
                 print("NUMBER SKIPPED: ", num_skip)
                 print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
                 results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
-                print(results)
+                print(np.round(results, 3))
         sys.exit()
     #########################################################################################################
     

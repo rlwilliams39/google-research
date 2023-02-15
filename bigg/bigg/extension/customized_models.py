@@ -124,24 +124,17 @@ class BiggWithEdgeLen(RecurTreeGen):
         if edge_feats is None:
             ll = 0
             #edge_feats = None
-            #pred_mean = params[0][0].item()
-            #pred_lvar = params[0][1]
-            #pred_var = torch.add(torch.nn.functional.softplus(pred_lvar, beta = 1), 1e-6).item()
-            #pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1)
-            #edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
-            #edge_feats = torch.exp(edge_feats)
+            pred_mean = params[0][0].item()
+            pred_lvar = params[0][1]
+            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1).item()
+            edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
+            edge_feats = torch.nn.functional.softplus(edge_feats)
             
             ## GAMMA DISTRIBUTION DRAW
-            pred_a = params[0][0].item()
-            pred_b = params[0][1].item()
-            edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, 1/pred_b)]])
+            #pred_a = params[0][0].item()
+            #pred_b = params[0][1].item()
+            #edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, 1/pred_b)]])
             
-            
-            ## Testing alternate parameterization
-            pred_a = params[0][0].item()
-            pred_mu = params[0][1].item()
-            r = np.random.gamma(pred_a, 1/pred_a)
-            edge_feats = torch.FloatTensor([[r * pred_mu]])
             
         else:
             ### Update log likelihood with weight prediction
@@ -150,40 +143,43 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             
             logw_obs = torch.log(edge_feats)
+            
+            ### Trying with softplus parameterization...
+            edge_feats_invsp = torch.log(torch.special.expm1(edge_feats))
+            
             k = len(params)
             y = torch.tensor([0]).repeat(k).to('cuda')
             #y = torch.tensor([0]).repeat(k)
             z = 1 - y
             
             ## MEAN AND VARIANCE OF LOGNORMAL
-            #mean = params.gather(1, y.view(-1, 1)).squeeze()
-            #lvar = params.gather(1, z.view(-1, 1)).squeeze()
-            #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
-            #var = torch.nn.functional.softplus(lvar, beta = 1)
+            mean = params.gather(1, y.view(-1, 1)).squeeze()
+            lvar = params.gather(1, z.view(-1, 1)).squeeze()
+            var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
+            var = torch.nn.functional.softplus(lvar, beta = 1)
             #print(mean)
             #print(lvar)
             
             ## diff_sq = (mu - logw)^2
             #diff_sq = torch.square(torch.sub(mean, logw_obs))
+            diff_sq = torch.square(torch.sub(mean, edge_feats_invsp))
             
             ## diff_sq2 = v^-1*diff_sq
-            #diff_sq2 = torch.div(diff_sq, var)
+            diff_sq2 = torch.div(diff_sq, var)
             
             ## log_var = log(v)
-            #log_var = torch.log(var)
+            log_var = torch.log(var)
             
             ## add to ll
             #ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
-            #ll = torch.sum(ll)
+            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
+            ll = torch.sum(ll)
             
             ## ALPHA AND BETA OF GAMMA
-            a = params.gather(1, y.view(-1, 1)).squeeze()
-            b = params.gather(1, z.view(-1, 1)).squeeze()
-            r = torch.div(edge_feats, b)
+            #a = params.gather(1, y.view(-1, 1)).squeeze()
+            #b = params.gather(1, z.view(-1, 1)).squeeze()
             
             #ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
-            diff_sq = torch.square(torch.sub(b, edge_feats))
-            ll = torch.mul(torch.sub(a, 1), r) - torch.mul(r, a) + torch.mul(a, torch.log(a)) - torch.lgamma(a) - 0.5*torch.sqrt(diff_sq)
             ll = torch.sum(ll)
             
         #state_update = self.embed_edge_feats(torch.log(edge_feats)) 

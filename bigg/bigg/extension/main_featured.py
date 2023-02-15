@@ -137,10 +137,10 @@ if __name__ == '__main__':
         train_graphs = cp.load(f)
     
     ########################################################################
-    has_node_feats = True
+    has_node_feats = False
     if has_node_feats:
         train_graphs = feature_fixer(train_graphs)
-    print(train_graphs[0].nodes(data=True))
+        print(train_graphs[0].nodes(data=True))
     ########################################################################
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
@@ -150,8 +150,8 @@ if __name__ == '__main__':
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
     #print(train_graphs[0].edges(data=True))
     
-    list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]    
-    #list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
+    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]    
+    list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
@@ -299,10 +299,10 @@ if __name__ == '__main__':
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
-            node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
-            node_feats = node_feats[1:]
+            #node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            #node_feats = node_feats[1:]
             
-            print(node_feats)
+            #print(node_feats)
             #sys.exit()
             #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             

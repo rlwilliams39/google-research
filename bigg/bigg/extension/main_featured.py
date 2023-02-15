@@ -333,7 +333,7 @@ if __name__ == '__main__':
                     ### Compute log likelihood, loss
                     ll, _, _, _ = model(node_end = n, edge_list = edgelist, weights = weightdict)
             else:
-                ll, _ = model.forward_train(batch_indices, node_feats=node_feats, edge_feats=None)#edge_feats)
+                ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

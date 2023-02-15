@@ -304,7 +304,7 @@ if __name__ == '__main__':
             
             #print(node_feats)
             #sys.exit()
-            #edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
+            edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
             
             if serialized:

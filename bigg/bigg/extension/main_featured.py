@@ -232,8 +232,8 @@ if __name__ == '__main__':
                         num_skip += 1
                         continue
                     for (n1, n2, w) in T.edges(data = True):
-                        #t = np.log(np.exp(w['weight']) - 1)
-                        t = w['weight']
+                        t = np.log(np.exp(w['weight']) - 1)
+                        #t = w['weight']
                         T_weights.append(t)
                         weights.append(t)
                     tree_var.append(np.var(T_weights, ddof = 1))

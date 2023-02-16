@@ -228,7 +228,7 @@ if __name__ == '__main__':
                 num_skip = 0
                 for T in graphs:
                     T_weights = []
-                    if len(T.edges()) != 6:#4:
+                    if len(T.edges()) != 4:#4:
                         num_skip += 1
                         continue
                     for (n1, n2, w) in T.edges(data = True):

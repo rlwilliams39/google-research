@@ -124,7 +124,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             ll = 0
             pred_mean = params[0][0].item()
             pred_lvar = params[0][1]
-            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 1).item()
+            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 2).item()
             edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
             
             if lognormal:
@@ -162,8 +162,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             if lognormal:
                 ## diff_sq = (mu - logw)^2
-                #diff_sq = torch.square(torch.sub(mean, logw_obs))
-                diff_sq = torch.square(torch.sub(mean, edge_feats_invsp))
+                diff_sq = torch.square(torch.sub(mean, logw_obs))
                 
                 ## diff_sq2 = v^-1*diff_sq
                 diff_sq2 = torch.div(diff_sq, var)
@@ -172,7 +171,7 @@ class BiggWithEdgeLen(RecurTreeGen):
                 log_var = torch.log(var)
                 
                 ## add to ll
-                ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
+                ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
                 ll = torch.sum(ll)
             
             else:
@@ -186,7 +185,6 @@ class BiggWithEdgeLen(RecurTreeGen):
                 log_var = torch.log(var)
                 
                 ## add to ll
-                #ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
                 ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
                 ll = torch.sum(ll)
             

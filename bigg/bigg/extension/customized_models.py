@@ -119,12 +119,13 @@ class BiggWithEdgeLen(RecurTreeGen):
         #params = torch.nn.functional.softplus(params, beta = 1)
         
         lognormal = False
+        b = 1.0
         
         if edge_feats is None:
             ll = 0
             pred_mean = params[0][0].item()
             pred_lvar = params[0][1]
-            pred_var = torch.nn.functional.softplus(pred_lvar, beta = 2).item()
+            pred_var = torch.nn.functional.softplus(pred_lvar, beta = b).item()
             edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
             
             if lognormal:
@@ -158,7 +159,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             mean = params.gather(1, y.view(-1, 1)).squeeze()
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
             #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
-            var = torch.nn.functional.softplus(lvar, beta = 2)
+            var = torch.nn.functional.softplus(lvar, beta = b)
             
             if lognormal:
                 ## diff_sq = (mu - logw)^2

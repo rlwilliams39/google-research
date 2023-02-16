@@ -278,7 +278,7 @@ if __name__ == '__main__':
                 #s = np.round(s, 4)
                 print("NUMBER SKIPPED: ", num_skip)
                 print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
-                results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up]
+                results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
                 print(np.round(results, 3))
         sys.exit()
     #########################################################################################################

@@ -157,8 +157,8 @@ class BiggWithEdgeLen(RecurTreeGen):
             ## MEAN AND VARIANCE OF LOGNORMAL
             mean = params.gather(1, y.view(-1, 1)).squeeze()
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
-            var = torch.add(torch.nn.functional.softplus(lvar, beta = 2), 1e-6)
-            var = torch.nn.functional.softplus(lvar, beta = 1)
+            #var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-6)
+            var = torch.nn.functional.softplus(lvar, beta = 2)
             
             if lognormal:
                 ## diff_sq = (mu - logw)^2

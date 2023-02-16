@@ -205,7 +205,7 @@ if __name__ == '__main__':
         print('graph generation complete')
         
         sum_stats = True
-        skip_train = True
+        skip_train = False
         if sum_stats:
             print("Generating Summary Statistics...")
             collect_graphs = [train_graphs, gen_graphs]
@@ -228,11 +228,12 @@ if __name__ == '__main__':
                 num_skip = 0
                 for T in graphs:
                     T_weights = []
-                    if len(T.edges()) != 4:
+                    if len(T.edges()) != 6#4:
                         num_skip += 1
                         continue
                     for (n1, n2, w) in T.edges(data = True):
-                        t = np.log(np.exp(w['weight']) - 1)
+                        #t = np.log(np.exp(w['weight']) - 1)
+                        t = w['weight']
                         T_weights.append(t)
                         weights.append(t)
                     tree_var.append(np.var(T_weights, ddof = 1))

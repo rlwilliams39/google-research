@@ -119,7 +119,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         #params = torch.nn.functional.softplus(params, beta = 1)
         
         lognormal = True
-        b = 2.0
+        b = 1.0
         
         if edge_feats is None:
             ll = 0

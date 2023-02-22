@@ -50,10 +50,13 @@ def graph_stat_gen(graphs, train, test, kind = None):
         results = A1_stats(collect_graphs)
         return 0
         
-    if kind == "GroupB5.dat" or "GroupB5-1.dat":
-        results = B5_stats(collect_graphs)
+    if kind == "GroupB5.dat":
+        results = B5_stats(collect_graphs, transform = True)
         return 0
-        
+    
+    if kind == "GroupB5-1.dat"
+       results = B5_stats(collect_graphs, transform = False)
+       return 0
     else:
         return 0
     return 0
@@ -103,7 +106,7 @@ def A1_stats(graphs):
     return 0
 
 
-def B5_stats(graphs):
+def B5_stats(graphs, transform = False):
     test_graphs = graphs[2]
     for idx in range(2):
         cur_graphs = graphs[idx]
@@ -126,8 +129,10 @@ def B5_stats(graphs):
                 num_skip += 1
                 continue
             for (n1, n2, w) in T.edges(data = True):
-                t = np.log(np.exp(w['weight']) - 1)
-                #t = w['weight']
+                if transform:
+                    t = np.log(np.exp(w['weight']) - 1)
+                else:
+                    t = w['weight']
                 T_weights.append(t)
                 weights.append(t)
             tree_var.append(np.var(T_weights, ddof = 1))

@@ -55,7 +55,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
     return 0
 
 def G201A_stats(graphs):
-    test_graphs = G201A_stats[2]
+    test_graphs = graphs[2]
     for idx in range(2):
         if idx == 0:
             print("TRAINING GRAPHS:")
@@ -101,7 +101,7 @@ def G201A_stats(graphs):
 
 
 def G205_stats(graphs):
-    test_graphs = G201A_stats[2]
+    test_graphs = graphs[2]
     for idx in range(2):
         if idx == 0:
             print("TRAINING GRAPHS:")
@@ -115,7 +115,7 @@ def G205_stats(graphs):
         tree_var = []
         tree_mean = []
         num_skip = 0
-        for T in graphs:
+        for T in cur_graphs:
             T_weights = []
             if len(T.edges()) != 4:#4:
                 num_skip += 1

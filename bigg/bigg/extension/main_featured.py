@@ -54,7 +54,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
         return 0
     return 0
 
-def G201A_stats(graphs)
+def G201A_stats(graphs):
     test_graphs = G201A_stats[2]
     for idx in range(2):
         if idx == 0:

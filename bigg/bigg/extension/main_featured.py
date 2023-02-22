@@ -51,7 +51,6 @@ def graph_stat_gen(graphs, train, test, kind = None):
         return 0
         
     if kind == "GroupB5.dat" or "GroupB5-1.dat":
-        print("Howdy")
         results = B5_stats(collect_graphs)
         return 0
         
@@ -62,12 +61,13 @@ def graph_stat_gen(graphs, train, test, kind = None):
 def A1_stats(graphs):
     test_graphs = graphs[2]
     for idx in range(2):
+        cur_graphs = graphs[idx]
         if idx == 0:
-            print("TRAINING GRAPHS:")
+            print("TRAINING GRAPHS:"))
+            k = len(cur_graphs[0])
         else:
             print("GENERATED GRAPHS:")
         
-        cur_graphs = graphs[idx]
         
         dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
         w_list = [] #List of weights grouped by order:
@@ -83,7 +83,7 @@ def A1_stats(graphs):
                     skip = True
                 else:
                     weights.append(w['weight'])
-            if len(weights) != 4:
+            if len(weights) != k:
                 bad_topology += 1
                 skip = True
             if not skip:

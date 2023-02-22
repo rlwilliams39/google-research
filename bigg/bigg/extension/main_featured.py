@@ -317,6 +317,7 @@ if __name__ == '__main__':
         
         #sum_stats = True
         #skip_train = False
+        print(cmd_args.file_name)
         stats = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = "G205")
         sys.exit()
     #########################################################################################################

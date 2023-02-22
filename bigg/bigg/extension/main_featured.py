@@ -127,6 +127,7 @@ def B5_stats(graphs, transform = False):
             T_weights = []
             if len(T.edges()) != k or not nx.is_tree(T):
                 num_skip += 1
+                print(T.edges(data=True))
                 continue
             for (n1, n2, w) in T.edges(data = True):
                 if transform:

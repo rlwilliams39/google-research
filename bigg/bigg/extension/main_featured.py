@@ -108,13 +108,14 @@ def A1_stats(graphs):
 def B5_stats(graphs):
     test_graphs = graphs[2]
     for idx in range(2):
+        cur_graphs = graphs[idx]
+        
         if idx == 0:
             print("TRAINING GRAPHS:")
             k = len(cur_graphs[0].edges())
         else:
             print("GENERATED GRAPHS:")
         
-        cur_graphs = graphs[idx]
         
         dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
         weights = []

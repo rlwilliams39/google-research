@@ -78,9 +78,12 @@ def A1_stats(graphs):
             weights = []
             skip = False
             for (n1, n2, w) in T.edges(data=True):
-                weights.append(w['weight'])
-            print("tree:", nx.is_tree(T))
-            if len(weights) != k or not nx.is_tree(T):
+                if (n1, n2) not in [(1, 0), (0, 2), (1,3), (1, 4), (0, 1)]:
+                    bad_topology += 1
+                    skip = True
+                else:
+                    weights.append(w['weight'])
+            if len(weights) != 4:
                 bad_topology += 1
                 skip = True
             if not skip:
@@ -107,6 +110,7 @@ def B5_stats(graphs):
     for idx in range(2):
         if idx == 0:
             print("TRAINING GRAPHS:")
+            k = len(cur_graphs[0].edges())
         else:
             print("GENERATED GRAPHS:")
         
@@ -119,7 +123,7 @@ def B5_stats(graphs):
         num_skip = 0
         for T in cur_graphs:
             T_weights = []
-            if len(T.edges()) != 4:#4:
+            if len(T.edges()) != k or not nx.is_tree(T):
                 num_skip += 1
                 continue
             for (n1, n2, w) in T.edges(data = True):

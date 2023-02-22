@@ -41,7 +41,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
     lognormal = False
     softplus2 = False
     print("lognormal? ", lognormal)
-    print("softplus2? ", sotfplus2)
+    print("softplus2? ", softplus2)
     
     collect_graphs = [train, graphs, test]
     if kind is None:

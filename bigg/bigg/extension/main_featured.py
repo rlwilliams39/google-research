@@ -38,6 +38,11 @@ from scipy.stats.distributions import chi2
 
 
 def graph_stat_gen(graphs, train, test, kind = None):
+    lognormal = False
+    softplus2 = False
+    print("lognormal? ", lognormal)
+    print("softplus2? ", sotfplus2)
+    
     collect_graphs = [train, graphs, test]
     if kind is None:
         return 0
@@ -45,7 +50,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
         results = A1_stats(collect_graphs)
         return 0
         
-    if kind == "GroupB5.dat":
+    if kind == "GroupB5.dat" or "GroupB5-1.dat":
         print("Howdy")
         results = B5_stats(collect_graphs)
         return 0

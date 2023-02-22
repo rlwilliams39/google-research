@@ -54,7 +54,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
         results = B5_stats(collect_graphs, transform = True)
         return 0
     
-    if kind == "GroupB5-1.dat"
+    if kind == "GroupB5-1.dat":
        results = B5_stats(collect_graphs, transform = False)
        return 0
     else:

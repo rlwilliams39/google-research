@@ -65,9 +65,9 @@ def A1_stats(graphs):
         if idx == 0:
             print("TRAINING GRAPHS:")
             k = len(cur_graphs[0].edges())
+            print(k)
         else:
             print("GENERATED GRAPHS:")
-        
         
         dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
         w_list = [] #List of weights grouped by order:
@@ -79,6 +79,7 @@ def A1_stats(graphs):
             skip = False
             for (n1, n2, w) in T.edges(data=True):
                 weights.append(w['weight'])
+            print("tree:", nx.is_tree(T))
             if len(weights) != k or not nx.is_tree(T):
                 bad_topology += 1
                 skip = True

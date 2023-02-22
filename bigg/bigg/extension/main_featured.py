@@ -64,9 +64,6 @@ def A1_stats(graphs):
         cur_graphs = graphs[idx]
         if idx == 0:
             print("TRAINING GRAPHS:")
-            good_edges = cur_graphs[0].edges(data=False)
-            print(good_edges)
-            sys.exit()
             k = len(cur_graphs[0].edges())
         else:
             print("GENERATED GRAPHS:")
@@ -81,12 +78,8 @@ def A1_stats(graphs):
             weights = []
             skip = False
             for (n1, n2, w) in T.edges(data=True):
-                if (n1, n2) not in [(1, 0), (0, 2), (1,3), (1, 4), (0, 1)]:
-                    bad_topology += 1
-                    skip = True
-                else:
-                    weights.append(w['weight'])
-            if len(weights) != k:
+                weights.append(w['weight'])
+            if len(weights) != k or not nx.is_tree(T):
                 bad_topology += 1
                 skip = True
             if not skip:

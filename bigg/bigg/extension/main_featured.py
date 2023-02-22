@@ -41,20 +41,20 @@ def graph_stat_gen(graphs, train, test, kind = None):
     collect_graphs = [train, graphs, test]
     if kind is None:
         return 0
-    if kind == "G201":
-        results = G201A_stats(collect_graphs)
+    if kind == "GroupA1.dat":
+        results = A1_stats(collect_graphs)
         return 0
         
-    if kind == "G205":
+    if kind == "GroupB5.dat":
         print("Howdy")
-        results = G205_stats(collect_graphs)
+        results = B5_stats(collect_graphs)
         return 0
         
     else:
         return 0
     return 0
 
-def G201A_stats(graphs):
+def A1_stats(graphs):
     test_graphs = graphs[2]
     for idx in range(2):
         if idx == 0:
@@ -100,7 +100,7 @@ def G201A_stats(graphs):
     return 0
 
 
-def G205_stats(graphs):
+def B5_stats(graphs):
     test_graphs = graphs[2]
     for idx in range(2):
         if idx == 0:
@@ -315,10 +315,8 @@ if __name__ == '__main__':
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('graph generation complete')
         
-        #sum_stats = True
-        #skip_train = False
-        print(cmd_args.file_name)
-        stats = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = "G205")
+        print("Generating Statistics for ", cmd_args.file_name)
+        stats = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
         sys.exit()
     #########################################################################################################
     

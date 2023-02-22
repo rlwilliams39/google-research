@@ -64,6 +64,9 @@ def A1_stats(graphs):
         cur_graphs = graphs[idx]
         if idx == 0:
             print("TRAINING GRAPHS:")
+            good_edges = cur_graphs[0].edges(data=False)
+            print(good_edges)
+            sys.exit()
             k = len(cur_graphs[0].edges())
         else:
             print("GENERATED GRAPHS:")

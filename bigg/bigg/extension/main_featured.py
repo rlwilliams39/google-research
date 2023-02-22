@@ -99,7 +99,7 @@ def A1_stats(graphs):
         lo = np.round(np.mean(w_list) - 1.96 * st / n**0.5, 4)
         up = np.round(np.mean(w_list) + 1.96 * st / n**0.5, 4)
         p = np.round(bad_topology / n, 4)
-        results = [dist, 1-p, med, mt, lo, up, st, np.round(np.mean(within_var**0.5), 4)]
+        results = [dist, 1-p, med, mt, lo, up, st, np.round(np.mean(within_var)**0.5, 4)]
         if idx == 0:
             print("results = [dist, 1-p, med, mt, lo, up, st, np.round(np.mean(within_var), 4)]")
         print(results)

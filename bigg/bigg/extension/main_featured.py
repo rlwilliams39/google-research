@@ -37,6 +37,117 @@ from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 from scipy.stats.distributions import chi2
 
 
+def graph_stat_gen(graphs, train, test, kind = None):
+    collect_graphs = [train, graphs, test]
+    if kind is None:
+        return 0
+    if kind is "G201":
+        results = G201A_stats(collect_graphs)
+        return 0
+        
+    if kind is "G205":
+        print("Howdy")
+        results = G205_stats(collect_graphs)
+        return 0
+        
+    else:
+        return 0
+    return 0
+
+def G201A_stats(graphs)
+    test_graphs = G201A_stats[2]
+    for idx in range(2):
+        if idx == 0:
+            print("TRAINING GRAPHS:")
+        else:
+            print("GENERATED GRAPHS:")
+        
+        cur_graphs = graphs[idx]
+        
+        dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
+        w_list = [] #List of weights grouped by order:
+        within_var = []
+        bad_topology = 0
+        
+        for T in cur_graphs:
+            weights = []
+            skip = False
+            for (n1, n2, w) in T.edges(data=True):
+                if (n1, n2) not in [(1, 0), (0, 2), (1,3), (1, 4), (0, 1)]:
+                    bad_topology += 1
+                    skip = True
+                else:
+                    weights.append(w['weight'])
+            if len(weights) != 4:
+                bad_topology += 1
+                skip = True
+            if not skip:
+                within_var.append(np.std(weights))
+                for i in range(len(weights)): 
+                    w_list.append(weights[i])
+        
+        med = np.round(np.median(w_list), 4)
+        mt = np.round(np.mean(w_list), 4)
+        st = np.round(np.std(w_list), 4)
+        n = len(cur_graphs)
+        lo = np.round(np.mean(w_list) - 1.96 * st / n**0.5, 4)
+        up = np.round(np.mean(w_list) + 1.96 * st / n**0.5, 4)
+        p = np.round(bad_topology / n, 4)
+        results = [dist, 1-p, med, mt, lo, up, st, np.round(np.mean(within_var), 4)]
+        if idx == 0:
+            print("results = [dist, 1-p, med, mt, lo, up, st, np.round(np.mean(within_var), 4)]")
+        print(results)
+    return 0
+
+
+def G205_stats(graphs):
+    test_graphs = G201A_stats[2]
+    for idx in range(2):
+        if idx == 0:
+            print("TRAINING GRAPHS:")
+        else:
+            print("GENERATED GRAPHS:")
+        
+        cur_graphs = graphs[idx]
+        
+        dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
+        weights = []
+        tree_var = []
+        tree_mean = []
+        num_skip = 0
+        for T in graphs:
+            T_weights = []
+            if len(T.edges()) != 4:#4:
+                num_skip += 1
+                continue
+            for (n1, n2, w) in T.edges(data = True):
+                t = np.log(np.exp(w['weight']) - 1)
+                #t = w['weight']
+                T_weights.append(t)
+                weights.append(t)
+            tree_var.append(np.var(T_weights, ddof = 1))
+            tree_mean.append(np.mean(T_weights))
+        
+        xbar = np.mean(weights)
+        s = np.std(weights, ddof = 1)
+        n = len(weights)
+        
+        mu_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
+        mu_up = np.round(xbar + 1.96 * s / n**0.5, 3)
+        
+        s_lo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
+        s_up = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
+        
+        mean_tree_var = np.mean(tree_var)
+        tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
+        tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
+        
+        print("NUMBER SKIPPED: ", num_skip)
+        print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
+        results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
+        print(np.round(results, 3))
+    return 0
+
 def dist_met(train, test, N = 10000, swap = True, scale = False):
     n = len(train)
     m = len(test)
@@ -204,83 +315,9 @@ if __name__ == '__main__':
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('graph generation complete')
         
-        sum_stats = True
-        skip_train = False
-        if sum_stats:
-            print("Generating Summary Statistics...")
-            collect_graphs = [train_graphs, gen_graphs]
-            names = ['TRAINING', 'GEN GRAPHS']
-            for idx in range(len(collect_graphs)):
-                if skip_train and 1-idx:
-                    print("SKIPPING TRAIN")
-                    print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
-                    print("[0.667 1.506 1.503 1.51  1.031 1.029 1.034 0.25  0.249 0.251]")
-                    continue
-                print(names[idx])
-                graphs = collect_graphs[idx]
-                
-                assert len(graphs) > 0
-                dist = np.round(dist_met(graphs, gt_graphs, N = 200000, swap = bool(idx), scale = True), 3)
-                
-                weights = []
-                tree_var = []
-                tree_mean = []
-                num_skip = 0
-                for T in graphs:
-                    T_weights = []
-                    if len(T.edges()) != 4:#4:
-                        num_skip += 1
-                        continue
-                    for (n1, n2, w) in T.edges(data = True):
-                        t = np.log(np.exp(w['weight']) - 1)
-                        #t = w['weight']
-                        T_weights.append(t)
-                        weights.append(t)
-                    tree_var.append(np.var(T_weights, ddof = 1))
-                    tree_mean.append(np.mean(T_weights))
-                
-                xbar = np.mean(weights)
-                s = np.std(weights, ddof = 1)
-                n = len(weights)
-                
-                mu_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
-                mu_up = np.round(xbar + 1.96 * s / n**0.5, 3)
-                
-                s_lo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
-                s_up = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
-                
-                mean_tree_var = np.mean(tree_var)
-                tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
-                tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
-                
-                #xbar = np.mean(n1_weights)
-                #s = np.std(n1_weights, ddof = 1)
-                #n = len(n1_weights)
-                
-                #n1_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
-                #n1_up = np.round(xbar + 1.96 * s / n**0.5, 3)
-                
-                #slo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
-                #sup = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
-                
-                #print(T_within_var)
-                #within_var_mean = np.mean(T_within_var)
-                #print(within_var_mean)
-                #within_lo = within_var_mean - 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
-                #within_up = within_var_mean + 1.96 * np.std(T_within_var, ddof = 1) / len(T_within_var)**0.5
-                
-                #within_sd = np.round(within_var_mean**0.5, 3)
-                #wlo = np.round(np.sqrt(within_lo), 3)
-                #wup = np.round(np.sqrt(within_up), 3)
-                
-                #within_sd = np.round(within_sd, 3)
-    
-                #xbar = np.round(xbar, 4)
-                #s = np.round(s, 4)
-                print("NUMBER SKIPPED: ", num_skip)
-                print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
-                results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
-                print(np.round(results, 3))
+        #sum_stats = True
+        #skip_train = False
+        stats = graph_stat_gen(gen_graphs, train_graphs, test_graphs, kind = "G205")
         sys.exit()
     #########################################################################################################
     

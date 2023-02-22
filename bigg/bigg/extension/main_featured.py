@@ -63,7 +63,7 @@ def A1_stats(graphs):
     for idx in range(2):
         cur_graphs = graphs[idx]
         if idx == 0:
-            print("TRAINING GRAPHS:"))
+            print("TRAINING GRAPHS:")
             k = len(cur_graphs[0])
         else:
             print("GENERATED GRAPHS:")

@@ -41,11 +41,11 @@ def graph_stat_gen(graphs, train, test, kind = None):
     collect_graphs = [train, graphs, test]
     if kind is None:
         return 0
-    if kind is "G201":
+    if kind == "G201":
         results = G201A_stats(collect_graphs)
         return 0
         
-    if kind is "G205":
+    if kind == "G205":
         print("Howdy")
         results = G205_stats(collect_graphs)
         return 0

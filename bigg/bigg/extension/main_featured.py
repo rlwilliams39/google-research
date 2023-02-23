@@ -39,7 +39,7 @@ from scipy.stats.distributions import chi2
 
 def graph_stat_gen(graphs, train, test, kind = None):
     lognormal = False
-    softplus2 = False
+    softplus2 = True
     print("lognormal? ", lognormal)
     print("softplus2? ", softplus2)
     

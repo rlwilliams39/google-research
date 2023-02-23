@@ -57,8 +57,27 @@ def graph_stat_gen(graphs, train, test, kind = None):
     if kind == "GroupB5-1.dat":
        results = B5_stats(collect_graphs, transform = False)
        return 0
+       
+    if kind == "Yeast.dat":
+        result = Yeast_stats(collect_graphs)
+        return 0
     else:
         return 0
+    return 0
+
+def Yeast_stats(graphs):
+    for idx in range(2):
+        cur_graphs = graphs[idx]
+        n = len(cur_graphs)
+        k = 0
+        if idx == 0:
+            print("TRAINING -- SANITY CHECK")
+        else:
+            print("RESULTS LOADING")
+        for T in cur_graphs:
+            if nx.is_tree(T):
+                k += 1
+        print("Proportion of Trees Produced: ", k / n)
     return 0
 
 def A1_stats(graphs):

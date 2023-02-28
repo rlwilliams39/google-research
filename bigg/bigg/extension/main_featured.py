@@ -54,7 +54,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
         results = B5_stats(collect_graphs, transform = True)
         return 0
     
-    if kind == "GroupB5-1.dat":
+    if kind == "GroupB5-1.dat" or kind == "GroupB5-2.dat":
        results = B5_stats(collect_graphs, transform = False)
        return 0
        
@@ -86,6 +86,8 @@ def A1_stats(graphs):
         cur_graphs = graphs[idx]
         if idx == 0:
             print("TRAINING GRAPHS:")
+            print("SKIPPING TRAINING SET")
+            continue
         else:
             print("GENERATED GRAPHS:")
         

@@ -415,8 +415,11 @@ if __name__ == '__main__':
                 optimizer.zero_grad()
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
         
-        print('saving')
-        torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
+        print('epoch complete')
+        cur = epoch+1
+        if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
+            print('saving epoch')
+            torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
         #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
         #print(pred_edges)
         #print(pred_node_feats)

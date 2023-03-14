@@ -279,12 +279,7 @@ if __name__ == '__main__':
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
-    ########################################################################
-    has_node_feats = False
-    if has_node_feats:
-        train_graphs = feature_fixer(train_graphs)
-        print(train_graphs[0].nodes(data=True))
-    ########################################################################
+     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 

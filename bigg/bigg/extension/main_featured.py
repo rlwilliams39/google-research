@@ -189,8 +189,8 @@ def dist_met(train, test, N = 10000, swap = True, scale = False):
     for i in range(N):
         kn = np.random.randint(0, n)
         km = np.random.randint(0, m)
-        train_g =  nx.to_numpy_matrix(train[kn])
-        test_g = nx.to_numpy_matrix(test[km])
+        train_g =  nx.to_numpy_array(train[kn])
+        test_g = nx.to_numpy_array(test[km])
         if swap:
             train_g[:, [1, 0]] = train_g[:, [0, 1]]
             train_g[[1, 0], :] = train_g[[0, 1], :]

@@ -92,7 +92,7 @@ if __name__ == '__main__':
             x = x + cano_g
         
         f = os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase)
-        open_file = open(f, "wb")
+        open_file = open(f, "w")
         cp.dump(x, open_file, cp.HIGHEST_PROTOCOL)
         open_file.close()
         

@@ -81,20 +81,21 @@ if __name__ == '__main__':
     #    print('num', phase, len(g_list))
     #    graph_splits[phase] = g_list
     
+    
+    
+    
     graph_splits = {}
     for phase, g_list in zip(['train', 'val', 'test'], [graphs[:num_train], graphs[:num_dev], graphs[num_train:]]):
-        with open(os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase), 'wb') as f:
-            x = []
-            for g in tqdm(g_list):
-                cano_g = get_graph_data(g, cmd_args.node_order)
-                x = x + cano_g
-                #for gc in cano_g:
-                #    cp.dump(gc, f, cp.HIGHEST_PROTOCOL)
-                #    if phase != 'train':
-                #        break
-            cp.dump(x, f, cp.HIGHEST_PROTOCOL)
-            #if phase != 'train':
-            #    break
+        x = []
+        for g in tqdm(g_list):
+            cano_g = get_graph_data(g, cmd_args.node_order)
+            x = x + cano_g
+        
+        f = os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase)
+        open_file = open(f, "wb")
+        cp.dump(x, open_file, cp.HIGHEST_PROTOCOL)
+        open_file.close()
+        
         print('num', phase, len(g_list))
         graph_splits[phase] = g_list
 

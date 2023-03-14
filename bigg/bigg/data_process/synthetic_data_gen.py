@@ -83,7 +83,7 @@ if __name__ == '__main__':
     
     graph_splits = {}
     for phase, g_list in zip(['train', 'val', 'test'], [graphs[:num_train], graphs[:num_dev], graphs[num_train:]]):
-        with open(os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase), 'wb') as f:
+        with os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase) as f:
             x = []
             for g in tqdm(g_list):
                 cano_g = get_graph_data(g, cmd_args.node_order)

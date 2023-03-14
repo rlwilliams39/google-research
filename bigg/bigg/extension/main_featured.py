@@ -268,6 +268,7 @@ if __name__ == '__main__':
     set_device(cmd_args.gpu)
     setup_treelib(cmd_args)
     assert cmd_args.blksize < 0  # assume graph is not that large, otherwise model parallelism is needed
+    has_node_feats = False
 
     #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
     #    train_graphs = cp.load(f)

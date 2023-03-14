@@ -279,7 +279,7 @@ if __name__ == '__main__':
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
-     print(train_graphs[0].edges(data=True))
+    print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 

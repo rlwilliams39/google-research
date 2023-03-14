@@ -276,6 +276,7 @@ if __name__ == '__main__':
     
     
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
+    print(path)
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     

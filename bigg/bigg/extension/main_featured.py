@@ -421,11 +421,10 @@ if __name__ == '__main__':
         #print(pred_node_feats)
         #print(pred_edge_feats)
     print("Model training complete.")
-        
-        
-        
-        
-                
-        
-        
-        
+    
+    
+    
+    
+    
+    
+    

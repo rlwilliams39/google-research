@@ -54,7 +54,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
         results = B5_stats(collect_graphs, transform = True)
         return 0
     
-    if kind in ["GroupB5-1.dat", "GroupB5-2.dat", "GroupB5-N5.dat", "GroupB5-N25.dat", "GroupB5-N50.dat", "GroupB5-N100.dat"]:
+    if kind in ["GroupB5-1.dat", "GroupB5-2.dat", "GroupB5-N5.dat", "GroupB5-N25.dat", "GroupB5-N50.dat", "GroupB5-N100.dat", "GroupB5-N25_NEW.dat"]:
        results = B5_stats(collect_graphs, transform = False)
        return 0
        
@@ -281,14 +281,13 @@ if __name__ == '__main__':
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
-    print(train_graphs[0].edges(data=True))
-    
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
-    print(train_graphs[0].edges(data=True))
+    if max_num_nodes < 100:
+        print(train_graphs[0].edges(data=True))
     
     #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]    
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]

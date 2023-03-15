@@ -76,8 +76,9 @@ def get_graph_data(G, node_order, order_only=False):
     G = nx.relabel_nodes(G, orig_map)
     
     if node_order == 'default':
+        out_list.append(G)
+        return G
         out_list.append(apply_order(G, list(range(len(G))), order_only))
-        print(out_list)
     
     if node_order == 'by_time': 
         def order_tree(G, find_leaves= False):

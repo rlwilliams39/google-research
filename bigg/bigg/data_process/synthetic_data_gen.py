@@ -85,9 +85,14 @@ if __name__ == '__main__':
     for phase, g_list in zip(['train', 'val', 'test'], [graphs[:num_train], graphs[:num_dev], graphs[num_train:]]):
         with open(os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase), 'wb') as f:
             x = []
-            for g in tqdm(g_list):
+            testing = 1
+            for g in tqdm(g_list):)
                 cano_g = get_graph_data(g, cmd_args.node_order)
+                if testing:
+                    print(g.edges(data=True))
+                    print(cano_g[0].edges(data=True))
                 x = x + cano_g
+                testing = 0
                 #for gc in cano_g:
                 #    cp.dump(gc, f, cp.HIGHEST_PROTOCOL)
                 #    if phase != 'train':

@@ -86,7 +86,7 @@ if __name__ == '__main__':
         with open(os.path.join(cmd_args.save_dir, '%s-graphs.pkl' % phase), 'wb') as f:
             x = []
             testing = 1
-            for g in tqdm(g_list):)
+            for g in tqdm(g_list):
                 cano_g = get_graph_data(g, cmd_args.node_order)
                 if testing:
                     print(g.edges(data=True))

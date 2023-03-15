@@ -77,7 +77,7 @@ def get_graph_data(G, node_order, order_only=False):
     
     if node_order == 'default':
         out_list.append(G)
-        return G
+        return out_list
         out_list.append(apply_order(G, list(range(len(G))), order_only))
     
     if node_order == 'by_time': 

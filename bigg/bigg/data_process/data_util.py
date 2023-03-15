@@ -68,11 +68,6 @@ def apply_order(G, nodelist, order_only, leaflist = None):
 
 def get_graph_data(G, node_order, order_only=False):
     G = G.to_undirected()
-    
-    skip = True
-    if skip:
-        return G
-    
     out_list = []
     orig_node_labels = sorted(list(G.nodes()))
     orig_map = {}
@@ -82,6 +77,7 @@ def get_graph_data(G, node_order, order_only=False):
     
     if node_order == 'default':
         out_list.append(apply_order(G, list(range(len(G))), order_only))
+        print(out_list)
     
     if node_order == 'by_time': 
         def order_tree(G, find_leaves= False):

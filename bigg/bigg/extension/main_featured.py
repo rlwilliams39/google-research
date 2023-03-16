@@ -332,9 +332,10 @@ if __name__ == '__main__':
                         assert e[0] > e[1]
                         w = w.item()
                         w = np.round(w, 4)
-                        edge = (e[0], e[1], w)
+                        edge = (e[1], e[0], w)
                         print("edge:", edge)
                         weighted_edges.append(edge)
+                    print("weighted edges: ", weighted_edges)
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)
                     gen_graphs.append(pred_g)

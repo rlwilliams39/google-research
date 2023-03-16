@@ -582,8 +582,8 @@ class RecurTreeGen(nn.Module):
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
             edges += [(i, x) for x in col_sm.indices]
-            print("column index: ", i)
-            print("edges: ", edges)
+            #print("column index: ", i)
+            #print("edges: ", edges)
             total_ll = total_ll + ll
 
         if self.has_node_feats:

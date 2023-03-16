@@ -337,7 +337,7 @@ if __name__ == '__main__':
                     gen_graphs.append(pred_g)
         counter = 0
         for g in gen_graphs:
-            if counter <= 100:
+            if counter <= 10:
                 print("edges:", g.edges(data=True))
                 counter += 1
         print('saving graphs')
@@ -354,7 +354,7 @@ if __name__ == '__main__':
     serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
-    scheduler = ExponentialLR(optimizer, gamma=0.9) ##added
+    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) ##added
     indices = list(range(len(train_graphs)))
     
     if cmd_args.epoch_load is None:

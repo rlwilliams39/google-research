@@ -317,8 +317,8 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
-                print("edges: "pred_edges)
-                print("edge feats:" pred_edge_feats)
+                print("edges: ", pred_edges)
+                print("edge feats:",  pred_edge_feats)
                 if has_node_feats:
                     pred_g = nx.Graph()
                     pred_g.add_nodes_from(range(num_nodes))
@@ -333,7 +333,7 @@ if __name__ == '__main__':
                         w = w.item()
                         w = np.round(w, 4)
                         edge = (e[0], e[1], w)
-                        print("edge:" edge)
+                        print("edge:", edge)
                         weighted_edges.append(edge)
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)

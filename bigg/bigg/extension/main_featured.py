@@ -154,7 +154,7 @@ def B5_stats(graphs, transform = False):
                 internal = [n for n in T.nodes() if T.degree(n) == 3]
                 root = [n for n in T.nodes() if T.degree(n) == 2]
                 
-                if len(leaves) == len(internal) + 2 and len(root) == 1:
+                if len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
                     num_tree += 1
                             
             T_weights = []

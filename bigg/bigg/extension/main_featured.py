@@ -354,7 +354,7 @@ if __name__ == '__main__':
     serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
-    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) ##added
+    #scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) ##added
     indices = list(range(len(train_graphs)))
     
     if cmd_args.epoch_load is None:
@@ -413,7 +413,7 @@ if __name__ == '__main__':
                 optimizer.step()
                 optimizer.zero_grad()
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
-        scheduler.step()
+        #scheduler.step()
         print('epoch complete')
         cur = epoch+1
         if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch

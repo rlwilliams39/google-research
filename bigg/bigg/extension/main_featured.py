@@ -328,7 +328,7 @@ if __name__ == '__main__':
                 else:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
-                        print("e": e)
+                        print("e: ", e)
                         assert e[0] > e[1]
                         w = w.item()
                         w = np.round(w, 4)

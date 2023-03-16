@@ -150,9 +150,9 @@ def B5_stats(graphs, transform = False):
         for T in cur_graphs:
             if nx.is_tree(T):
                 ## T is a tree. need to assert bifurcating
-                leaves = [n for n in X.nodes() if X.degree(n) == 1]
-                internal = [n for n in X.nodes() if X.degree(n) == 3]
-                root = [n for n in X.nodes() if X.degree(n) == 2]
+                leaves = [n for n in T.nodes() if T.degree(n) == 1]
+                internal = [n for n in T.nodes() if T.degree(n) == 3]
+                root = [n for n in T.nodes() if T.degree(n) == 2]
                 
                 if len(leaves) == len(internal) + 2 and len(root) == 1:
                     num_tree += 1

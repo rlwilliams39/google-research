@@ -146,7 +146,17 @@ def B5_stats(graphs, transform = False):
         tree_var = []
         tree_mean = []
         num_skip = 0
+        num_tree = 0
         for T in cur_graphs:
+            if nx.is_tree(T):
+                ## T is a tree. need to assert bifurcating
+                leaves = [n for n in X.nodes() if X.degree(n) == 1]
+                internal = [n for n in X.nodes() if X.degree(n) == 3]
+                root = [n for n in X.nodes() if X.degree(n) == 2]
+                
+                if len(leaves) == len(internal) + 2 and len(root) == 1:
+                    num_tree += 1
+                            
             T_weights = []
             if len(T.edges()) != k or not nx.is_tree(T):
                 num_skip += 1
@@ -177,6 +187,7 @@ def B5_stats(graphs, transform = False):
         tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
         
         print("NUMBER SKIPPED: ", num_skip)
+        print("NUMBER CORRECT TREE: ", num_tree)
         print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
         results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
         print(np.round(results, 3))

@@ -156,12 +156,12 @@ def B5_stats(graphs, transform = False):
                 
                 if len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
                     num_tree += 1
+                else:
+                    skip += 1
+            else:
+                skip += 1
                             
             T_weights = []
-            if len(T.edges()) != k or not nx.is_tree(T):
-                num_skip += 1
-                print("Is Tree?", nx.is_tree(T))
-                continue
             for (n1, n2, w) in T.edges(data = True):
                 if transform:
                     t = np.log(np.exp(w['weight']) - 1)

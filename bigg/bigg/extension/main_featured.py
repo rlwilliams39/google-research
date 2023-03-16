@@ -157,9 +157,9 @@ def B5_stats(graphs, transform = False):
                 if len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
                     num_tree += 1
                 else:
-                    skip += 1
+                    num_skip += 1
             else:
-                skip += 1
+                num_skip += 1
                             
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):

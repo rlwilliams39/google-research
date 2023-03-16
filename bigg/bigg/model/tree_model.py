@@ -677,6 +677,8 @@ class RecurTreeGen(nn.Module):
             #edge_feats_embed = self.embed_edge_feats(torch.log(torch.special.expm1(edge_feats)))
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
+        print("logit has edge:", logit_has_edge)
+        print("has ch: ", has_ch)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
 

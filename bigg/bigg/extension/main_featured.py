@@ -147,6 +147,7 @@ def B5_stats(graphs, transform = False):
         tree_mean = []
         num_skip = 0
         num_tree = 0
+        good_graphs = []
         for T in cur_graphs:
             cont = False
             if nx.is_tree(T):
@@ -167,7 +168,7 @@ def B5_stats(graphs, transform = False):
             if cont:
                 continue
             
-            print(T.edges(data=True))
+            good_graphs.append(T)
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):
                 if transform:
@@ -198,7 +199,7 @@ def B5_stats(graphs, transform = False):
         print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
         results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
         print(np.round(results, 3))
-    return 0
+    return good_graphs
 
 def dist_met(train, test, N = 10000, swap = True, scale = False):
     n = len(train)
@@ -362,13 +363,15 @@ if __name__ == '__main__':
             if counter <= 10:
                 print("edges:", g.edges(data=True))
                 counter += 1
-        print('saving graphs')
-        with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
-            cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
-        print('graph generation complete')
         
         print("Generating Statistics for ", cmd_args.file_name)
-        stats = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
+        final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
+        print("final_g len ": len(final_graphs))
+        print('saving graphs')
+        with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
+            cp.dump(final_graphs, f, cp.HIGHEST_PROTOCOL)
+        print('graph generation complete')
+        
         sys.exit()
     #########################################################################################################
     

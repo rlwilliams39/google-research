@@ -148,6 +148,7 @@ def B5_stats(graphs, transform = False):
         num_skip = 0
         num_tree = 0
         for T in cur_graphs:
+            cont = False
             if nx.is_tree(T):
                 ## T is a tree. need to assert bifurcating
                 leaves = [n for n in T.nodes() if T.degree(n) == 1]
@@ -158,9 +159,15 @@ def B5_stats(graphs, transform = False):
                     num_tree += 1
                 else:
                     num_skip += 1
+                    cont = True
             else:
+                cont = True
                 num_skip += 1
-                            
+            
+            if cont:
+                continue
+            
+            print(T.edges(data=True))
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):
                 if transform:

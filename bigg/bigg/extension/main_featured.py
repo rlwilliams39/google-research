@@ -366,7 +366,7 @@ if __name__ == '__main__':
         
         print("Generating Statistics for ", cmd_args.file_name)
         final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
-        print("final_g len ": len(final_graphs))
+        print("final_g len: ", len(final_graphs))
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(final_graphs, f, cp.HIGHEST_PROTOCOL)

@@ -58,7 +58,7 @@ def graph_stat_gen(graphs, train, test, kind = None):
     
     if kind in ["GroupB5-1.dat", "GroupB5-2.dat", "GroupB5-N5.dat", "GroupB5-N25.dat", "GroupB5-N50.dat", "GroupB5-N100.dat", "GroupB5-N25_NEW.dat"]:
        results = B5_stats(collect_graphs, transform = False)
-       return 0
+       return results
        
     if kind == "Yeast.dat":
         result = Yeast_stats(collect_graphs)

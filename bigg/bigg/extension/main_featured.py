@@ -363,7 +363,7 @@ if __name__ == '__main__':
                     pred_g = nx.Graph()
                     pred_g.add_edges_from(pred_edges)
                     gen_graphs.append(pred_g)
-        
+         
         counter = 0
         for g in gen_graphs:
             if counter <= 10:
@@ -387,7 +387,7 @@ if __name__ == '__main__':
                         trees += 1
             print("Number of Trees: ", trees)
             print("Out of....: ", len(gen_graphs))
-            final_graphs = graphs
+            final_graphs = gen_graphs
         
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:

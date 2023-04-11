@@ -156,7 +156,7 @@ def B5_stats(graphs, transform = False):
                 internal = [n for n in T.nodes() if T.degree(n) == 3]
                 root = [n for n in T.nodes() if T.degree(n) == 2]
                 
-                if len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
+                if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
                     num_tree += 1
                 else:
                     num_skip += 1
@@ -344,7 +344,7 @@ if __name__ == '__main__':
                     #print(pred_node_feats)
                     sys.exit()
                 
-                else:
+                if has_edge_feats:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
@@ -364,9 +364,25 @@ if __name__ == '__main__':
                 print("edges:", g.edges(data=True))
                 counter += 1
         
-        print("Generating Statistics for ", cmd_args.file_name)
-        final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
-        print("final_g len: ", len(final_graphs))
+        if has_edge_feats:
+            print("Generating Statistics for ", cmd_args.file_name)
+            final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
+            print("final_g len: ", len(final_graphs))
+        
+        else:
+            print("Testing for Tree Structures...")
+            trees = 0
+            for T in gen_graphs:
+                if nx.is_tree(T):
+                    leaves = [n for n in T.nodes() if T.degree(n) == 1]
+                    internal = [n for n in T.nodes() if T.degree(n) == 3]
+                    root = [n for n in T.nodes() if T.degree(n) == 2]
+                    if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
+                        trees += 1
+            print("Number of Trees: ", trees)
+            print("Out of....: ", len(gen_graphs))
+            final_graphs = graphs
+        
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(final_graphs, f, cp.HIGHEST_PROTOCOL)

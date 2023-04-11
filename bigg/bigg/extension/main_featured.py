@@ -358,6 +358,12 @@ if __name__ == '__main__':
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)
                     gen_graphs.append(pred_g)
+                
+                else:
+                    pred_g = nx.Graph()
+                    pred_g.add_edges_from(pred_edges)
+                    gen_graphs.append(pred_g)
+        
         counter = 0
         for g in gen_graphs:
             if counter <= 10:

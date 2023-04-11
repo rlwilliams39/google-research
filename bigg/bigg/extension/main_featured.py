@@ -344,7 +344,7 @@ if __name__ == '__main__':
                     #print(pred_node_feats)
                     sys.exit()
                 
-                if has_edge_feats:
+                if cmd_args.has_edge_feats:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
@@ -364,7 +364,7 @@ if __name__ == '__main__':
                 print("edges:", g.edges(data=True))
                 counter += 1
         
-        if has_edge_feats:
+        if cmd_args.has_edge_feats:
             print("Generating Statistics for ", cmd_args.file_name)
             final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
             print("final_g len: ", len(final_graphs))

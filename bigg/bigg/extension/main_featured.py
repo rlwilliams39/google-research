@@ -249,7 +249,7 @@ if __name__ == '__main__':
                 if cmd_args.lin_model:
                     for idx in batch_indices:
                         g = train_graphs[idx]
-                        weights = edge_feats[idx]
+                        weights = list_edge_feats[idx]
                         features = nx.adjacency_matrix(g).todense()
                         feature_matrix = np.delete(features, -1, axis=1)
                         lin_model.train(feature_matrix, weights)

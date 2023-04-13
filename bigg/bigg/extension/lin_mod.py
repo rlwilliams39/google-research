@@ -20,6 +20,8 @@ class EdgeWeightLinearModel:
     
     def train(self, features, weights):
         weights = weights.cpu().detach().numpy()
+        print(features)
+        print(weights)
         self.lin_mod.fit(features, weights)
     
     def rep_train(self, list_features, list_weights):

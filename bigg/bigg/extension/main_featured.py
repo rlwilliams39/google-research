@@ -252,7 +252,7 @@ if __name__ == '__main__':
                         weights = edge_feats[idx]
                         features = nx.adjacency_matrix(g).todense()
                         feature_matrix = np.delete(features, -1, axis=1)
-                        lin_model.train(feature_matrix, weights))
+                        lin_model.train(feature_matrix, weights)
             
             loss = -ll / num_nodes
             loss.backward()

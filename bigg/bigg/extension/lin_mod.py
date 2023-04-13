@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 class EdgeWeightLinearModel:
     
     def __init__(self, args):
-        super().__init__(args)
+        #super().__init__(args)
         self.lin_mod = make_pipeline(StandardScaler(),lm.SGDRegressor(max_iter=1000, tol=1e-3, warm_start = True))
     
     def train(features, weights):

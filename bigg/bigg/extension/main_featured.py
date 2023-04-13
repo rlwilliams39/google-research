@@ -105,7 +105,7 @@ if __name__ == '__main__':
     print("ARGUMENT", cmd_args.lin_model)
     ### LINEAR MODEL
     if cmd_args.lin_model:
-        lin_model = EdgeWeightLinearModel(cmd_args).to(cmd_args.device)
+        lin_model = EdgeWeightLinearModel(cmd_args)
         if cmd_args.phase != 'train':
             with open(cmd_args.save_dir + 'lin_model.pkl', 'rb') as f:
                 lin_model = cp.load(f)    

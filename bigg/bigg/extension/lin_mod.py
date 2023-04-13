@@ -1,72 +1,123 @@
-# coding=utf-8
-# Copyright 2022 The Google Research Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-import cmd
-from copyreg import pickle
-# pylint: skip-file
-
-import os
-import sys
-import pickle as cp
-import networkx as nx
+### For Linear Regression Prediction
+import pandas as pd
 import numpy as np
-import random
-from tqdm import tqdm
-import torch
-import torch.optim as optim
-from collections import OrderedDict
-from bigg.common.configs import cmd_args, set_device
-from bigg.extension.customized_models import BiggWithEdgeLen
-from bigg.extension.lin_mod import EdgeWeightLinearModel
-from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
-from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
-from scipy.stats.distributions import chi2
-from bigg.extension.graph_stats import *
+from sklearn import linear_model as lm
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+
+from sklearn.linear_model import SGDRegressor
+from sklearn.datasets import load_boston
+from sklearn.datasets import make_regression
+from sklearn.preprocessing import scale
+import matplotlib.pyplot as plt 
 
 
-def get_node_feats(g):
-    length = []
-    for i, (idx, feat) in enumerate(g.nodes(data=True)):
-        assert i == idx
-        length.append(feat['length'])
-    return np.expand_dims(np.array(length, dtype=np.float32), axis=1)
+class EdgeWeightLinearModel:
+    
+    def __init__(self, args):
+        super().__init__(args)
+        self.lin_mod = make_pipeline(StandardScaler(),lm.SGDRegressor(max_iter=1000, tol=1e-3, warm_start = True))
+    
+    def train(features, weights):
+        self.lin_mod.fit(features, weights)
+    
+    def predict(features):
+        weights = self.lin_mod.predict(features)
+        return features
 
 
-def get_edge_feats(g):
-    edges = sorted(g.edges(data=True), key=lambda x: x[0] * len(g) + x[1])
-    weights = [x[2]['weight'] for x in edges]
-    return np.expand_dims(np.array(weights, dtype=np.float32), axis=1)
 
 
-def debug_model(model, graph, node_feats, edge_feats):
-    ll, _ = model.forward_train([0], node_feats=node_feats, edge_feats=edge_feats)
-    print(ll)
 
-    edges = []
-    for e in graph.edges():
-        if e[1] > e[0]:
-            e = (e[1], e[0])
-        edges.append(e)
-    edges = sorted(edges)
-    ll, _, _, _, _ = model(len(graph), edges, node_feats=node_feats, edge_feats=edge_feats)
-    print(ll)
-    import sys
-    sys.exit()
+
+
+
+
+
+class BiggWithEdgeLen(RecurTreeGen):
+
+    def __init__(self, args):
+        super().__init__(args)
+        self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
+        self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
+        self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2])
+        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2]) ## Changed
+        self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        self.edge_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim) ## ADDED
+
+
+
+
+d1 = {'col1': np.floor(np.random.uniform(20,30,50)), 'col2': np.floor(np.random.uniform(15,25,50)), 'col3': np.floor(np.random.uniform(10,30,50))}
+df1 = pd.DataFrame(data = d1)
+y1 = 1.5 * df.col1 - 0.25 * df.col2  - 0.75 * df.col3 + np.random.normal(0, 1, 50)
+
+
+d2 = {'col1': np.floor(np.random.uniform(20,30,50)), 'col2': np.floor(np.random.uniform(15,25,50)), 'col3': np.floor(np.random.uniform(10,30,50))}
+df2 = pd.DataFrame(data = d2)
+y2 = 1.5 * df.col1 - 0.25 * df.col2  - 0.75 * df.col3 + np.random.normal(0, 1, 50)
+
+d3 = {'col1': np.floor(np.random.uniform(20,30,50)), 'col2': np.floor(np.random.uniform(15,25,50)), 'col3': np.floor(np.random.uniform(10,30,50))}
+df3 = pd.DataFrame(data = d2)
+y3 = 1.5 * df.col1 - 0.25 * df.col2  - 0.75 * df.col3 + np.random.normal(0, 1, 50)
+
+
+reg1 = lm.SGDRegressor(max_iter = 1000, tol=1e-3)
+reg2 = lm.SGDRegressor(max_iter = 1000, tol=1e-3)
+
+
+scaled_df1 = scale(df1)
+scaled_df2 = scale(df2)
+scaled_df3 = scale(df3)
+
+reg1.partial_fit(scaled_df1, y1)
+reg1.partial_fit(scaled_df2, y2)
+#reg2.partial_fit(scaled_df1, y1)
+reg2.partial_fit(scaled_df2, y2)
+
+reg1.predict(scaled_df3) - reg2.predict(scaled_df3)
+
+
+
+
+
+
+
+
+
+
+
+
+
+###
+reg2 = make_pipeline(StandardScaler(),lm.SGDRegressor(max_iter=1000, tol=1e-3, warm_start = True))
+reg2.fit(df1, y1)
+reg2.fit(df2, y2)
+reg2.predict(df3) - y3
+
+
+reg2.fit(df1, y1)
+reg2.predict(df3) - y3
+
+
+
+
+
+
+def lin_reg_weights(edges): 
+    regr = linear_model.LinearRegression()
+    regr.fit(X, y)
+    
+    
+
+
+
+
+
+
+## LOSS: (w - w-hat)^2
+## Idea: input graphs one at a time. Get path matrix from graph. 
+
 
 
 if __name__ == '__main__':
@@ -103,18 +154,10 @@ if __name__ == '__main__':
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
     
-    ### LINEAR MODEL
-    if cmd_args.lin_model:
-        lin_model = EdgeWeightLinearModel(cmd_args).to(cmd_args.device)
-        if cmd_args.phase != 'train'
-            with open(cmd_args.save_dir + 'lin_model.pkl', 'rb') as f:
-                lin_model = cp.load(f)    
-    ###
     
     if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
         print('loading from', cmd_args.model_dump)
         model.load_state_dict(torch.load(cmd_args.model_dump))
-
     
     #########################################################################################################
     if cmd_args.phase != 'train':
@@ -131,16 +174,16 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
+                #print("edges: ", pred_edges)
+                #print("edge feats:",  pred_edge_feats)
+                if has_node_feats:
+                    pred_g = nx.Graph()
+                    pred_g.add_nodes_from(range(num_nodes))
+                    #print(pred_node_feats)
+                    sys.exit()
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
-                    if cmd_args.lin_model:
-                        temp_g = nx.Graph()
-                        temp_g.add_edges_from(pred_edges)
-                        
-                        features = nx.adjacency_matrix(temp_g).todense()
-                        feature_matrix = np.delete(features, -1, axis=1)
-                        predicted_edge_feats = lin_model.predict(features)
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
@@ -245,15 +288,6 @@ if __name__ == '__main__':
                     ll, _, _, _ = model(node_end = n, edge_list = edgelist, weights = weightdict)
             else:
                 ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
-                
-                if cmd_args.lin_model:
-                    for idx in batch_indices:
-                        g = train_graphs[idx]
-                        weights = edge_feats[idx]
-                        features = nx.adjacency_matrix(g).todense()
-                        feature_matrix = np.delete(features, -1, axis=1)
-                        lin_model.train(feature_matrix, weights))
-            
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()
@@ -270,18 +304,9 @@ if __name__ == '__main__':
         if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
-            if cmd_args.lin_model:
-                with open(cmd_args.save_dir + 'lin_model.pkl', 'wb') as f:
-                    cp.dump(lin_model, f, cp.HIGHEST_PROTOCOL)
         #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
         #print(pred_edges)
         #print(pred_node_feats)
         #print(pred_edge_feats)
     print("Model training complete.")
-    
-    
-    
-    
-    
-    
     

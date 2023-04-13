@@ -23,6 +23,8 @@ import pickle as cp
 import torch
 
 cmd_opt = argparse.ArgumentParser(description='Argparser for grecur', allow_abbrev=False)
+cmd_opt.add_argument('-lin_model', default = False, help = 'run linear model?')
+cmd_opt.add_argument('-lin_model_path', default = '', help = 'file path to linear model')
 cmd_opt.add_argument('-save_dir', default='.', help='result output root')
 cmd_opt.add_argument('-file_name', default='.', help='file name to be loaded') ### ADDED
 cmd_opt.add_argument('-gen_graphs', default=False, help='whether we want to generate graphs after training') ### ADDED
@@ -37,44 +39,44 @@ cmd_opt.add_argument('-gpu', type=int, default=-1, help='-1: cpu; 0 - ?: specifi
 cmd_opt.add_argument('-num_proc', type=int, default=1, help='number of processes')
 cmd_opt.add_argument('-node_order', default='default', help='default/DFS/BFS/degree_descent/degree_accent/k_core/all, or any of them concat by +')
 
-cmd_opt.add_argument('-dist_backend', default='gloo', help='dist package backend', choices=['gloo', 'nccl'])
+cmd_opt.add_argument('-dist_backend', default='gloo', help='dist package backend', choices=['gloo', 'nccl']) ###
 
 cmd_opt.add_argument('-embed_dim', default=256, type=int, help='embed size')
-cmd_opt.add_argument('-bits_compress', default=256, type=int, help='num of bits to compress')
-cmd_opt.add_argument('-param_layers', default=1, type=int, help='num of param groups')
+cmd_opt.add_argument('-bits_compress', default=256, type=int, help='num of bits to compress') ###
+cmd_opt.add_argument('-param_layers', default=1, type=int, help='num of param groups') ###
 cmd_opt.add_argument('-num_test_gen', default=-1, type=int, help='num of graphs generated for test')
 cmd_opt.add_argument('-max_num_nodes', default=-1, type=int, help='max num of nodes')
 
 
-cmd_opt.add_argument('-rnn_layers', default=2, type=int, help='num layers in rnn')
+cmd_opt.add_argument('-rnn_layers', default=2, type=int, help='num layers in rnn') ######
 cmd_opt.add_argument('-seed', default=34, type=int, help='seed')
-cmd_opt.add_argument('-learning_rate', default=1e-3, type=float, help='learning rate')
-cmd_opt.add_argument('-grad_clip', default=5, type=float, help='gradient clip')
+cmd_opt.add_argument('-learning_rate', default=1e-3, type=float, help='learning rate') #####
+cmd_opt.add_argument('-grad_clip', default=5, type=float, help='gradient clip') ########
 cmd_opt.add_argument('-train_ratio', default=0.8, type=float, help='ratio for training')
 cmd_opt.add_argument('-dev_ratio', default=0.2, type=float, help='ratio for dev')
-cmd_opt.add_argument('-greedy_frac', default=0, type=float, help='prob for greedy decode')
+cmd_opt.add_argument('-greedy_frac', default=0, type=float, help='prob for greedy decode') #######
 
 cmd_opt.add_argument('-num_epochs', default=100000, type=int, help='num epochs')
 cmd_opt.add_argument('-batch_size', default=10, type=int, help='batch size')
-cmd_opt.add_argument('-pos_enc', default=True, type=eval, help='pos enc?')
-cmd_opt.add_argument('-pos_base', default=10000, type=int, help='base of pos enc')
+cmd_opt.add_argument('-pos_enc', default=True, type=eval, help='pos enc?') ##########
+cmd_opt.add_argument('-pos_base', default=10000, type=int, help='base of pos enc') #########
 
 cmd_opt.add_argument('-old_model', default=False, type=eval, help='old model dumps?')
 
 cmd_opt.add_argument('-tree_pos_enc', default=False, type=eval, help='pos enc for tree?')
 
 cmd_opt.add_argument('-blksize', default=-1, type=int, help='num blksize steps')
-cmd_opt.add_argument('-accum_grad', default=1, type=int, help='accumulate grad for batching purpose')
+cmd_opt.add_argument('-accum_grad', default=1, type=int, help='accumulate grad for batching purpose') 
 
 cmd_opt.add_argument('-epoch_save', default=100, type=int, help='num epochs between save')
 cmd_opt.add_argument('-epoch_load', default=None, type=int, help='epoch for loading')
 
-cmd_opt.add_argument('-batch_exec', default=False, type=eval, help='run with dynamic batching?')
+cmd_opt.add_argument('-batch_exec', default=False, type=eval, help='run with dynamic batching?') #####
 
-cmd_opt.add_argument('-share_param', default=True, type=eval, help='share param in each level?')
+cmd_opt.add_argument('-share_param', default=True, type=eval, help='share param in each level?') #####
 cmd_opt.add_argument('-directed', default=False, type=eval, help='is directed graph?')
 cmd_opt.add_argument('-self_loop', default=False, type=eval, help='has self-loop?')
-cmd_opt.add_argument('-bfs_permute', default=False, type=eval, help='random permute with bfs?')
+cmd_opt.add_argument('-bfs_permute', default=False, type=eval, help='random permute with bfs?') #######
 cmd_opt.add_argument('-display', default=False, type=eval, help='display progress?')
 
 cmd_opt.add_argument('-has_edge_feats', default=False, type=eval, help='has edge features?')

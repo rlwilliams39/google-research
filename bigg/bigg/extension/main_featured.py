@@ -102,7 +102,7 @@ if __name__ == '__main__':
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
-    
+    print("ARGUMENT", cmd_args.lin_model)
     ### LINEAR MODEL
     if cmd_args.lin_model:
         lin_model = EdgeWeightLinearModel(cmd_args).to(cmd_args.device)

@@ -18,13 +18,13 @@ class EdgeWeightLinearModel:
         #super().__init__(args)
         self.lin_mod = make_pipeline(StandardScaler(),lm.SGDRegressor(max_iter=1000, tol=1e-3, warm_start = True))
     
-    def train(features, weights):
+    def train(self, features, weights):
         self.lin_mod.fit(features, weights)
     
-    def rep_train(list_features, list_weights):
+    def rep_train(self, list_features, list_weights):
         for features, weights in zip(list_features, list_weights):
             self.drain(features, weights)
     
-    def predict(features):
+    def predict(self, features):
         weights = self.lin_mod.predict(features)
         return features

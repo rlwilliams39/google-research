@@ -165,7 +165,7 @@ if __name__ == '__main__':
                 print("edges:", g.edges(data=True))
                 counter += 1
         
-        if cmd_args.has_edge_feats:
+        if False: #cmd_args.has_edge_feats:
             print("Generating Statistics for ", cmd_args.file_name)
             final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
             print("final_g len: ", len(final_graphs))
@@ -251,6 +251,17 @@ if __name__ == '__main__':
                         g = train_graphs[idx]
                         weights = list_edge_feats[idx]
                         features = nx.adjacency_matrix(g).todense()
+                        ### Do SVD on Adjacency Matrix: take ___ columns of U from __ largest SVD
+                        ### Multivariate Linear Regression................................
+                        
+                        Y = XB + E
+                        nx1 nxp px1 nx1
+                        
+                        n = # graphs
+                        
+                        Y   = XB + E
+                        nxd = nx
+                        
                         feature_matrix = np.delete(features, -1, axis=1)
                         lin_model.train(feature_matrix, weights)
             

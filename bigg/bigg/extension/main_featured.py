@@ -254,13 +254,13 @@ if __name__ == '__main__':
                         ### Do SVD on Adjacency Matrix: take ___ columns of U from __ largest SVD
                         ### Multivariate Linear Regression................................
                         
-                        Y = XB + E
-                        nx1 nxp px1 nx1
+                        #Y = XB + E
+                        #nx1 nxp px1 nx1
                         
-                        n = # graphs
+                        #n = # graphs
                         
-                        Y   = XB + E
-                        nxd = nx
+                        #Y   = XB + E
+                        #nxd = nx
                         
                         feature_matrix = np.delete(features, -1, axis=1)
                         lin_model.train(feature_matrix, weights)

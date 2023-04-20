@@ -102,7 +102,7 @@ if __name__ == '__main__':
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
-    print("ARGUMENT", cmd_args.lin_model)
+    #print("ARGUMENT", cmd_args.lin_model)
     ### LINEAR MODEL
     if cmd_args.lin_model:
         lin_model = EdgeWeightLinearModel(cmd_args)
@@ -122,6 +122,15 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
+        if cmd_args.simple_normal:
+            all_weights = []
+            for g in train_graphs:
+                weights = [g[n1][n2]['weight'] for (n1, n2, w) in g.edges(data=True)]
+                all_weights += weights
+            np_all_weights = np.log(np.exp(np.array(all_weights))-1)
+            mu_hat = np.mean(np_all_weights)
+            s_hat = np.std(np_all_weights, ddof = 1)
+        
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
         with open(path, 'rb') as f:
             gt_graphs = cp.load(f)
@@ -138,9 +147,20 @@ if __name__ == '__main__':
                         temp_g = nx.Graph()
                         temp_g.add_edges_from(pred_edges)
                         
-                        features = nx.adjacency_matrix(temp_g).todense()
-                        feature_matrix = np.delete(features, -1, axis=1)
+                        feature_matrix = np.zeros(shape = (int(n*(n-1)/2), n))
+                        
+                        row = 0
+                        for i in range(n):
+                            for k in range(i+1, n):
+                                feature_matrix[row][i] = 1  
+                                feature_matrix[row][k] = 1 
+                                row += 1
                         predicted_edge_feats = lin_model.predict(features)
+                    
+                    if cmd_args.simple_normal:
+                        predicted_edge_feats = np.random.normal(mu_hat, s_hat)
+                        predicted_edge_feats = np.log(np.exp(np.array(predicted_edge_feats))+1)
+                    
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
@@ -249,10 +269,25 @@ if __name__ == '__main__':
                 if cmd_args.lin_model:
                     for idx in batch_indices:
                         g = train_graphs[idx]
-                        weights = list_edge_feats[idx]
-                        features = nx.adjacency_matrix(g).todense()
+                        #weights = list_edge_feats[idx]
+                        W = nx.adjacency_matrix(g).todense()
+                        
+                        weights = W[np.triu_indices(len(W), k = 1)]
+                        weights = np.array([max(10**-9, w) for w in weights])
+                        weights = np.log(np.exp(weights)-1)
                         ### Do SVD on Adjacency Matrix: take ___ columns of U from __ largest SVD
                         ### Multivariate Linear Regression................................
+                        
+                        
+                        n = len(g)
+                        feature_matrix = np.zeros(shape = (int(n*(n-1)/2), n))
+                        
+                        row = 0
+                        for i in range(n):
+                            for k in range(i+1, n):
+                                feature_matrix[row][i] = 1  
+                                feature_matrix[row][k] = 1 
+                                row += 1
                         
                         #Y = XB + E
                         #nx1 nxp px1 nx1
@@ -262,8 +297,8 @@ if __name__ == '__main__':
                         #Y   = XB + E
                         #nxd = nx
                         
-                        feature_matrix = np.delete(features, -1, axis=1)
                         lin_model.train(feature_matrix, weights)
+                
             
             loss = -ll / num_nodes
             loss.backward()
@@ -291,7 +326,33 @@ if __name__ == '__main__':
     print("Model training complete.")
     
     
-    
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     
     
     

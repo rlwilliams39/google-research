@@ -141,7 +141,7 @@ if __name__ == '__main__':
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
                 
-                if cmd_args.has_edge_feats:
+                if cmd_args.has_edge_feats or cmd_args.simple_normal:
                     weighted_edges = []
                     if cmd_args.lin_model:
                         temp_g = nx.Graph()

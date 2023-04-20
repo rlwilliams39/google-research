@@ -158,8 +158,8 @@ if __name__ == '__main__':
                         predicted_edge_feats = lin_model.predict(features)
                     
                     if cmd_args.simple_normal:
-                        predicted_edge_feats = np.random.normal(mu_hat, s_hat)
-                        predicted_edge_feats = np.log(np.exp(np.array(predicted_edge_feats))+1)
+                        pred_edge_feats = np.random.normal(mu_hat, s_hat)
+                        pred_edge_feats = np.log(np.exp(np.array(predicted_edge_feats))+1)
                     
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)

@@ -155,16 +155,17 @@ if __name__ == '__main__':
                                 feature_matrix[row][i] = 1  
                                 feature_matrix[row][k] = 1 
                                 row += 1
-                        predicted_edge_feats = lin_model.predict(features)
+                        pred_edge_feats = lin_model.predict(features)
                     
                     if cmd_args.simple_normal:
-                        pred_edge_feats = np.random.normal(mu_hat, s_hat)
+                        pred_edge_feats = np.random.normal(mu_hat, s_hat, len(pred_edges))
                         pred_edge_feats = np.log(np.exp(np.array(pred_edge_feats))+1)
                     
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
-                        w = w.item()
+                        if not cmd_args.simple_normal:
+                            w = w.item()
                         w = np.round(w, 4)
                         edge = (e[1], e[0], w)
                         #print("edge:", edge)

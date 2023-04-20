@@ -159,7 +159,7 @@ if __name__ == '__main__':
                     
                     if cmd_args.simple_normal:
                         pred_edge_feats = np.random.normal(mu_hat, s_hat)
-                        pred_edge_feats = np.log(np.exp(np.array(predicted_edge_feats))+1)
+                        pred_edge_feats = np.log(np.exp(np.array(pred_edge_feats))+1)
                     
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)

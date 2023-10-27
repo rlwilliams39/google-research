@@ -145,8 +145,8 @@ if __name__ == '__main__':
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
-                        if cmd_args.alt_edge_feats is None:
-                            w = w.item()
+                        #if cmd_args.alt_edge_feats is None:
+                        w = w.item()
                         w = np.round(w, 4)
                         edge = (e[1], e[0], w)
                         #print("edge:", edge)

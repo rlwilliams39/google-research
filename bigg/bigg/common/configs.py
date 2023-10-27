@@ -25,6 +25,7 @@ import torch
 cmd_opt = argparse.ArgumentParser(description='Argparser for grecur', allow_abbrev=False)
 cmd_opt.add_argument('-lin_model', default = False, help = 'run linear model?')
 cmd_opt.add_argument('-lin_model_path', default = '', help = 'file path to linear model')
+cmd_opt.add_argument('-weight_gen_type', default = None, help = 'How to sample weights; alt parameterization')
 cmd_opt.add_argument('-simple_normal', default = False, help = 'implement simple normal model?')
 cmd_opt.add_argument('-save_dir', default='.', help='result output root')
 cmd_opt.add_argument('-file_name', default='.', help='file name to be loaded') ### ADDED

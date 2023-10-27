@@ -37,6 +37,8 @@ from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 from scipy.stats.distributions import chi2
 from bigg.extension.graph_stats import *
+from bigg.extension.alternative_model import *
+from bigg.train_creator.train_data_generator import *
 
 
 def get_node_feats(g):
@@ -84,10 +86,14 @@ if __name__ == '__main__':
     #train_graphs = nx.readwrite.read_gpickle()
     
     
-    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
-    print(path)
-    with open(path, 'rb') as f:
-        train_graphs = cp.load(f)
+    #path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
+    #print(path)
+    #with open(path, 'rb') as f:
+    #    train_graphs = cp.load(f)
+    
+    train_graphs = graph_generator(n = 5, num_graphs = 5000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = False)
+    for i in range(50):
+        print(train_graphs[i].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
@@ -122,14 +128,6 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
-        if cmd_args.simple_normal:
-            all_weights = []
-            for g in train_graphs:
-                weights = [g[n1][n2]['weight'] for (n1, n2, w) in g.edges(data=True)]
-                all_weights += weights
-            np_all_weights = np.log(np.exp(np.array(all_weights))-1)
-            mu_hat = np.mean(np_all_weights)
-            s_hat = np.std(np_all_weights, ddof = 1)
         
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
         with open(path, 'rb') as f:
@@ -140,31 +138,14 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
+                pred_edge_feats = weight_generator(cmd_args.weight_gen_type, pred_edges, pred_edge_feats, train_graphs)
                 
-                if cmd_args.has_edge_feats or cmd_args.simple_normal:
+                if cmd_args.has_edge_feats or cmd_args.weight_gen_type is not None:
                     weighted_edges = []
-                    if cmd_args.lin_model:
-                        temp_g = nx.Graph()
-                        temp_g.add_edges_from(pred_edges)
-                        
-                        feature_matrix = np.zeros(shape = (int(n*(n-1)/2), n))
-                        
-                        row = 0
-                        for i in range(n):
-                            for k in range(i+1, n):
-                                feature_matrix[row][i] = 1  
-                                feature_matrix[row][k] = 1 
-                                row += 1
-                        pred_edge_feats = lin_model.predict(features)
-                    
-                    if cmd_args.simple_normal:
-                        pred_edge_feats = np.random.normal(mu_hat, s_hat, len(pred_edges))
-                        pred_edge_feats = np.log(np.exp(np.array(pred_edge_feats))+1)
-                    
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
-                        if not cmd_args.simple_normal:
+                        if cmd_args.alt_edge_feats is None:
                             w = w.item()
                         w = np.round(w, 4)
                         edge = (e[1], e[0], w)

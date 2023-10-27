@@ -130,28 +130,6 @@ def B5_stats(graphs, transform = False):
         weights = []
         tree_var = []
         tree_mean = []
-        num_skip = 0
-        num_tree = 0
-        good_graphs = []
-        for T in cur_graphs:
-            cont = False
-            if nx.is_tree(T):
-                ## T is a tree. need to assert bifurcating
-                leaves = [n for n in T.nodes() if T.degree(n) == 1]
-                internal = [n for n in T.nodes() if T.degree(n) == 3]
-                root = [n for n in T.nodes() if T.degree(n) == 2]
-                
-                if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
-                    num_tree += 1
-                else:
-                    num_skip += 1
-                    cont = True
-            else:
-                cont = True
-                num_skip += 1
-            
-            if cont:
-                continue
             
             good_graphs.append(T)
             T_weights = []

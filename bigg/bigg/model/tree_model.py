@@ -693,6 +693,7 @@ class RecurTreeGen(nn.Module):
                 print("edge_feats: ", edge_feats)
                 print("Cur_states: ", cur_states)
                 print("edge_state: ", edge_state)
+                print("target_feats: ", target_feats)
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break
             cur_states = (cur_states[0][is_nonleaf], cur_states[1][is_nonleaf])

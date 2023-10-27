@@ -138,9 +138,9 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
-                pred_edge_feats = weight_generator(cmd_args.weight_gen_type, pred_edges, pred_edge_feats, train_graphs)
+                #pred_edge_feats = weight_generator(cmd_args.weight_gen_type, pred_edges, pred_edge_feats, train_graphs)
                 
-                if cmd_args.has_edge_feats or cmd_args.weight_gen_type is not None:
+                if cmd_args.has_edge_feats:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)

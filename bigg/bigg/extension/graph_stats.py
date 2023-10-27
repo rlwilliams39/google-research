@@ -27,6 +27,8 @@ def graph_stat_gen(graphs, train, test, kind = None):
     softplus2 = False
     print("lognormal? ", lognormal)
     print("softplus2? ", softplus2)
+    results = B5_stats(graphs, transform = True)
+    print(results)
     
     collect_graphs = [train, graphs, test]
     if kind is None:
@@ -115,18 +117,18 @@ def A1_stats(graphs):
 
 
 def B5_stats(graphs, transform = False):
-    test_graphs = graphs[2]
-    for idx in range(2):
-        cur_graphs = graphs[idx]
+    #test_graphs = graphs[2]
+    for idx in range(1):
+        cur_graphs = graphs#[idx]
         
-        if idx == 0:
-            print("TRAINING GRAPHS:")
-            k = len(cur_graphs[0].edges())
-        else:
-            print("GENERATED GRAPHS:")
+        #if idx == 0:
+        #    print("TRAINING GRAPHS:")
+        #    k = len(cur_graphs[0].edges())
+        #else:
+        #    print("GENERATED GRAPHS:")
         
         
-        dist = np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
+        dist = 0 #np.round(dist_met(cur_graphs, test_graphs, N = 100000, swap = (idx != 0), scale = True), 3)
         weights = []
         tree_var = []
         tree_mean = []

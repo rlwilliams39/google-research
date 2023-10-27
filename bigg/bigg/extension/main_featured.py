@@ -169,7 +169,7 @@ if __name__ == '__main__':
         
         if True: #cmd_args.has_edge_feats:
             print("Generating Statistics for ", cmd_args.file_name)
-            final_graphs = graph_stat_gen(gen_graphs, train_graphs, gt_graphs, kind = cmd_args.file_name)
+            final_graphs = graph_stat_gen(gen_graphs)#, train_graphs)#, gt_graphs, kind = cmd_args.file_name)
             print("final_g len: ", len(final_graphs))
         
         else:

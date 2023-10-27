@@ -28,7 +28,7 @@ def graph_stat_gen(graphs):#, train, test, kind = None):
     print("lognormal? ", lognormal)
     print("softplus2? ", softplus2)
     results = B5_stats(graphs, transform = False)
-    print(results)
+    #print(results)
     
     collect_graphs = [train, graphs, test]
     if kind is None:

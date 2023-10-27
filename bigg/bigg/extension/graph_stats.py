@@ -22,7 +22,7 @@ from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 from scipy.stats.distributions import chi2
 
 
-def graph_stat_gen(graphs, train, test, kind = None):
+def graph_stat_gen(graphs):#, train, test, kind = None):
     lognormal = False
     softplus2 = False
     print("lognormal? ", lognormal)

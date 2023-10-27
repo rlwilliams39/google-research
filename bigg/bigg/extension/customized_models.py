@@ -120,6 +120,8 @@ class BiggWithEdgeLen(RecurTreeGen):
         
         lognormal = False
         b = 1.0
+        print(edge_feats)
+        print(TOFU)
         
         if edge_feats is None:
             ll = 0
@@ -152,7 +154,6 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             k = len(params)
             y = torch.tensor([0]).repeat(k).to('cuda')
-            #y = torch.tensor([0]).repeat(k)
             z = 1 - y
             
             ## MEAN AND VARIANCE OF LOGNORMAL

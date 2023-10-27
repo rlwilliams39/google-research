@@ -120,7 +120,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         
         lognormal = False
         b = 1.0
-        print(edge_feats)
+        #print(edge_feats)
         
         if edge_feats is None:
             ll = 0

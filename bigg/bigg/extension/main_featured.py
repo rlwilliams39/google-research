@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #with open(path, 'rb') as f:
     #    train_graphs = cp.load(f)
     
-    train_graphs = graph_generator(n = 5, num_graphs = 5000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = False)
+    train_graphs = graph_generator(n = 5, num_graphs = 5000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     for i in range(50):
         print(train_graphs[i].edges(data=True))
     
@@ -103,7 +103,7 @@ if __name__ == '__main__':
     if max_num_nodes < 100:
         print(train_graphs[0].edges(data=True))
     
-    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs]    
+    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 

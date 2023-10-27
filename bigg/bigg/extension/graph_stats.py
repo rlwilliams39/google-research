@@ -130,7 +130,7 @@ def B5_stats(graphs, transform = False):
         weights = []
         tree_var = []
         tree_mean = []
-            
+        for T in graphs:    
             good_graphs.append(T)
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):

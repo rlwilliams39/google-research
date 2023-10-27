@@ -27,7 +27,7 @@ def graph_stat_gen(graphs):#, train, test, kind = None):
     softplus2 = False
     print("lognormal? ", lognormal)
     print("softplus2? ", softplus2)
-    results = B5_stats(graphs, transform = True)
+    results = B5_stats(graphs, transform = False)
     print(results)
     
     collect_graphs = [train, graphs, test]
@@ -137,6 +137,7 @@ def B5_stats(graphs, transform = False):
         correct = 0
         good_graphs = []
         
+        print("Hi 1")
         for T in graphs:
             if nx.is_tree(T):
                 leaves = [n for n in T.nodes() if T.degree(n) == 1]
@@ -146,6 +147,7 @@ def B5_stats(graphs, transform = False):
                 correct += 1
                 good_graphs.append(T)        
         
+        print("Hi 2")
         for T in good_graphs:    
             good_graphs.append(T)
             T_weights = []
@@ -159,6 +161,7 @@ def B5_stats(graphs, transform = False):
             tree_var.append(np.var(T_weights, ddof = 1))
             tree_mean.append(np.mean(T_weights))
         
+        print("Hi 3")
         xbar = np.mean(weights)
         s = np.std(weights, ddof = 1)
         n = len(weights)

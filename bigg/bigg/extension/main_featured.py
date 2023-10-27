@@ -36,7 +36,7 @@ from bigg.extension.customized_models import BiggWithEdgeLen
 from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 from scipy.stats.distributions import chi2
-#from bigg.extension.graph_stats import *
+from bigg.extension.graph_stats import *
 #from bigg.extension.alternative_model import *
 from bigg.train_creator.train_data_generator import *
 

@@ -148,8 +148,7 @@ def B5_stats(graphs, transform = False):
                 good_graphs.append(T)        
         
         print("Hi 2")
-        for T in good_graphs:    
-            good_graphs.append(T)
+        for T in good_graphs:
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):
                 if transform:

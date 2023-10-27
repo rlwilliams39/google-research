@@ -132,7 +132,21 @@ def B5_stats(graphs, transform = False):
         weights = []
         tree_var = []
         tree_mean = []
-        for T in graphs:    
+        good_graphs = []
+        
+        correct = 0
+        good_graphs = []
+        
+        for T in graphs:
+            if nx.is_tree(T):
+                leaves = [n for n in T.nodes() if T.degree(n) == 1]
+                internal = [n for n in T.nodes() if T.degree(n) == 3]
+                root = [n for n in T.nodes() if T.degree(n) == 2]
+            if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
+                correct += 1
+                good_graphs.append(T)        
+        
+        for T in good_graphs:    
             good_graphs.append(T)
             T_weights = []
             for (n1, n2, w) in T.edges(data = True):
@@ -159,8 +173,8 @@ def B5_stats(graphs, transform = False):
         tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
         tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
         
-        print("NUMBER SKIPPED: ", num_skip)
-        print("NUMBER CORRECT TREE: ", num_tree)
+        #print("NUMBER SKIPPED: ", num_skip)
+        print("NUMBER CORRECT TREE: ", correct)
         print("dist, mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
         results = [dist, xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
         print(np.round(results, 3))

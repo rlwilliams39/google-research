@@ -143,9 +143,9 @@ def B5_stats(graphs, transform = False):
                 leaves = [n for n in T.nodes() if T.degree(n) == 1]
                 internal = [n for n in T.nodes() if T.degree(n) == 3]
                 root = [n for n in T.nodes() if T.degree(n) == 2]
-            if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
-                correct += 1
-                good_graphs.append(T)        
+                if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
+                    correct += 1
+                    good_graphs.append(T)        
         
         print("Hi 2")
         for T in good_graphs:

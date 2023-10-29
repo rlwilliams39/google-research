@@ -158,7 +158,12 @@ if __name__ == '__main__':
                 
                 else:
                     pred_g = nx.Graph()
-                    pred_g.add_edges_from(pred_edges)
+                    fixed_edges = []
+                    for e in pred_edges:
+                        w = 1.0
+                        edge = (e[0], e[1], w)
+                        fixed_edges.append(edge)
+                    pred_g.add_weighted_edges_from(fixed_edges)
                     gen_graphs.append(pred_g)
          
         counter = 0

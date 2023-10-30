@@ -671,6 +671,9 @@ class RecurTreeGen(nn.Module):
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
+        print(edge_feats)
+        print(cur_states)
+        print(TOFU)
 
         lv = 0
         while True:

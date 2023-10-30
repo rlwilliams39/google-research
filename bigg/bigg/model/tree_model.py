@@ -736,5 +736,8 @@ class RecurTreeGen(nn.Module):
             cur_states = tuple(new_states)
             lv += 1
         print(next_states)
+        print(next_states[0].size())
         print(TOFU)
+        
+        
         return ll, next_states

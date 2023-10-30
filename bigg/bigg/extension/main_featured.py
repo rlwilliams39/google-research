@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #with open(path, 'rb') as f:
     #    train_graphs = cp.load(f)
     
-    train_graphs = graph_generator(n = 3, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    train_graphs = graph_generator(n = 5, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     for i in range(2):
         print(train_graphs[i].edges(data=True))
     
@@ -254,42 +254,8 @@ if __name__ == '__main__':
                     ll = ll_i + ll
             else:
                 ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
-                
-                if cmd_args.lin_model:
-                    for idx in batch_indices:
-                        g = train_graphs[idx]
-                        #weights = list_edge_feats[idx]
-                        W = nx.adjacency_matrix(g).todense()
-                        
-                        weights = W[np.triu_indices(len(W), k = 1)]
-                        weights = np.array([max(10**-9, w) for w in weights])
-                        weights = np.log(np.exp(weights)-1)
-                        ### Do SVD on Adjacency Matrix: take ___ columns of U from __ largest SVD
-                        ### Multivariate Linear Regression................................
-                        
-                        
-                        n = len(g)
-                        feature_matrix = np.zeros(shape = (int(n*(n-1)/2), n))
-                        
-                        row = 0
-                        for i in range(n):
-                            for k in range(i+1, n):
-                                feature_matrix[row][i] = 1  
-                                feature_matrix[row][k] = 1 
-                                row += 1
-                        
-                        #Y = XB + E
-                        #nx1 nxp px1 nx1
-                        
-                        #n = # graphs
-                        
-                        #Y   = XB + E
-                        #nxd = nx
-                        
-                        lin_model.train(feature_matrix, weights)
-                
             
-            loss = -ll / num_nodes
+            loss = -ll
             loss.backward()
             loss = loss.item()
 

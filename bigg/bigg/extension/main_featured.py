@@ -200,7 +200,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     # debug_model(model, train_graphs[0], list_node_feats[0], list_edge_feats[0])
-    serialized = False
+    serialized = True
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     #scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) ##added

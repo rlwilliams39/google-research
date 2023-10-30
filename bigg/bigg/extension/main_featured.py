@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #with open(path, 'rb') as f:
     #    train_graphs = cp.load(f)
     
-    train_graphs = graph_generator(n = 5, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    train_graphs = graph_generator(n = 3, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     for i in range(2):
         print(train_graphs[i].edges(data=True))
     
@@ -226,6 +226,7 @@ if __name__ == '__main__':
             
             
             if serialized:
+                total_ll = 0
                 for ind in batch_indices:
                     g = train_graphs[ind]
                     n = len(g)
@@ -250,6 +251,7 @@ if __name__ == '__main__':
                     
                     ### Compute log likelihood, loss
                     ll, _, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    total_ll = ll + total_ll
             else:
                 ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
                 

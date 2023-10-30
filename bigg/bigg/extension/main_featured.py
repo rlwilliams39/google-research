@@ -226,7 +226,7 @@ if __name__ == '__main__':
             
             
             if serialized:
-                total_ll = 0
+                ll = 0
                 for ind in batch_indices:
                     g = train_graphs[ind]
                     n = len(g)
@@ -250,8 +250,8 @@ if __name__ == '__main__':
                         weightdict[e] = data['weight']
                     
                     ### Compute log likelihood, loss
-                    ll, _, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
-                    total_ll = ll + total_ll
+                    ll_i, _, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    ll = ll_i + ll
             else:
                 ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
                 

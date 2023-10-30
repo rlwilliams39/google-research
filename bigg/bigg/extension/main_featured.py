@@ -251,7 +251,7 @@ if __name__ == '__main__':
                     
                     ### Compute log likelihood, loss
                     print(g.edges(data=True))
-                    print(edges)
+                    print(edgelist)
                     print(list_edge_feats[ind])
                     ll_i, _, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll

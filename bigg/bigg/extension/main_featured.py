@@ -235,8 +235,8 @@ if __name__ == '__main__':
                     ### Obtaining edge list 
                     edgelist = []
                     for e in g.edges():
-                        if e[0] < e[1]:
-                            e = (e[1], e[0])
+                        #if e[0] < e[1]:
+                        #    e = (e[1], e[0])
                         edgelist.append((e[0], e[1]))
                     edgelist.sort(key = lambda x: x[0])
                     

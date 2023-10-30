@@ -249,7 +249,7 @@ if __name__ == '__main__':
                         weightdict[e] = data['weight']
                     
                     ### Compute log likelihood, loss
-                    ll, _, _, _ = model(node_end = n, edge_list = edgelist, weights = weightdict)
+                    ll, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
             else:
                 ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
                 

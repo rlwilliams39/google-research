@@ -230,33 +230,33 @@ if __name__ == '__main__':
                 for ind in batch_indices:
                     g = train_graphs[ind]
                     n = len(g)
-                    m = len(g.edges())
+                    #m = len(g.edges())
                     
                     ### Obtaining edge list 
                     edgelist = []
                     for e in g.edges():
-                        #if e[0] < e[1]:
-                        #    e = (e[1], e[0])
+                        if e[0] < e[1]:
+                            e = (e[1], e[0])
                         edgelist.append((e[0], e[1]))
                     edgelist.sort(key = lambda x: x[0])
                     
                     ### Obtaining weights list
-                    weightdict = dict()
-                    for node1, node2, data in g.edges(data=True):
-                        if node1 < node2:
-                            e = (node2, node1)
-                        else:
-                            e = (node1, node2)
-                        weightdict[e] = data['weight']
+                    #weightdict = dict()
+                    #for node1, node2, data in g.edges(data=True):
+                    #    if node1 < node2:
+                    #        e = (node2, node1)
+                    #    else:
+                    #        e = (node1, node2)
+                    #    weightdict[e] = data['weight']
                     
                     ### Compute log likelihood, loss
-                    print(g.edges(data=True))
-                    print(edgelist)
-                    print(list_edge_feats[ind])
+                    #print(g.edges(data=True))
+                    #print(edgelist)
+                    #print(list_edge_feats[ind])
                     ll_i, _, _, _, _ = model(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:
-                ll, _ = model.forward_train(batch_indices, node_feats=None, edge_feats = edge_feats)
+                ll, _ = model.forward_train(batch_indices, node_feats = None, edge_feats = edge_feats)
             
             loss = -ll
             loss.backward()

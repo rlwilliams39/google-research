@@ -100,22 +100,12 @@ if __name__ == '__main__':
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
-    if max_num_nodes < 100:
-        print(train_graphs[0].edges(data=True))
     
-    #list_node_feats = [torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
+    list_node_feats = None #[torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
 
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
-    #print("ARGUMENT", cmd_args.lin_model)
-    ### LINEAR MODEL
-    if cmd_args.lin_model:
-        lin_model = EdgeWeightLinearModel(cmd_args)
-        if cmd_args.phase != 'train':
-            with open(cmd_args.save_dir + 'lin_model.pkl', 'rb') as f:
-                lin_model = cp.load(f)    
-    ###
     
     if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
         print('loading from', cmd_args.model_dump)
@@ -128,7 +118,6 @@ if __name__ == '__main__':
         print("Now generating sampled graphs...")
         num_node_dist = get_node_dist(train_graphs)
         
-        
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
         #with open(path, 'rb') as f:
         #    gt_graphs = cp.load(f)
@@ -138,20 +127,16 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
-                #pred_edge_feats = weight_generator(cmd_args.weight_gen_type, pred_edges, pred_edge_feats, train_graphs)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         #print("e: ", e)
                         assert e[0] > e[1]
-                        #if cmd_args.alt_edge_feats is None:
                         w = w.item()
                         w = np.round(w, 4)
                         edge = (e[1], e[0], w)
-                        #print("edge:", edge)
                         weighted_edges.append(edge)
-                    #print("weighted edges: ", weighted_edges)
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)
                     gen_graphs.append(pred_g)
@@ -172,7 +157,7 @@ if __name__ == '__main__':
                 print("edges:", g.edges(data=True))
                 counter += 1
         
-        if True: #cmd_args.has_edge_feats:
+        if cmd_args.has_edge_feats:
             print("Generating Statistics for ", cmd_args.file_name)
             final_graphs = graph_stat_gen(gen_graphs)#, train_graphs)#, gt_graphs, kind = cmd_args.file_name)
             print("final_g len: ", len(final_graphs))
@@ -208,6 +193,7 @@ if __name__ == '__main__':
     
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
+    
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
         pbar = tqdm(range(cmd_args.epoch_save))
 
@@ -217,20 +203,14 @@ if __name__ == '__main__':
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
-            #node_feats = torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
-            #node_feats = node_feats[1:]
-            
-            #print(node_feats)
-            #sys.exit()
+            node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
-            
             
             if serialized:
                 ll = 0
                 for ind in batch_indices:
                     g = train_graphs[ind]
                     n = len(g)
-                    #m = len(g.edges())
                     
                     ### Obtaining edge list 
                     edgelist = []
@@ -240,15 +220,6 @@ if __name__ == '__main__':
                         edgelist.append((e[0], e[1]))
                     edgelist.sort(key = lambda x: x[0])
                     
-                    ### Obtaining weights list
-                    #weightdict = dict()
-                    #for node1, node2, data in g.edges(data=True):
-                    #    if node1 < node2:
-                    #        e = (node2, node1)
-                    #    else:
-                    #        e = (node1, node2)
-                    #    weightdict[e] = data['weight']
-                    
                     ### Compute log likelihood, loss
                     #print(g.edges(data=True))
                     #print(edgelist)
@@ -256,7 +227,7 @@ if __name__ == '__main__':
                     ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:
-                ll, _ = model.forward_train(batch_indices, node_feats = None, edge_feats = edge_feats)
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
             
             loss = -ll
             loss.backward()

@@ -654,12 +654,12 @@ class RecurTreeGen(nn.Module):
         lv = 0
         while True:
             is_nonleaf = TreeLib.QueryNonLeaf(lv)
-            print(is_nonleaf)
+            #print(is_nonleaf)
             if self.has_edge_feats:
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
-                print(target_feats)
+                #print(target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
@@ -681,9 +681,9 @@ class RecurTreeGen(nn.Module):
                 h_next_buf = c_next_buf = None
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(lv + 1)
-                print("EDGE INDEX: ", edge_idx)
+                #print("EDGE INDEX: ", edge_idx)
                 left_feats = edge_feats_embed[edge_idx[~is_rch]]
-                print("LEFT FEATS: ", left_feats)
+                #print("LEFT FEATS: ", left_feats)
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
                 h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats)
                 left_ids = tuple([None] + list(left_ids[1:]))
@@ -710,9 +710,9 @@ class RecurTreeGen(nn.Module):
                 new_states.append(new_s)
             cur_states = tuple(new_states)
             lv += 1
-            print(cur_states)
-            print(cur_states[0].size())
+            #print(cur_states)
+            #print(cur_states[0].size())
         
-        print(TOFU)
+        #print(TOFU)
         
         return ll, next_states

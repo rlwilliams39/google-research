@@ -56,7 +56,6 @@ def get_edge_feats(g):
 
 
 def debug_model(model, graph, node_feats, edge_feats):
-    print("Hello!")
     ll, _ = model.forward_train([0], node_feats=node_feats, edge_feats=edge_feats)
     print(ll)
 
@@ -186,7 +185,6 @@ if __name__ == '__main__':
     #########################################################################################################
     
     debug_model(model, train_graphs[0], None, list_edge_feats[0])
-    print(TOFU)
     serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)

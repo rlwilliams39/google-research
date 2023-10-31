@@ -30,7 +30,8 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_encodingLSTM = nn.LSTMCell(1, args.embed_dim)
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2])
-        self.edgelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 2]) ## Changed
+        self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
+        self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         #self.edge_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim) ## ADDED
         
@@ -115,7 +116,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             else return the edge_feats as it is
         """
         h, _ = state
-        params = self.edgelen_pred(h)
+        mus, lvars = self.edgelen_mean(h), self.edgelen_lvar(h)
         
         ## GAMMA:
         #params = torch.nn.functional.softplus(params, beta = 1)
@@ -126,8 +127,8 @@ class BiggWithEdgeLen(RecurTreeGen):
         
         if edge_feats is None:
             ll = 0
-            pred_mean = params[0][0].item()
-            pred_lvar = params[0][1]
+            pred_mean = mus.item()
+            pred_lvar = lvars.item()
             pred_var = torch.nn.functional.softplus(pred_lvar, beta = b).item()
             edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
             
@@ -147,25 +148,18 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
             
-            
             logw_obs = torch.log(edge_feats)
             
             ### Trying with softplus parameterization...
             edge_feats_invsp = torch.log(torch.special.expm1(edge_feats))
             
-            k = len(params)
-            y = torch.tensor([0]).repeat(k).to('cuda')
-            z = 1 - y
-            
             ## MEAN AND VARIANCE OF LOGNORMAL
-            mean = params.gather(1, y.view(-1, 1)).squeeze()
-            lvar = params.gather(1, z.view(-1, 1)).squeeze()
-            var = torch.add(torch.nn.functional.softplus(lvar, beta = b), 0)
+            var = torch.add(torch.nn.functional.softplus(lvars, beta = b), 0)
             #var = torch.nn.functional.softplus(lvar, beta = b)
             
             if lognormal:
                 ## diff_sq = (mu - logw)^2
-                diff_sq = torch.square(torch.sub(mean, logw_obs))
+                diff_sq = torch.square(torch.sub(mus, logw_obs))
                 
                 ## diff_sq2 = v^-1*diff_sq
                 diff_sq2 = torch.div(diff_sq, var)
@@ -179,7 +173,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             
             else:
                 ## diff_sq = (mu - softminusw)^2
-                diff_sq = torch.square(torch.sub(mean, edge_feats_invsp))
+                diff_sq = torch.square(torch.sub(mus, edge_feats_invsp))
                 
                 ## diff_sq2 = v^-1*diff_sq
                 diff_sq2 = torch.div(diff_sq, var)

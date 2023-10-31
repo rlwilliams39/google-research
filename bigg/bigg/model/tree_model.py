@@ -707,9 +707,8 @@ class RecurTreeGen(nn.Module):
             cur_states = tuple(new_states)
             lv += 1
         
+        row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         print(next_states)
         print(next_states[0].size())
-        print(cur_states)
-        print(cur_states[0].size())
         print(TOFU)
         return ll, next_states

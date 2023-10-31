@@ -1,5 +1,5 @@
 # coding=utf-8
-# Copyright 2023 The Google Research Authors.
+# Copyright 2022 The Google Research Authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -351,6 +351,7 @@ class RecurTreeGen(nn.Module):
             self.m_pred_has_right = MLP(args.embed_dim, [2 * args.embed_dim, 1])
             self.m_cell_topdown = nn.LSTMCell(args.embed_dim, args.embed_dim)
             self.m_cell_topright = nn.LSTMCell(args.embed_dim, args.embed_dim)
+            
         else:
             fn_pred = lambda: MLP(args.embed_dim, [2 * args.embed_dim, 1])
             fn_tree_cell = lambda: BinaryTreeLSTMCell(args.embed_dim)
@@ -372,12 +373,25 @@ class RecurTreeGen(nn.Module):
             self.cell_topdown_modules, self.cell_topright_modules = [nn.ModuleList(l) for l in lstm_cell_modules]
             self.lr2p_cell = fn_tree_cell()
         self.row_tree = FenwickTree(args)
-
+        #self.use_weight_state = False
+        
+        #use_weight_state = False
+        #print("Using Weight State?", use_weight_state)
+        #if use_weight_state:
+        #    self.use_weight_state = True
+        #    self.weight_state = FenwickTree(args)
+        #    self.m_cell_w_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        #    self.m_e2w_cell = BinaryTreeLSTMCell(args.embed_dim)
+        #print("")
+        #print("")
+        #print("Trying to fix")
+        
         if args.tree_pos_enc:
             self.tree_pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base, bias=np.pi / 4)
         else:
             self.tree_pos_enc = lambda x: 0
-
+    
+    
     def cell_topdown(self, x, y, lv):
         cell = self.m_cell_topdown if self.share_param else self.cell_topdown_modules[lv]
         return cell(x, y)
@@ -409,7 +423,7 @@ class RecurTreeGen(nn.Module):
         if prob >= 0.5:
             p += self.greedy_frac
         return p
-
+    
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
         assert lb <= ub
         if tree_node.is_root:
@@ -448,7 +462,12 @@ class RecurTreeGen(nn.Module):
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
                     edge_embed = self.embed_edge_feats(cur_feats)
-                    return ll, (edge_embed, edge_embed), 1, cur_feats
+                    #edge_embed = self.embed_edge_feats(cur_feats, state)
+                    #print(state)
+                    #print(edge_embed)
+                    #print(cur_feats)
+                    #return ll, (edge_embed, edge_embed), 1, cur_feats
+                    #return ll, edge_embed, 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:
@@ -554,11 +573,13 @@ class RecurTreeGen(nn.Module):
             if target_edge_feats is not None and target_edge_feats.shape[0]:
                 list_pred_edge_feats.append(target_edge_feats)
             if self.has_node_feats:
-                target_feat_embed = self.embed_node_feats(target_node_feats)
+                target_feat_embed = self.embed_node_feats(torch.log(target_node_feats))
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
             edges += [(i, x) for x in col_sm.indices]
+            #print("column index: ", i)
+            #print("edges: ", edges)
             total_ll = total_ll + ll
 
         if self.has_node_feats:
@@ -580,7 +601,7 @@ class RecurTreeGen(nn.Module):
         # embed trees
         all_ids = TreeLib.PrepareTreeEmbed()
         if self.has_node_feats:
-            node_feats = self.embed_node_feats(node_feats)
+            node_feats = self.embed_node_feats(torch.log(node_feats))
         if self.has_edge_feats:
             edge_feats = self.embed_edge_feats(edge_feats)
 
@@ -650,6 +671,9 @@ class RecurTreeGen(nn.Module):
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
+        #print(edge_feats)
+        #print(cur_states)
+        #print(TOFU)
 
         lv = 0
         while True:
@@ -660,6 +684,12 @@ class RecurTreeGen(nn.Module):
                 target_feats = edge_feats[edge_of_lv]
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 ll = ll + edge_ll
+                print("edge_of_lv: ", edge_of_lv)
+                print("~is_nonleaf: ", ~is_nonleaf)
+                print("edge_feats: ", edge_feats)
+                print("Cur_states: ", cur_states)
+                print("edge_state: ", edge_state)
+                print("target_feats: ", target_feats)
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break
             cur_states = (cur_states[0][is_nonleaf], cur_states[1][is_nonleaf])
@@ -706,5 +736,9 @@ class RecurTreeGen(nn.Module):
                 new_states.append(new_s)
             cur_states = tuple(new_states)
             lv += 1
-
+        print(next_states)
+        print(next_states[0].size())
+        print(TOFU)
+        
+        
         return ll, next_states

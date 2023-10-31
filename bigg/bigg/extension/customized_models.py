@@ -33,8 +33,6 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
         self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
-        #self.edge_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim) ## ADDED
-        
 
     # to be customized
     def embed_node_feats(self, node_feats):
@@ -118,12 +116,8 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         mus, lvars = self.edgelen_mean(h), self.edgelen_lvar(h)
         
-        ## GAMMA:
-        #params = torch.nn.functional.softplus(params, beta = 1)
-        
         lognormal = False
         b = 1.0
-        #print(edge_feats)
         
         if edge_feats is None:
             ll = 0
@@ -137,12 +131,6 @@ class BiggWithEdgeLen(RecurTreeGen):
             else:
                 edge_feats = torch.nn.functional.softplus(edge_feats)
             
-            ## GAMMA DISTRIBUTION DRAW
-            #pred_a = params[0][0].item()
-            #pred_b = params[0][1].item()
-            #edge_feats = torch.FloatTensor([[np.random.gamma(pred_a, 1/pred_b)]])
-            
-            
         else:
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
@@ -154,8 +142,7 @@ class BiggWithEdgeLen(RecurTreeGen):
             edge_feats_invsp = torch.log(torch.special.expm1(edge_feats))
             
             ## MEAN AND VARIANCE OF LOGNORMAL
-            var = torch.add(torch.nn.functional.softplus(lvars, beta = b), 0)
-            #var = torch.nn.functional.softplus(lvar, beta = b)
+            var = torch.nn.functional.softplus(lvars, beta = b)
             
             if lognormal:
                 ## diff_sq = (mu - logw)^2
@@ -184,15 +171,4 @@ class BiggWithEdgeLen(RecurTreeGen):
                 ## add to ll
                 ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
                 ll = torch.sum(ll)
-            
-            ## ALPHA AND BETA OF GAMMA
-            #a = params.gather(1, y.view(-1, 1)).squeeze()
-            #b = params.gather(1, z.view(-1, 1)).squeeze()
-            
-            #ll = torch.mul(torch.sub(a, 1), logw_obs) - torch.mul(edge_feats, b) + torch.mul(a, torch.log(b)) - torch.lgamma(a)
-            #ll = torch.sum(ll)
-            
-        #state_update = self.embed_edge_feats(torch.log(edge_feats)) 
-        #state = self.edge_state_update(state_update, state)
-        #return new_state, ll, edge_feats
         return ll, edge_feats

@@ -659,6 +659,7 @@ class RecurTreeGen(nn.Module):
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
+                print(target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:

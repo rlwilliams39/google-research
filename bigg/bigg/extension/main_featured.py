@@ -185,6 +185,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     debug_model(model, train_graphs[0], None, list_edge_feats[0])
+    sys.exit()
     serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)

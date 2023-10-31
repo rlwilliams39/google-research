@@ -128,6 +128,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         if edge_feats is None:
             ll = 0
             pred_mean = mus.item()
+            pred_lvar = lvars
             pred_var = torch.nn.functional.softplus(pred_lvar, beta = b).item()
             edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
             

@@ -668,6 +668,11 @@ class RecurTreeGen(nn.Module):
             left_logits = self.pred_has_left(cur_states[0], lv)
             has_left, num_left = TreeLib.GetChLabel(-1, lv)
             left_update = self.topdown_left_embed[has_left] + self.tree_pos_enc(num_left)
+            print(has_left)
+            print(has_left.size())
+            print(self.topown_left_embed)
+            print(self.topdown_left_embed[has_left])
+            print(TOFU)
             left_ll, float_has_left = self.binary_ll(left_logits, has_left, need_label=True, reduction='sum')
             ll = ll + left_ll
 

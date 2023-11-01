@@ -670,7 +670,7 @@ class RecurTreeGen(nn.Module):
             left_update = self.topdown_left_embed[has_left] + self.tree_pos_enc(num_left)
             print(has_left)
             #print(has_left.size())
-            print(self.topown_left_embed)
+            print(self.topdown_left_embed)
             print(self.topdown_left_embed[has_left])
             print(TOFU)
             left_ll, float_has_left = self.binary_ll(left_logits, has_left, need_label=True, reduction='sum')

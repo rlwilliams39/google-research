@@ -669,7 +669,7 @@ class RecurTreeGen(nn.Module):
             has_left, num_left = TreeLib.GetChLabel(-1, lv)
             left_update = self.topdown_left_embed[has_left] + self.tree_pos_enc(num_left)
             print(has_left)
-            print(has_left.size())
+            #print(has_left.size())
             print(self.topown_left_embed)
             print(self.topdown_left_embed[has_left])
             print(TOFU)

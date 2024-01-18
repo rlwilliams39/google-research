@@ -178,9 +178,9 @@ def tree_weight_statistics(graphs, transform = False):
   print('95% CI: ', ' (' + str(results_rounded[7]) + ',' + str(results_rounded[8]), ')')
   return results
   
-def get_graph_stats(gt_graphs, test_graphs, graph_type):
+def get_graph_stats(gen_graphs, gt_graphs, graph_type):
     if graph_type == "tree":
-        prop, true_trees = correct_tree_topology_check(out_graphs)
+        prop, true_trees = correct_tree_topology_check(gen_graphs)
         print("Proportion Correct Topology: ", prop)
         true_trees_edges = []
         true_train_edges = []
@@ -188,7 +188,7 @@ def get_graph_stats(gt_graphs, test_graphs, graph_type):
         #### TESTING MMD
         #test = degree_stats(out_graphs, ordered_train_graphs)
         #print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(out_graphs, ordered_train_graphs)
+        test2 = spectral_stats(gen_graphs, gt_graphs)
         print("MMD on Specta of L Normalized: ", test2)
         #test3 = clustering_stats(out_graphs, ordered_train_graphs)
         #print("MMD on Clustering Coefficient: ", test3)
@@ -220,11 +220,11 @@ def get_graph_stats(gt_graphs, test_graphs, graph_type):
             test_stats = tree_weight_statistics(true_trees)
     
     elif graph_type == "lobster":
-        prop, true_lobsters = correct_lobster_topology_check(out_graphs)
+        prop, true_lobsters = correct_lobster_topology_check(gen_graphs)
         print("Proportion Correct Topology: ", prop)
     
     elif graph_type == "grid":
-        prop, true_lobsters = correct_grid_topology_check(out_graphs)
+        prop, true_lobsters = correct_grid_topology_check(gen_graphs)
         print("Proportion Correct Topology: ", prop)
     
     else:

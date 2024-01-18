@@ -142,19 +142,20 @@ if __name__ == '__main__':
         
         for idx in range(10):
             print("edges: ", gen_graphs[idx].edges(data=True))
-            
+        
+        print(cmd_args.g_type)
         get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type)
         
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
-            cp.dump(final_graphs, f, cp.HIGHEST_PROTOCOL)
+            cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
         print('graph generation complete')
         
         sys.exit()
     #########################################################################################################
     
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
-    serialized = False
+    #serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
@@ -162,6 +163,7 @@ if __name__ == '__main__':
     if cmd_args.epoch_load is None:
         cmd_args.epoch_load = 0
     
+    prev = datetime.now()
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
         pbar = tqdm(range(cmd_args.epoch_save))
 
@@ -174,26 +176,25 @@ if __name__ == '__main__':
             node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            if serialized:
-                ll = 0
-                for ind in batch_indices:
-                    g = train_graphs[ind]
-                    n = len(g)
-                    
-                    ### Obtaining edge list 
-                    edgelist = []
-                    for e in g.edges():
-                        if e[0] < e[1]:
-                            e = (e[1], e[0])
-                        edgelist.append((e[0], e[1]))
-                    edgelist.sort(key = lambda x: x[0])
-                    
-                    ### Compute log likelihood, loss
-                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
-                    ll = ll_i + ll
-            else:
-                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
-            
+            #if serialized:
+            #    ll = 0
+            #    for ind in batch_indices:
+            #        g = train_graphs[ind]
+            #        n = len(g)
+            #        
+            #        ### Obtaining edge list 
+            #        edgelist = []
+            #        for e in g.edges():
+            #            if e[0] < e[1]:
+            #                e = (e[1], e[0])
+            #            edgelist.append((e[0], e[1]))
+            #        edgelist.sort(key = lambda x: x[0])
+            #        
+            #        ### Compute log likelihood, loss
+            #        ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+            #        ll = ll_i + ll
+            #else:
+            ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
             loss = -ll
             loss.backward()
             loss = loss.item()
@@ -210,9 +211,11 @@ if __name__ == '__main__':
         if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
-            if cmd_args.lin_model:
-                with open(cmd_args.save_dir + 'lin_model.pkl', 'wb') as f:
-                    cp.dump(lin_model, f, cp.HIGHEST_PROTOCOL)
+            #if cmd_args.lin_model:
+            #    with open(cmd_args.save_dir + 'lin_model.pkl', 'wb') as f:
+            #        cp.dump(lin_model, f, cp.HIGHEST_PROTOCOL)
+    elapsed = datetime.now() - prev
+    print("Time elapsed during training: ", elapsed)
     print("Model training complete.")
     
     

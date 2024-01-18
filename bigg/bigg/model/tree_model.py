@@ -654,12 +654,10 @@ class RecurTreeGen(nn.Module):
         lv = 0
         while True:
             is_nonleaf = TreeLib.QueryNonLeaf(lv)
-            #print(is_nonleaf)
             if self.has_edge_feats:
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
-                #print(target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
@@ -668,11 +666,6 @@ class RecurTreeGen(nn.Module):
             left_logits = self.pred_has_left(cur_states[0], lv)
             has_left, num_left = TreeLib.GetChLabel(-1, lv)
             left_update = self.topdown_left_embed[has_left] + self.tree_pos_enc(num_left)
-            #print(has_left)
-            #print(has_left.size())
-            #print(self.topdown_left_embed)
-            #print(self.topdown_left_embed[has_left])
-            #print(TOFU)
             left_ll, float_has_left = self.binary_ll(left_logits, has_left, need_label=True, reduction='sum')
             ll = ll + left_ll
 
@@ -715,9 +708,5 @@ class RecurTreeGen(nn.Module):
                 new_states.append(new_s)
             cur_states = tuple(new_states)
             lv += 1
-            #print(cur_states)
-            #print(cur_states[0].size())
-        
-        #print(TOFU)
         
         return ll, next_states

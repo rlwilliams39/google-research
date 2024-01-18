@@ -65,75 +65,75 @@ def graph_generator(n = 5, num_graphs = 5000, constant_topology = False,
     return graphs
     
 
-#def adj_vec(g, as_torch = True, weighted = True, normalize = False):
-#    '''
-#    Transforms nx graph into adjacency vector
-#    Args:
-#        as_torch: if True, returns tensor object.
-#        weighted: if True, returns weighted adjacency vector.
-#    '''
-#    n = len(g)
-#    if normalize:
-#       #Lstar = nx.normalized_laplacian_matrix(g).todense()
-#       #print(Lstar)
-#       #A = np.identity(n) - Lstar
-#       Astar = (nx.adjacency_matrix(g).todense() > 0) + 0
-#       deg = np.diag([y**-0.5 for _, y in g.degree()])
-#       out = np.matmul(deg, Astar)
-#       A = np.matmul(out, deg)
-#    
-#    else:
-#        A = nx.adjacency_matrix(g).todense()
-#    
-#    U = A[np.triu_indices(n, k = 1)]
-#    k = len(U)
-#    
-#    if not weighted and not normalize:
-#        U = (U > 0) + 0
-#    
-#    if as_torch:
-#        U = torch.tensor(U, dtype=torch.float32)
-#        U = U.reshape([1 , k])[0]
+def adj_vec(g, as_torch = True, weighted = True, normalize = False):
+    '''
+    Transforms nx graph into adjacency vector
+    Args:
+        as_torch: if True, returns tensor object.
+        weighted: if True, returns weighted adjacency vector.
+    '''
+    n = len(g)
+    if normalize:
+       #Lstar = nx.normalized_laplacian_matrix(g).todense()
+       #print(Lstar)
+       #A = np.identity(n) - Lstar
+       Astar = (nx.adjacency_matrix(g).todense() > 0) + 0
+       deg = np.diag([y**-0.5 for _, y in g.degree()])
+       out = np.matmul(deg, Astar)
+       A = np.matmul(out, deg)
+    
+    else:
+        A = nx.adjacency_matrix(g).todense()
+    
+    U = A[np.triu_indices(n, k = 0)]
+    k = len(U)
+    
+    if not weighted and not normalize:
+        U = (U > 0) + 0
+    
+    if as_torch:
+        U = torch.tensor(U, dtype=torch.float32)
+        U = U.reshape([1 , k])[0]
 #    print(U)
-#    return U
+    return U
 
 
-#def train_data_creator(n = 5, num_graphs = 5000, as_torch = True,
-#                       constant_topology = False, constant_weights = False,
-#                       weighted = True, scale = 1):
-#    '''
-#    Creates a set of training graphs
-#    Args:
-#        n: number of leaves
-#        num_graphs: number of requested graphs
-#        as_torch: if True, returns tensor object.
-#        constant_topology: if True, all graphs are topologically identical
-#        constant_weights: if True, all weights across all graphs are identical
-#        mu_weight: mean weight 
-#    '''
-#    graphs = graph_generator(n, num_graphs, constant_topology, constant_weights, scale)
-#    adj_vecs = []
-#    for g in graphs:
-#        U = adj_vec(g, as_torch, weighted)
-#        adj_vecs.append(U)
-#    return adj_vecs
+def train_data_creator(n = 5, num_graphs = 5000, as_torch = True,
+                       constant_topology = False, constant_weights = False,
+                       weighted = True, scale = 1):
+    '''
+    Creates a set of training graphs
+    Args:
+        n: number of leaves
+        num_graphs: number of requested graphs
+        as_torch: if True, returns tensor object.
+        constant_topology: if True, all graphs are topologically identical
+        constant_weights: if True, all weights across all graphs are identical
+        mu_weight: mean weight 
+    '''
+    graphs = graph_generator(n, num_graphs, constant_topology, constant_weights, scale)
+    adj_vecs = []
+    for g in graphs:
+        U = adj_vec(g, as_torch, weighted)
+        adj_vecs.append(U)
+    return adj_vecs
 
 
-#def graph_from_adj(vec):
-#    '''
-#    Transforms (weighted) adjacency vector into (weighted) graph
-#    Args:
-#        vec: adjacency vector to be converted. Can be weighted or unweighted.
-#    '''
-#    vec = np.array(vec)
-#    k = len(vec)
-#    n = int((2*k + .25)**0.5 + 0.5)
-#    tri = np.zeros((n, n))
-#    tri[np.triu_indices(n, 1)] = vec
-#    tri = np.transpose(tri)
-#    tri[np.triu_indices(n, 1)] = vec   
-#    g = nx.from_numpy_array(tri)
-#    return g
+def graph_from_adj(vec):
+    '''
+    Transforms (weighted) adjacency vector into (weighted) graph
+    Args:
+        vec: adjacency vector to be converted. Can be weighted or unweighted.
+    '''
+    vec = np.array(vec)
+    k = len(vec)
+    n = int((2*k + .25)**0.5 + 0.5)
+    tri = np.zeros((n, n))
+    tri[np.triu_indices(n, 0)] = vec
+    tri = np.transpose(tri)
+    tri[np.triu_indices(n, 0)] = vec   
+    g = nx.from_numpy_array(tri)
+    return g
 
 
 ## NEED TO INCORPORATE WEIGHTED GRAPHS.......

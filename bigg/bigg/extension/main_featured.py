@@ -32,13 +32,12 @@ import torch.optim as optim
 from collections import OrderedDict
 from bigg.common.configs import cmd_args, set_device
 from bigg.extension.customized_models import BiggWithEdgeLen
-#from bigg.extension.lin_mod import EdgeWeightLinearModel
 from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
 from scipy.stats.distributions import chi2
-from bigg.extension.graph_stats import *
-#from bigg.extension.alternative_model import *
-from bigg.train_creator.train_data_generator import *
+from bigg.extension.eval_.graph_stats import *
+from bigg.extension.eval_.mmd import *
+from bigg.extension.eval_.mmd_stats import *
 
 
 def get_node_feats(g):
@@ -79,21 +78,11 @@ if __name__ == '__main__':
     setup_treelib(cmd_args)
     assert cmd_args.blksize < 0  # assume graph is not that large, otherwise model parallelism is needed
     has_node_feats = False
-
-    #with open(os.path.join(cmd_args.data_dir, 'Group202A.dat'), 'rb') as f:
-    #    train_graphs = cp.load(f)
-    #train_graphs = nx.read_gpickle('/content/drive/MyDrive/Projects/Data/Bigg-Data/Yeast.dat')    
-    #train_graphs = nx.readwrite.read_gpickle()
     
-    
-    #path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
-    #print(path)
-    #with open(path, 'rb') as f:
-    #    train_graphs = cp.load(f)
-    
-    train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
-    for i in range(2):
-        print(train_graphs[i].edges(data=True))
+    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
+    print(path)
+    with open(path, 'rb') as f:
+        train_graphs = cp.load(f)
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
 
@@ -104,7 +93,6 @@ if __name__ == '__main__':
     list_node_feats = None #[torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
     list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
-
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
     
     if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
@@ -119,9 +107,11 @@ if __name__ == '__main__':
         num_node_dist = get_node_dist(train_graphs)
         
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
-        #with open(path, 'rb') as f:
-        #    gt_graphs = cp.load(f)
-        #print('# gt graphs', len(gt_graphs))
+        
+        with open(path, 'rb') as f:
+            gt_graphs = cp.load(f)
+        print('# gt graphs', len(gt_graphs))
+        
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
@@ -131,7 +121,6 @@ if __name__ == '__main__':
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
-                        #print("e: ", e)
                         assert e[0] > e[1]
                         w = w.item()
                         w = np.round(w, 4)
@@ -150,31 +139,11 @@ if __name__ == '__main__':
                         fixed_edges.append(edge)
                     pred_g.add_weighted_edges_from(fixed_edges)
                     gen_graphs.append(pred_g)
-         
-        counter = 0
-        for g in gen_graphs:
-            if counter <= 50:
-                print("edges:", g.edges(data=True))
-                counter += 1
         
-        if cmd_args.has_edge_feats:
-            print("Generating Statistics for ", cmd_args.file_name)
-            final_graphs = graph_stat_gen(gen_graphs)#, train_graphs)#, gt_graphs, kind = cmd_args.file_name)
-            print("final_g len: ", len(final_graphs))
-        
-        else:
-            print("Testing for Tree Structures...")
-            trees = 0
-            for T in gen_graphs:
-                if nx.is_tree(T):
-                    leaves = [n for n in T.nodes() if T.degree(n) == 1]
-                    internal = [n for n in T.nodes() if T.degree(n) == 3]
-                    root = [n for n in T.nodes() if T.degree(n) == 2]
-                    if 2*len(leaves) - 1 == len(T) and len(leaves) == len(internal) + 2 and len(root) == 1 and len(leaves) + len(internal)+ len(root) == len(T):
-                        trees += 1
-            print("Number of Trees: ", trees)
-            print("Out of....: ", len(gen_graphs))
-            final_graphs = gen_graphs
+        for idx in range(10):
+            print("edges: ", gen_graphs[idx].edges(data=True))
+            
+        get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type)
         
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
@@ -188,7 +157,6 @@ if __name__ == '__main__':
     serialized = False
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
-    #scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.9) ##added
     indices = list(range(len(train_graphs)))
     
     if cmd_args.epoch_load is None:
@@ -221,9 +189,6 @@ if __name__ == '__main__':
                     edgelist.sort(key = lambda x: x[0])
                     
                     ### Compute log likelihood, loss
-                    #print(g.edges(data=True))
-                    #print(edgelist)
-                    #print(list_edge_feats[ind])
                     ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:
@@ -239,19 +204,15 @@ if __name__ == '__main__':
                 optimizer.step()
                 optimizer.zero_grad()
             pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / cmd_args.epoch_save, loss))
-        #scheduler.step()
+        
         print('epoch complete')
-        cur = epoch+1
+        cur = epoch + 1
         if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             if cmd_args.lin_model:
                 with open(cmd_args.save_dir + 'lin_model.pkl', 'wb') as f:
                     cp.dump(lin_model, f, cp.HIGHEST_PROTOCOL)
-        #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(len(train_graphs[0]))
-        #print(pred_edges)
-        #print(pred_node_feats)
-        #print(pred_edge_feats)
     print("Model training complete.")
     
     

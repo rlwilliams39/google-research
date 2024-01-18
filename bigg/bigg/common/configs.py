@@ -88,6 +88,7 @@ cmd_opt.add_argument('-has_node_feats', default=False, type=eval, help='has node
 cmd_args, _ = cmd_opt.parse_known_args()
 
 if cmd_args.save_dir is not None:
+    print(os.path.isdir(cmd_args.save_dir))
     if not os.path.isdir(cmd_args.save_dir):
         os.makedirs(cmd_args.save_dir)
 

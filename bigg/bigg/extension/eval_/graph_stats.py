@@ -180,7 +180,7 @@ def tree_weight_statistics(graphs, transform = False):
   print('95% CI: ', ' (' + str(results_rounded[7]) + ',' + str(results_rounded[8]), ')')
   return results
   
-def get_graph_stats(gen_graphs, gt_graphs, graph_type):
+def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
     if graph_type == "tree":
         prop, true_trees = correct_tree_topology_check(gen_graphs)
         print("Proportion Correct Topology: ", prop)
@@ -218,7 +218,7 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type):
         #    print("New trees: ", len(true_trees_edges) - in_train)
         #    print(true_train_edges)
         #    print("Test Check: ", test_check)
-        if cmd_args.weighted:
+        if weighted:
             test_stats = tree_weight_statistics(true_trees)
     
     elif graph_type == "lobster":

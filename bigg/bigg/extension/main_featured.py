@@ -86,7 +86,7 @@ if __name__ == '__main__':
         train_graphs = cp.load(f)
     
     ## Try with this:::
-    train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    #train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
@@ -149,7 +149,7 @@ if __name__ == '__main__':
             print("edges: ", gen_graphs[idx].edges(data=True))
         
         print(cmd_args.g_type)
-        get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type)
+        get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type, cmd_args.has_edge_feats)
         
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:

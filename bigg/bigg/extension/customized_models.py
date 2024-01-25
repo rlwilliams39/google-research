@@ -27,11 +27,11 @@ class BiggWithEdgeLen(RecurTreeGen):
     def __init__(self, args):
         super().__init__(args)
         self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
-        self.edgelen_encodingLSTM = nn.LSTMCell(1, args.embed_dim)
+        #self.edgelen_encodingLSTM = nn.LSTMCell(1, args.embed_dim)
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2])
-        self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
-        self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, args.embed_dim, 1]) ## Changed
+        self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
+        self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
 
     # to be customized
@@ -126,16 +126,13 @@ class BiggWithEdgeLen(RecurTreeGen):
             pred_var = torch.nn.functional.softplus(pred_lvar, beta = b).item()
             edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
             
-            if lognormal:
-                edge_feats = torch.exp(edge_feats)
-            else:
-                edge_feats = torch.nn.functional.softplus(edge_feats)
+            edge_feats = torch.nn.functional.softplus(edge_feats)
             
         else:
             ### Update log likelihood with weight prediction
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
-            
+            #print(edge_feats)
             logw_obs = torch.log(edge_feats)
             
             ### Trying with softplus parameterization...
@@ -144,31 +141,16 @@ class BiggWithEdgeLen(RecurTreeGen):
             ## MEAN AND VARIANCE OF LOGNORMAL
             var = torch.nn.functional.softplus(lvars, beta = b)
             
-            if lognormal:
-                ## diff_sq = (mu - logw)^2
-                diff_sq = torch.square(torch.sub(mus, logw_obs))
-                
-                ## diff_sq2 = v^-1*diff_sq
-                diff_sq2 = torch.div(diff_sq, var)
-                
-                ## log_var = log(v)
-                log_var = torch.log(var)
-                
-                ## add to ll
-                ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - logw_obs - 0.5 * np.log(2*np.pi)
-                ll = torch.sum(ll)
+            ## diff_sq = (mu - softminusw)^2
+            diff_sq = torch.square(torch.sub(mus, edge_feats_invsp))
             
-            else:
-                ## diff_sq = (mu - softminusw)^2
-                diff_sq = torch.square(torch.sub(mus, edge_feats_invsp))
-                
-                ## diff_sq2 = v^-1*diff_sq
-                diff_sq2 = torch.div(diff_sq, var)
-                
-                ## log_var = log(v)
-                log_var = torch.log(var)
-                
-                ## add to ll
-                ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
-                ll = torch.sum(ll)
+            ## diff_sq2 = v^-1*diff_sq
+            diff_sq2 = torch.div(diff_sq, var)
+            
+            ## log_var = log(v)
+            log_var = torch.log(var)
+            
+            ## add to ll
+            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
+            ll = torch.sum(ll)
         return ll, edge_feats

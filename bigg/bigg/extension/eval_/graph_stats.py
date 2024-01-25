@@ -9,6 +9,8 @@ from torch import nn
 from torch.nn.parameter import Parameter
 import pandas as pd
 import os
+from bigg.extension.eval_.mmd import *
+from bigg.extension.eval_.mmd_stats import *
 
 		## Topology Check Functions
 def correct_tree_topology_check(graphs):

@@ -38,6 +38,7 @@ from scipy.stats.distributions import chi2
 from bigg.extension.eval_.graph_stats import *
 from bigg.extension.eval_.mmd import *
 from bigg.extension.eval_.mmd_stats import *
+from bigg.train_creator.train_data_generator import *
 
 
 def get_node_feats(g):
@@ -84,6 +85,8 @@ if __name__ == '__main__':
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
+    ## Try with this:::
+    train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
@@ -119,7 +122,6 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
-                print(pred_edges)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []

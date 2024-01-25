@@ -200,7 +200,7 @@ if __name__ == '__main__':
             #        ll = ll_i + ll
             #else:
             ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
-            loss = -ll
+            loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()
 

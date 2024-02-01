@@ -82,10 +82,8 @@ class BiggWithEdgeLen(RecurTreeGen):
             print(params)
             ## MEAN AND VARIANCE OF LOGNORMAL
             mean = params.gather(1, y.view(-1, 1)).squeeze()
-            #print(mean)
             lvar = params.gather(1, z.view(-1, 1)).squeeze()
             var = torch.add(torch.nn.functional.softplus(lvar, beta = 1), 1e-9)
-            #var = torch.nn.functional.softplus(lvar, beta = 1)
             
             ## diff_sq = (mu - logw)^2
             diff_sq = torch.square(torch.sub(mean, logw_obs))
@@ -116,15 +114,13 @@ class BiggWithEdgeLen(RecurTreeGen):
         h, _ = state
         mus, lvars = self.edgelen_mean(h), self.edgelen_lvar(h)
         
-        lognormal = False
-        b = 1.0
-        
         if edge_feats is None:
             ll = 0
             pred_mean = mus.item()
             pred_lvar = lvars
-            pred_var = torch.nn.functional.softplus(pred_lvar, beta = b).item()
-            edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_var**0.5)]])
+            ## Try exponentiation instead of softplus for var...
+            pred_sd = torch.exp(0.5 * pred_lvar).item()
+            edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_sd)]])
             
             edge_feats = torch.nn.functional.softplus(edge_feats)
             
@@ -133,13 +129,13 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### https://stackoverflow.com/questions/66091226/runtimeerror-expected-all-tensors-to-be-on-the-same-device-but-found-at-least
             ### NOTE: find more efficient way of doing this
             #print(edge_feats)
-            logw_obs = torch.log(edge_feats)
+            #logw_obs = torch.log(edge_feats)
             
             ### Trying with softplus parameterization...
             edge_feats_invsp = torch.log(torch.special.expm1(edge_feats))
             
             ## MEAN AND VARIANCE OF LOGNORMAL
-            var = torch.nn.functional.softplus(lvars, beta = b)
+            var = torch.exp(lvars) #torch.nn.functional.softplus(lvars, beta = b)
             
             ## diff_sq = (mu - softminusw)^2
             diff_sq = torch.square(torch.sub(mus, edge_feats_invsp))
@@ -148,9 +144,10 @@ class BiggWithEdgeLen(RecurTreeGen):
             diff_sq2 = torch.div(diff_sq, var)
             
             ## log_var = log(v)
-            log_var = torch.log(var)
+            #log_var = torch.log(var)
             
             ## add to ll
-            ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
+            #ll = - torch.mul(log_var, 0.5) - torch.mul(diff_sq2, 0.5) - edge_feats + edge_feats_invsp - 0.5 * np.log(2*np.pi)
+            ll = - torch.mul(lvars, 0.5) - torch.mul(diff_sq2, 0.5) + edge_feats - edge_feats_invsp - 0.5 * np.log(2*np.pi)
             ll = torch.sum(ll)
         return ll, edge_feats

@@ -75,6 +75,7 @@ def selective_update_hc(h, c, zero_one, feats):
     print(zero_one)
     print(feats)
     print(TOFU)
+    test = self.embed_edge_feats(feats, (h, c))
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)

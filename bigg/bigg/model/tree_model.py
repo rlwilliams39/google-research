@@ -74,6 +74,10 @@ def selective_update_hc(h, c, zero_one, feats, embedding):
     print(c)
     print(zero_one)
     print(feats)
+    h_up = h[zero_one]
+    c_up = c[zero_one]
+    print(h_up)
+    print(c_up)
     test = embedding(feats, (h, c))
     print(test[0])
     print(TOFU)

@@ -70,22 +70,17 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
 
 def selective_update_hc(h, c, zero_one, feats, embedding):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
-    print(h.size())
-    print(c)
-    print(zero_one)
-    print(feats)
     h_up = h[zero_one == 1]
     c_up = c[zero_one == 1]
-    print(h_up)
-    print(c_up)
-    test = embedding(feats, (h, c))
-    print(test[0])
-    print(TOFU)
-    nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
-    local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
-    h = torch.where(zero_one, local_edge_feats, h)
-    c = torch.where(zero_one, local_edge_feats, c)
+    test = embedding(feats, (h_up, c_up))
+    
+    h[zero_one == 1] = test[0]
+    c[zero_one == 1] = test[1]
+    #nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
+    #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
+    #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
+    #h = torch.where(zero_one, local_edge_feats, h)
+    #c = torch.where(zero_one, local_edge_feats, c)
     return h, c
 
 def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None):

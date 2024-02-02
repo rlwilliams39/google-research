@@ -74,9 +74,8 @@ def selective_update_hc(h, c, zero_one, feats, embedding):
     print(c)
     print(zero_one)
     print(feats)
-    print(zero_one)
-    h_up = h[zero_one]
-    c_up = c[zero_one]
+    h_up = h[zero_one == 1]
+    c_up = c[zero_one == 1]
     print(h_up)
     print(c_up)
     test = embedding(feats, (h, c))

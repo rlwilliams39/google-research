@@ -68,13 +68,13 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 
-def selective_update_hc(h, c, zero_one, feats):
+def selective_update_hc(h, c, zero_one, feats, embedding = self.embed_edge_feats):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
     print(h)
     print(c)
     print(zero_one)
     print(feats)
-    test = self.embed_edge_feats(feats, (h, c))
+    test = embedding(feats, (h, c))
     print(test)
     print(TOFU)
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)

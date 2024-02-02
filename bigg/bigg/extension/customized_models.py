@@ -40,7 +40,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         return self.nodelen_encoding(node_feats)
 
     def embed_edge_feats(self, edge_feats, state = None):
-        return self.edgelen_encoding_test(edge_feats)
+        return self.edgelen_encoding_test(edge_feats, state)
 
     def predict_node_feats(self, state, node_feats=None):
         """

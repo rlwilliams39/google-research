@@ -85,8 +85,8 @@ if __name__ == '__main__':
     with open(path, 'rb') as f:
         train_graphs = cp.load(f)
     
-    ## Try with this:::
-    #train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    ## Try with this:
+    train_graphs = graph_generator(n = 5, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]

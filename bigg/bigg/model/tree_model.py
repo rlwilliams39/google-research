@@ -69,6 +69,12 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
 
 
 def selective_update_hc(h, c, zero_one, feats):
+    #### Here, I want to update using the weights LSTM. And then only for those that are 1.
+    print(h)
+    print(c)
+    print(zero_one)
+    print(feats)
+    print(TOFU)
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
@@ -447,8 +453,10 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    edge_embed = self.embed_edge_feats(cur_feats)
-                    return ll, (edge_embed, edge_embed), 1, cur_feats
+                    #edge_embed = self.embed_edge_feats(cur_feats) ### change this??
+                    edge_embed = self.embed_edge_feats(cur_feats, state)
+                    #return ll, (edge_embed, edge_embed), 1, cur_feats
+                    return ll, edge_embed, 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:
@@ -582,7 +590,7 @@ class RecurTreeGen(nn.Module):
         if self.has_node_feats:
             node_feats = self.embed_node_feats(node_feats)
         if self.has_edge_feats:
-            edge_feats = self.embed_edge_feats(edge_feats)
+            edge_feats = edge_feats ##self.embed_edge_feats(edge_feats)
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -645,7 +653,7 @@ class RecurTreeGen(nn.Module):
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats
         if self.has_edge_feats:
-            edge_feats_embed = self.embed_edge_feats(edge_feats)
+            edge_feats_embed = edge_feats #self.embed_edge_feats(edge_feats)
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
@@ -659,6 +667,9 @@ class RecurTreeGen(nn.Module):
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
+                edge_state_update = self.embed_edge_feats(target_feats, edge_state)
+                cur_states[0][~is_nonleaf] = edge_state_update[0]
+                cur_states[1][~is_nonleaf] = edge_state_update[1]
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break

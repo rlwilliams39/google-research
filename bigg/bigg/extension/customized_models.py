@@ -27,6 +27,7 @@ class BiggWithEdgeLen(RecurTreeGen):
     def __init__(self, args):
         super().__init__(args)
         self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
+        self.edgelen_encoding_test = nn.LSTMCell(1, args.embed_dim)
         #self.edgelen_encodingLSTM = nn.LSTMCell(1, args.embed_dim)
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2])
@@ -39,7 +40,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         return self.nodelen_encoding(node_feats)
 
     def embed_edge_feats(self, edge_feats, state = None):
-        return self.edgelen_encoding(edge_feats)
+        return self.edgelen_encoding_test(edge_feats)
 
     def predict_node_feats(self, state, node_feats=None):
         """

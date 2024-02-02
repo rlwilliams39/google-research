@@ -160,7 +160,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
-    #serialized = False
+    serialized = True
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
@@ -181,25 +181,25 @@ if __name__ == '__main__':
             node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            #if serialized:
-            #    ll = 0
-            #    for ind in batch_indices:
-            #        g = train_graphs[ind]
-            #        n = len(g)
-            #        
-            #        ### Obtaining edge list 
-            #        edgelist = []
-            #        for e in g.edges():
-            #            if e[0] < e[1]:
-            #                e = (e[1], e[0])
-            #            edgelist.append((e[0], e[1]))
-            #        edgelist.sort(key = lambda x: x[0])
-            #        
-            #        ### Compute log likelihood, loss
-            #        ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
-            #        ll = ll_i + ll
-            #else:
-            ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
+            if serialized:
+                ll = 0
+                for ind in batch_indices:
+                    g = train_graphs[ind]
+                    n = len(g)
+                    
+                    ### Obtaining edge list 
+                    edgelist = []
+                    for e in g.edges():
+                        if e[0] < e[1]:
+                            e = (e[1], e[0])
+                        edgelist.append((e[0], e[1]))
+                    edgelist.sort(key = lambda x: x[0])
+                    
+                    ### Compute log likelihood, loss
+                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    ll = ll_i + ll
+            else:
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

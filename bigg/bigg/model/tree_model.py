@@ -769,11 +769,11 @@ class RecurTreeGen(nn.Module):
                 #left_feats = edge_feats_embed[edge_idx[~is_rch]]
                 left_feats_h = edge_feats_embed_h[edge_idx[~is_rch]]
                 left_feats_c = edge_feats_embed_c[edge_idx[~is_rch]]
-                print(edge_idx)
-                print(left_feats_h)
                 #print("left_feats: ", left_feats)
                 #print(STOP)
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
+                print(h_bot)
+                print(left_feats_h)
                 h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], [left_feats_h, left_feats_c]) ##########
                 left_ids = tuple([None] + list(left_ids[1:]))
 

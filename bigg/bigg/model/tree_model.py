@@ -76,18 +76,25 @@ def selective_update_hc(h, c, zero_one, feats, embedding):
     
     #h[zero_one == 1] = test[0]
     #c[zero_one == 1] = test[1]
-    print("Prior h: ", h)
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
-    h = torch.where(zero_one, local_edge_feats, h)
-    c = torch.where(zero_one, local_edge_feats, c)
-    print("nz_idx: ", nz_idx)
-    print("local_edge_feats: ", local_edge_feats)
-    print("feats: ", feats)
-    print("zero_one: ", zero_one)
-    print("new h: ", h)
-    print(TOFU)
+    new_h, new_c = embedding(local_edge_feats, (h, c))
+    h = torch.where(zero_one, new_h, h)
+    c = torch.where(zero_one, new_c, c)
+    
+    
+    ##print("Prior h: ", h)
+    ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
+    #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
+    #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
+    #h = torch.where(zero_one, local_edge_feats, h)
+    #c = torch.where(zero_one, local_edge_feats, c)
+    #print("nz_idx: ", nz_idx)
+    #print("local_edge_feats: ", local_edge_feats)
+    #print("feats: ", feats)
+    #print("zero_one: ", zero_one)
+    #print("new h: ", h)
+    #print(TOFU)
     return h, c
 
 def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None):

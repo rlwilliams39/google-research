@@ -106,6 +106,9 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     node_feats = [t_lch, t_rch]
     h_list = []
     c_list = []
+    edge_h_list = []
+    edge_c_list = []
+    edge_indices = []
     for i in range(2):
         print("ITERATION")
         print(edge_feats[i])
@@ -114,6 +117,8 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         if edge_feats is not None:
             if test:
                 local_hbot, local_cbot, edge_h, edge_c = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
+                edge_h_list.append(edge_h)
+                edge_c_list.append(edge_c)
             else:
                 local_hbot, local_cbot = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
         if cell_node is not None:
@@ -121,6 +126,9 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         h_vecs, c_vecs = tree_state_select(local_hbot, local_cbot, h_buf, c_buf, lambda : new_ids[i])
         h_list.append(h_vecs)
         c_list.append(c_vecs)
+    
+    print(h_list)
+    print(c_list)
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 

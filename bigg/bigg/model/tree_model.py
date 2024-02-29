@@ -219,9 +219,7 @@ class FenwickTree(nn.Module):
                 node_feats, is_tree_trivial, t_lch, t_rch = feat_dict['node']
                 sel_feat = node_feats[is_tree_trivial]
                 feat_dict['node'] = (sel_feat[t_lch], sel_feat[t_rch])
-            print(h_bot)
             h_bot, c_bot = h_bot
-            print(h_bot)
         if h_bot is not None:
             row_embeds.append((h_bot, c_bot))
         if prev_rowsum_h is not None:
@@ -599,8 +597,8 @@ class RecurTreeGen(nn.Module):
         all_ids = TreeLib.PrepareTreeEmbed()
         if self.has_node_feats:
             node_feats = self.embed_node_feats(node_feats)
-        if self.has_edge_feats:
-            edge_feats = edge_feats ##self.embed_edge_feats(edge_feats)
+        #if self.has_edge_feats:
+        #    edge_feats = edge_feats ##self.embed_edge_feats(edge_feats)
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -677,9 +675,9 @@ class RecurTreeGen(nn.Module):
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
-                #edge_state_update = self.embed_edge_feats(target_feats, edge_state)
-                #cur_states[0][~is_nonleaf] = edge_state_update[0]
-                #cur_states[1][~is_nonleaf] = edge_state_update[1]
+                edge_state_update = self.embed_edge_feats(target_feats, edge_state)
+                cur_states[0][~is_nonleaf] = edge_state_update[0]
+                cur_states[1][~is_nonleaf] = edge_state_update[1]
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break

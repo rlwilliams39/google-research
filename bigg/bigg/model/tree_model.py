@@ -617,7 +617,7 @@ class RecurTreeGen(nn.Module):
         max_level = len(all_ids) - 1
         h_buf_list = [None] * (len(all_ids) + 1)
         c_buf_list = [None] * (len(all_ids) + 1)
-        
+        print(edge_feats)
 
         for d in range(len(all_ids) - 1, -1, -1):
             fn_ids = lambda i: all_ids[d][i]

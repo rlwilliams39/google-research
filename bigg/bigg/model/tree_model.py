@@ -70,17 +70,23 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
 
 def selective_update_hc(h, c, zero_one, feats, embedding):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
-    h_up = h[zero_one == 1]
-    c_up = c[zero_one == 1]
-    test = embedding(feats, (h_up, c_up))
+    #h_up = h[zero_one == 1]
+    #c_up = c[zero_one == 1]
+    #test = embedding(feats, (h_up, c_up))
     
-    h[zero_one == 1] = test[0]
-    c[zero_one == 1] = test[1]
-    #nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
-    #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
-    #h = torch.where(zero_one, local_edge_feats, h)
-    #c = torch.where(zero_one, local_edge_feats, c)
+    #h[zero_one == 1] = test[0]
+    #c[zero_one == 1] = test[1]
+    print("Prior h: ", h)
+    nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
+    local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
+    zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
+    h = torch.where(zero_one, local_edge_feats, h)
+    c = torch.where(zero_one, local_edge_feats, c)
+    print("nz_idx: ", nz_idx)
+    print("local_edge_feats: ", local_edge_feats))
+    print("zero_one: ", zero_one)
+    print("new h: ", h)
+    print(TOFU)
     return h, c
 
 def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None):
@@ -226,7 +232,7 @@ class FenwickTree(nn.Module):
             if i == 0 and (self.has_edge_feats or self.has_node_feats):
                 lstm_func = featured_batch_tree_lstm3
             lstm_func = partial(lstm_func, h_buf=row_embeds[-1][0], c_buf=row_embeds[-1][1],
-                                h_past=prev_rowsum_h, c_past=prrev_rowsum_c, fn_all_ids=fn_ids, cell=self.merge_cell, embedding = embedding)
+                                h_past=prev_rowsum_h, c_past=prrev_rowsum_c, fn_all_ids=fn_ids, cell=self.merge_cell)
             if i == 0:
                 if self.has_edge_feats or self.has_node_feats:
                     new_states = lstm_func(feat_dict, h_bot, c_bot, cell_node=None if not self.has_node_feats else self.node_feat_update, embedding = embedding)

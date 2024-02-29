@@ -68,7 +68,7 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 
-def selective_update_hc(h, c, zero_one, feats, embedding = None):
+def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
@@ -88,9 +88,13 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None):
     #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
     #h = torch.where(zero_one, local_edge_feats, h)
     #c = torch.where(zero_one, local_edge_feats, c)
+    if test:
+        edge_h = torch.select(new_h, 0, zero_one) 
+        edge_c = torch.select(new_c, 0, zero_one) 
+        return h, c, edge_h, edge_c
     return h, c
 
-def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None):
+def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None,test=False):
     new_ids = [list(fn_all_ids(0)), list(fn_all_ids(1))]
     lch_isleaf, rch_isleaf = new_ids[0][0], new_ids[1][0]
     new_ids[0][0] = new_ids[1][0] = None
@@ -105,7 +109,10 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         leaf_check = is_leaf[i]
         local_hbot, local_cbot = h_bot[leaf_check], c_bot[leaf_check]
         if edge_feats is not None:
-            local_hbot, local_cbot = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding)
+            if test:
+                local_hbot, local_cbot, edge_h, edge_c = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
+            else:
+                local_hbot, local_cbot = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
         if cell_node is not None:
             local_hbot, local_cbot = cell_node(node_feats[i], (local_hbot, local_cbot))
         h_vecs, c_vecs = tree_state_select(local_hbot, local_cbot, h_buf, c_buf, lambda : new_ids[i])
@@ -623,7 +630,7 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(d + 1)
                 local_edge_feats = edge_feats[edge_idx]
-                #print(local_edge_feats)
+                print(local_edge_feats)
                 #print(is_rch)
                 #print(h_bot)
                 #print(c_bot)
@@ -633,7 +640,7 @@ class RecurTreeGen(nn.Module):
                 #print(STOP)
                 new_h, new_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats)
             else:
-                new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
+                new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
             h_buf_list[d] = new_h
             c_buf_list[d] = new_c
         hc_bot = fn_hc_bot(0)
@@ -665,8 +672,8 @@ class RecurTreeGen(nn.Module):
         ll = 0.0
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
-        row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats)
-        print(prev_rowsum_states)
+        print(TOFU)
+        row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = None)#self.embed_edge_feats)
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats

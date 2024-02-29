@@ -771,7 +771,7 @@ class RecurTreeGen(nn.Module):
                 #print("left_feats: ", left_feats)
                 #print(STOP)
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
-                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], [left_feats_h, left_feats_c], embed = None) ##########
+                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], [left_feats_h, left_feats_c]) ##########
                 left_ids = tuple([None] + list(left_ids[1:]))
 
             left_subtree_states = tree_state_select(h_bot, c_bot,

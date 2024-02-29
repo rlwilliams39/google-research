@@ -743,12 +743,14 @@ class RecurTreeGen(nn.Module):
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
+        print(row_states)
 
         lv = 0
         while True:
             is_nonleaf = TreeLib.QueryNonLeaf(lv)
             if self.has_edge_feats:
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
+                print(edge_state)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
                 #print("target feats: ", target_feats)

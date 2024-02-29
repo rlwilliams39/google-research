@@ -603,7 +603,7 @@ class RecurTreeGen(nn.Module):
             return -loss, label
         return -loss
 
-   def forward_row_trees(self, graph_ids, node_feats=None, edge_feats=None, list_node_starts=None, num_nodes=-1, list_col_ranges=None, embedding=None):
+   def forward_row_trees(self, graph_ids, node_feats=None, edge_feats=None, list_node_starts=None, num_nodes=-1, list_col_ranges=None, embedding=None): 
         TreeLib.PrepareMiniBatch(graph_ids, list_node_starts, num_nodes, list_col_ranges)
         # embed trees
         all_ids = TreeLib.PrepareTreeEmbed()

@@ -698,6 +698,7 @@ class RecurTreeGen(nn.Module):
                 h_next_buf = c_next_buf = None
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(lv + 1)
+                print(edge_feats_embed)
                 left_feats = edge_feats_embed[edge_idx[~is_rch]]
                 #left_feats = edge_feats[edge_idx[~is_rch]]
                 print(left_feats)

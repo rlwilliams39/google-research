@@ -131,8 +131,8 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         h_list.append(h_vecs)
         c_list.append(c_vecs)
     
-    print(edge_h_dict)
-    print(edge_c_dict)
+    if test:
+        return cell((h_list[0], c_list[0]), (h_list[1], c_list[1])), edge_h_dict, edge_c_dict
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 
@@ -654,7 +654,7 @@ class RecurTreeGen(nn.Module):
                 #print(c_buf)
                 #print(fn_ids)
                 #print(STOP)
-                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
+                new_h, new_c, edge_h_dict, edge_c_dict = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
                 print(TOFU)
             else:
                 new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)

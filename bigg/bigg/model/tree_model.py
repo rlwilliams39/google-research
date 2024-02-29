@@ -722,8 +722,8 @@ class RecurTreeGen(nn.Module):
                     edge_feats_embed_c = edge_c
                 
                 else:
-                    edge_feats_embed_h = torch.cat(edge_feats_embed_h, edge_h)
-                    edge_feats_embed_h = torch.cat(edge_feats_embed_c, edge_c)
+                    edge_feats_embed_h = torch.cat([edge_feats_embed_h, edge_h])
+                    edge_feats_embed_h = torch.cat([edge_feats_embed_c, edge_c])
             print(edge_feats_embed_h)
             print(STOP)
         logit_has_edge = self.pred_has_ch(row_states[0])

@@ -80,20 +80,9 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None):
         c = torch.where(zero_one, new_c, c)
     
     else:
-        feats_h = feats[0]
-        feats_c = feats[1]
-        h = torch.where(zero_one, local_feats_h, h)
-        c = torch.where(zero_one, local_feats_c, c)
+        h = torch.where(zero_one, local_edge_feats, h)
+        c = torch.where(zero_one, local_edge_feats, c)
     
-    ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
-    #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
-    #h = torch.where(zero_one, local_edge_feats, h)
-    #c = torch.where(zero_one, local_edge_feats, c)
-    #if test:
-    #    edge_h = new_h[zero_one.squeeze(1)]
-    #    edge_c = new_c[zero_one.squeeze(1)]
-    #    return h, c, edge_h, edge_c
     return h, c
 
 def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell, t_lch=None, t_rch=None, cell_node=None, embedding=None):

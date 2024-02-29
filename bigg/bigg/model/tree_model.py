@@ -118,12 +118,11 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         if edge_feats is not None:
             if test:
                 local_hbot, local_cbot, edge_h, edge_c = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
-                print("edge_h: ", edge_h)
-                edge_h = torch.split(edge_h, 1)
-                print(edge_h)
-                for edge in edge_feats[i]:
-                    edge_h_dict[i] = edge_h
-                    print(TOFU)
+                edge_h, edge_c = torch.split(edge_h, 1), torch.split(edge_c, 1)
+                for k in range(len(edge_feats[i])):
+                    edge = edge_feats[i][k]
+                    edge_h_dict[edge] = edge_h[k]
+                    edge_c_dict[edge] = edge_c[k]
             else:
                 local_hbot, local_cbot = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
         if cell_node is not None:
@@ -132,8 +131,8 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         h_list.append(h_vecs)
         c_list.append(c_vecs)
     
-    print(edge_h_list)
-    print(edge_c_list)
+    print(edge_h_dict)
+    print(edge_c_dict)
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 

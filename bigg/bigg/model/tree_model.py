@@ -498,9 +498,7 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    #edge_embed = self.embed_edge_feats(cur_feats) ### change this??
                     edge_embed = self.embed_edge_feats(cur_feats, state)
-                    #return ll, (edge_embed, edge_embed), 1, cur_feats
                     return ll, edge_embed, 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
@@ -707,11 +705,13 @@ class RecurTreeGen(nn.Module):
     def forward_train(self, graph_ids, node_feats=None, edge_feats=None,
                       list_node_starts=None, num_nodes=-1, prev_rowsum_states=[None, None], list_col_ranges=None):
         ll = 0.0
+        self.has_edge_feats = False
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list, edge_h_dict, edge_c_dict = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges, test = True)
         row_states, next_states, dicts = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats, dicts = [edge_h_dict, edge_c_dict])#self.embed_edge_feats)
-        edge_h_dict = dicts[0]
-        edge_c_dict = dicts[1]
+        self.has_edge_feats = True
+        #edge_h_dict = dicts[0]
+        #edge_c_dict = dicts[1]
         
         #print(edge_feats)
         #print(edge_h_dict)
@@ -777,13 +777,13 @@ class RecurTreeGen(nn.Module):
                 h_next_buf = c_next_buf = None
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(lv + 1)
-                #left_feats = edge_feats_embed[edge_idx[~is_rch]]
-                left_feats_h = edge_feats_embed_h[edge_idx[~is_rch]]
-                left_feats_c = edge_feats_embed_c[edge_idx[~is_rch]]
+                left_feats = edge_feats_embed[edge_idx[~is_rch]]
+                #left_feats_h = edge_feats_embed_h[edge_idx[~is_rch]]
+                #left_feats_c = edge_feats_embed_c[edge_idx[~is_rch]]
                 #print("left_feats: ", left_feats)
                 #print(STOP)
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
-                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], [left_feats_h, left_feats_c]) ##########
+                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats, self.embed_edge_feats) ##########
                 left_ids = tuple([None] + list(left_ids[1:]))
 
             left_subtree_states = tree_state_select(h_bot, c_bot,

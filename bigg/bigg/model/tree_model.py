@@ -710,6 +710,7 @@ class RecurTreeGen(nn.Module):
                                                                            list_node_starts, num_nodes, list_col_ranges, test = True)
         row_states, next_states, dicts = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats, dicts = [edge_h_dict, edge_c_dict])#self.embed_edge_feats)
         self.has_edge_feats = True
+        print(self.has_edge_feats)
         #edge_h_dict = dicts[0]
         #edge_c_dict = dicts[1]
         

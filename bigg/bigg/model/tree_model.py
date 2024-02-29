@@ -107,6 +107,8 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     h_list = []
     c_list = []
     for i in range(2):
+        print("ITERATION")
+        print(edge_feats[i])
         leaf_check = is_leaf[i]
         local_hbot, local_cbot = h_bot[leaf_check], c_bot[leaf_check]
         if edge_feats is not None:

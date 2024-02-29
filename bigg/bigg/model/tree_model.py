@@ -631,6 +631,8 @@ class RecurTreeGen(nn.Module):
         h_buf_list = [None] * (len(all_ids) + 1)
         c_buf_list = [None] * (len(all_ids) + 1)
         #print(edge_feats)
+        edge_h_dict = {}
+        edge_c_dict = {}
 
         for d in range(len(all_ids) - 1, -1, -1):
             fn_ids = lambda i: all_ids[d][i]
@@ -651,7 +653,9 @@ class RecurTreeGen(nn.Module):
                 #print(c_buf)
                 #print(fn_ids)
                 #print(STOP)
-                new_h, new_c, edge_h_dict, edge_c_dict = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
+                new_h, new_c, edge_h_dict_i, edge_c_dict_i = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
+                edge_h_dict.update(edge_h_dict_i)
+                edge_c_dict.update(edge_c_dict_i)
                 #print(TOFU)
             else:
                 new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)

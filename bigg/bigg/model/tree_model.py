@@ -239,6 +239,7 @@ class FenwickTree(nn.Module):
 
     def forward_train(self, h_bot, c_bot, h_buf0, c_buf0, prev_rowsum_h, prrev_rowsum_c, embedding = None, dicts = None):
         # embed row tree
+        self.has_edge_feats = False
         if dicts is not None:
             edge_h_dict = dicts[0]
             edge_c_dict = dicts[1]
@@ -316,6 +317,7 @@ class FenwickTree(nn.Module):
         if dicts is not None:
             dicts = [edge_h_dict, edge_c_dict]
             return (row_h, row_c), ret_state, dicts
+        self.has_edge_feats = True
         return (row_h, row_c), ret_state
 
 

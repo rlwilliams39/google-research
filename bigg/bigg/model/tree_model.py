@@ -74,7 +74,7 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None):
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
     
-    if embeding is not None:
+    if embedding is not None:
         new_h, new_c = embedding(local_edge_feats, (h, c))
         h = torch.where(zero_one, new_h, h)
         c = torch.where(zero_one, new_c, c)

@@ -622,6 +622,7 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(d + 1)
                 local_edge_feats = edge_feats[edge_idx]
+                print(local_edge_feats)
                 new_h, new_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats)
             else:
                 new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
@@ -698,15 +699,10 @@ class RecurTreeGen(nn.Module):
                 h_next_buf = c_next_buf = None
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(lv + 1)
-                print(edge_feats_embed)
                 #left_feats = edge_feats_embed[edge_idx[~is_rch]]
                 left_feats = edge_feats[edge_idx[~is_rch]]
-                print(edge_feats)
-                print(edge_idx[~is_rch])
-                print("left feats: ", left_feats)
-                print(TOFU)
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
-                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats, None)#self.embed_edge_feats) ##########
+                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats, self.embed_edge_feats) ##########
                 left_ids = tuple([None] + list(left_ids[1:]))
 
             left_subtree_states = tree_state_select(h_bot, c_bot,

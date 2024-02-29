@@ -86,7 +86,7 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     
     print("FEATS: ", feats)
     print("NEW H: ", new_h)
-    print("NEW H SUB: ", new_h[zero_one_old])
+    print("NEW H SUB: ", new_h[zero_one_old, :])
     print(zero_one_old)
     print("EDGE H: ", edge_h)
     

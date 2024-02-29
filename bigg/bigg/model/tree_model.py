@@ -132,7 +132,8 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
         c_list.append(c_vecs)
     
     if test:
-        return cell((h_list[0], c_list[0]), (h_list[1], c_list[1])), edge_h_dict, edge_c_dict
+        new_h, new_c = cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
+        return new_h, new_c, edge_h_dict, edge_c_dict
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 

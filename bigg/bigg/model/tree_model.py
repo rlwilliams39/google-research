@@ -89,8 +89,8 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     #h = torch.where(zero_one, local_edge_feats, h)
     #c = torch.where(zero_one, local_edge_feats, c)
     if test:
-        edge_h = new_h[zero_one.squeeze(1)])
-        edge_c = new_c[zero_one.squeeze(1)])
+        edge_h = new_h[zero_one.squeeze(1)]
+        edge_c = new_c[zero_one.squeeze(1)]
         return h, c, edge_h, edge_c
     return h, c
 

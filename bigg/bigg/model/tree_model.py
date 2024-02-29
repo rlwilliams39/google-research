@@ -68,14 +68,20 @@ def batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_all_ids, cell):
     return cell((h_list[0], c_list[0]), (h_list[1], c_list[1]))
 
 
-def selective_update_hc(h, c, zero_one, feats, embedding):
+def selective_update_hc(h, c, zero_one, feats, embedding = None):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    new_h, new_c = embedding(local_edge_feats, (h, c))
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
-    h = torch.where(zero_one, new_h, h)
-    c = torch.where(zero_one, new_c, c)
+    
+    if embeding is not None:
+        new_h, new_c = embedding(local_edge_feats, (h, c))
+        h = torch.where(zero_one, new_h, h)
+        c = torch.where(zero_one, new_c, c)
+    
+    else:
+        h = torch.where(zero_one, local_edge_feats, h)
+        c = torch.where(zero_one, local_edge_feats, c)
     
     ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
@@ -694,7 +700,7 @@ class RecurTreeGen(nn.Module):
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(lv + 1)
                 left_feats = edge_feats_embed[edge_idx[~is_rch]]
                 h_bot, c_bot = h_bot[left_ids[0]], c_bot[left_ids[0]]
-                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats, self.embed_edge_feats)
+                h_bot, c_bot = selective_update_hc(h_bot, c_bot, left_ids[0], left_feats, self.embed_edge_feats) ##########
                 left_ids = tuple([None] + list(left_ids[1:]))
 
             left_subtree_states = tree_state_select(h_bot, c_bot,

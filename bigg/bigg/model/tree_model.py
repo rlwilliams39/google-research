@@ -219,6 +219,7 @@ class FenwickTree(nn.Module):
                 node_feats, is_tree_trivial, t_lch, t_rch = feat_dict['node']
                 sel_feat = node_feats[is_tree_trivial]
                 feat_dict['node'] = (sel_feat[t_lch], sel_feat[t_rch])
+            print(h_bot)
             h_bot, c_bot = h_bot
             print(h_bot)
         if h_bot is not None:

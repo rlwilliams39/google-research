@@ -711,8 +711,7 @@ class RecurTreeGen(nn.Module):
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list, edge_h_dict, edge_c_dict = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges, test = True)
         row_states, next_states, dicts = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats, dicts = [edge_h_dict, edge_c_dict])#self.embed_edge_feats)
-        self.has_edge_feats = True
-        print(self.has_edge_feats)
+        #print(self.has_edge_feats)
         #edge_h_dict = dicts[0]
         #edge_c_dict = dicts[1]
         
@@ -746,15 +745,16 @@ class RecurTreeGen(nn.Module):
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
-        print(row_states)
+        #print(row_states)
 
         lv = 0
+        self.has_edge_feats = True
         while True:
             is_nonleaf = TreeLib.QueryNonLeaf(lv)
             if self.has_edge_feats:
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
-                print(edge_state)
+                #print(edge_state)
                 target_feats = edge_feats[edge_of_lv]
                 #print("target feats: ", target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)

@@ -617,7 +617,7 @@ class RecurTreeGen(nn.Module):
         max_level = len(all_ids) - 1
         h_buf_list = [None] * (len(all_ids) + 1)
         c_buf_list = [None] * (len(all_ids) + 1)
-        print(edge_feats)
+        #print(edge_feats)
 
         for d in range(len(all_ids) - 1, -1, -1):
             fn_ids = lambda i: all_ids[d][i]
@@ -672,8 +672,9 @@ class RecurTreeGen(nn.Module):
         ll = 0.0
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
-        print(TOFU)
+        print(hc_bot)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = None)#self.embed_edge_feats)
+        print(TOFU)
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats

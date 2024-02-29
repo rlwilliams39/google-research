@@ -769,6 +769,7 @@ class RecurTreeGen(nn.Module):
                 #left_feats = edge_feats_embed[edge_idx[~is_rch]]
                 left_feats_h = edge_feats_embed_h[edge_idx[~is_rch]]
                 left_feats_c = edge_feats_embed_c[edge_idx[~is_rch]]
+                print(edge_idx)
                 print(left_feats_h)
                 #print("left_feats: ", left_feats)
                 #print(STOP)

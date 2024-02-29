@@ -711,12 +711,21 @@ class RecurTreeGen(nn.Module):
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats
         if self.has_edge_feats:
-            edge_feats_embed = edge_feats
+            edge_feats_embed_h = None
+            edge_feats_embed_c = None
+            i = 0
             for edge in edge_feats.numpy():
-                print(edge[0])
-            print(STOP)
+                edge_h = edge_h_dict[edge]
+                edge_c = edge_c_dict[edge]
+                if edge_feats_embed_h is None:
+                    edge_feats_embed_h = edge_h
+                    edge_feats_embed_c = edge_c
                 
-            edge_feats_embed = edge_feats #self.embed_edge_feats(edge_feats, row_states) #self.embed_edge_feats(edge_feats)
+                else:
+                    edge_feats_embed_h = torch.cat(edge_feats_embed_h, edge_h)
+                    edge_feats_embed_h = torch.cat(edge_feats_embed_c, edge_c)
+            print(edge_feats_embed_h)
+            print(STOP)
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)

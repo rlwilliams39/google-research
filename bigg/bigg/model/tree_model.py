@@ -215,12 +215,12 @@ class FenwickTree(nn.Module):
         row_embeds = [(self.init_h0, self.init_c0)]
         if self.has_edge_feats or self.has_node_feats:
             feat_dict = c_bot
-            print(feat_dict)
             if 'node' in feat_dict:
                 node_feats, is_tree_trivial, t_lch, t_rch = feat_dict['node']
                 sel_feat = node_feats[is_tree_trivial]
                 feat_dict['node'] = (sel_feat[t_lch], sel_feat[t_rch])
             h_bot, c_bot = h_bot
+            print(h_bot)
         if h_bot is not None:
             row_embeds.append((h_bot, c_bot))
         if prev_rowsum_h is not None:

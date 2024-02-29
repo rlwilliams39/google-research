@@ -86,7 +86,7 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     
     print("FEATS: ", feats)
     print("NEW H: ", new_h)
-    indices = torch.tensor(np.argwhere(np.asarray(zero_one.long())))
+    indices = torch.tensor(np.argwhere(zero_one_old)))
     print(zero_one_old)
     print(indices)
     print("NEW H SUB: ", torch.index_select(new_h, 0, indices))

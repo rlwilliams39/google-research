@@ -736,10 +736,10 @@ class RecurTreeGen(nn.Module):
                     edge_feats_embed_c = torch.cat([edge_feats_embed_c, edge_c])
             #print(edge_feats_embed_h)
             #print(STOP)
-        print("Hello")
+        #print("Hello")
         logit_has_edge = self.pred_has_ch(row_states[0])
-        print(logit_has_edge)
-        print(edge_feats)
+        #print(logit_has_edge)
+        #print(edge_feats)
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)
         cur_states = (row_states[0][has_ch], row_states[1][has_ch])
@@ -753,8 +753,8 @@ class RecurTreeGen(nn.Module):
                 target_feats = edge_feats[edge_of_lv]
                 #print("target feats: ", target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
-                cur_states = selective_update_hc(cur_states[0], cur_states[1], ~is_nonleaf, target_feats, embedding = self.embed_edge_feats)
-                edge_feats_embed = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
+                #cur_states = selective_update_hc(cur_states[0], cur_states[1], ~is_nonleaf, target_feats, embedding = self.embed_edge_feats)
+                #edge_feats_embed = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 ll = ll + edge_ll
             if is_nonleaf is None or np.sum(is_nonleaf) == 0:
                 break

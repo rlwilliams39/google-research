@@ -622,7 +622,6 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(d + 1)
                 local_edge_feats = edge_feats[edge_idx]
-                print("local edge feats in fwd row trees: ", local_edge_feats)
                 new_h, new_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats)
             else:
                 new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
@@ -655,6 +654,9 @@ class RecurTreeGen(nn.Module):
     def forward_train(self, graph_ids, node_feats=None, edge_feats=None,
                       list_node_starts=None, num_nodes=-1, prev_rowsum_states=[None, None], list_col_ranges=None):
         ll = 0.0
+        print(list_node_starts)
+        print(num_nodes)
+        print(list_col_ranges)
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats)

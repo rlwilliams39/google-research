@@ -99,6 +99,7 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     lch_isleaf, rch_isleaf = new_ids[0][0], new_ids[1][0]
     new_ids[0][0] = new_ids[1][0] = None
     is_leaf = [lch_isleaf, rch_isleaf]
+    print(edge_feats)
     if edge_feats is not None:
         edge_feats = [edge_feats[~is_rch], edge_feats[is_rch]]
         assert np.sum(is_rch) == np.sum(rch_isleaf)
@@ -599,7 +600,7 @@ class RecurTreeGen(nn.Module):
             return -loss, label
         return -loss
 
-    def forward_row_trees(self, graph_ids, node_feats=None, edge_feats=None, list_node_starts=None, num_nodes=-1, list_col_ranges=None):
+    def forward_row_trees(self, graph_ids, node_feats=None, edge_feats=None, list_node_starts=None, num_nodes=-1, list_col_ranges=None, test = False):
         TreeLib.PrepareMiniBatch(graph_ids, list_node_starts, num_nodes, list_col_ranges)
         # embed trees
         all_ids = TreeLib.PrepareTreeEmbed()
@@ -639,7 +640,7 @@ class RecurTreeGen(nn.Module):
                 #print(c_buf)
                 #print(fn_ids)
                 #print(STOP)
-                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = True)
+                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test)
                 print(TOFU)
             else:
                 new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)

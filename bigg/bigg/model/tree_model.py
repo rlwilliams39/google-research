@@ -715,8 +715,8 @@ class RecurTreeGen(nn.Module):
             edge_feats_embed_c = None
             i = 0
             for edge in edge_feats.numpy():
-                edge_h = edge_h_dict[edge]
-                edge_c = edge_c_dict[edge]
+                edge_h = edge_h_dict[edge[0]]
+                edge_c = edge_c_dict[edge[0]]
                 if edge_feats_embed_h is None:
                     edge_feats_embed_h = edge_h
                     edge_feats_embed_c = edge_c

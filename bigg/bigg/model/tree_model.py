@@ -83,20 +83,14 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
         h = torch.where(zero_one, local_edge_feats, h)
         c = torch.where(zero_one, local_edge_feats, c)
     
-    print("FEATS: ", feats)
-    print("NEW H: ", new_h)
-    #indices = np.argwhere(zero_one_old)
-    print(zero_one)
-    print("NEW H SUB: ", new_h[zero_one.reshape(4)])
-    print("EDGE H: ", edge_h)
     ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
     #zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
     #h = torch.where(zero_one, local_edge_feats, h)
     #c = torch.where(zero_one, local_edge_feats, c)
     if test:
-        edge_h = torch.select(new_h, 0, zero_one) 
-        edge_c = torch.select(new_c, 0, zero_one) 
+        edge_h = new_h[zero_one.squeeze(1)])
+        edge_c = new_c[zero_one.squeeze(1)])
         return h, c, edge_h, edge_c
     return h, c
 
@@ -645,7 +639,8 @@ class RecurTreeGen(nn.Module):
                 #print(c_buf)
                 #print(fn_ids)
                 #print(STOP)
-                new_h, new_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats)
+                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = True)
+                print(TOFU)
             else:
                 new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
             h_buf_list[d] = new_h

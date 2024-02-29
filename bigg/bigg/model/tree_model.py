@@ -99,7 +99,6 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     lch_isleaf, rch_isleaf = new_ids[0][0], new_ids[1][0]
     new_ids[0][0] = new_ids[1][0] = None
     is_leaf = [lch_isleaf, rch_isleaf]
-    print(edge_feats)
     if edge_feats is not None:
         edge_feats = [edge_feats[~is_rch], edge_feats[is_rch]]
         assert np.sum(is_rch) == np.sum(rch_isleaf)
@@ -109,10 +108,7 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     edge_h_dict = {}
     edge_c_dict = {}
     edge_indices = []
-    print(test)
     for i in range(2):
-        print("ITERATION")
-        print(edge_feats[i])
         leaf_check = is_leaf[i]
         local_hbot, local_cbot = h_bot[leaf_check], c_bot[leaf_check]
         if edge_feats is not None:
@@ -647,7 +643,7 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(d + 1)
                 local_edge_feats = edge_feats[edge_idx]
-                print(local_edge_feats)
+                #print(local_edge_feats)
                 #print(is_rch)
                 #print(h_bot)
                 #print(c_bot)
@@ -656,9 +652,9 @@ class RecurTreeGen(nn.Module):
                 #print(fn_ids)
                 #print(STOP)
                 new_h, new_c, edge_h_dict, edge_c_dict = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
-                print(TOFU)
+                #print(TOFU)
             else:
-                new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
+                new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
             h_buf_list[d] = new_h
             c_buf_list[d] = new_c
         hc_bot = fn_hc_bot(0)
@@ -676,6 +672,8 @@ class RecurTreeGen(nn.Module):
             feat_dict['node'] = (node_feats, is_tree_trivial, t_lch, t_rch)
         if len(feat_dict):
             hc_bot = (hc_bot, feat_dict)
+        if test:
+            return hc_bot, fn_hc_bot, h_buf_list, c_buf_list, edge_h_dict, edge_c_dict
         return hc_bot, fn_hc_bot, h_buf_list, c_buf_list
 
     def forward_row_summaries(self, graph_ids, node_feats=None, edge_feats=None,
@@ -688,8 +686,10 @@ class RecurTreeGen(nn.Module):
     def forward_train(self, graph_ids, node_feats=None, edge_feats=None,
                       list_node_starts=None, num_nodes=-1, prev_rowsum_states=[None, None], list_col_ranges=None):
         ll = 0.0
-        hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
+        hc_bot, fn_hc_bot, h_buf_list, c_buf_list, edge_h_dict, edge_c_dict = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges, test = True)
+        print(edge_h_dict)
+        print(TOFU)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = None)#self.embed_edge_feats)
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)

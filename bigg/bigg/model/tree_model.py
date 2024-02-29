@@ -713,7 +713,7 @@ class RecurTreeGen(nn.Module):
         if self.has_edge_feats:
             edge_feats_embed = edge_feats
             for edge in edge_feats.numpy():
-                print(edge)
+                print(edge[0])
             print(STOP)
                 
             edge_feats_embed = edge_feats #self.embed_edge_feats(edge_feats, row_states) #self.embed_edge_feats(edge_feats)

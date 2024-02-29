@@ -72,7 +72,6 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
-    zero_one_old = zero_one
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
     
     if embedding is not None:
@@ -86,10 +85,10 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     
     print("FEATS: ", feats)
     print("NEW H: ", new_h)
-    indices = np.argwhere(zero_one_old)
-    print(zero_one_old)
+    #indices = np.argwhere(zero_one_old)
+    print(zero_one)
     print(indices)
-    print("NEW H SUB: ", torch.index_select(new_h, 0, indices))
+    print("NEW H SUB: ", new_h[zero_one])
     print("EDGE H: ", edge_h)
     ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     #local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])

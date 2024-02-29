@@ -83,7 +83,7 @@ def selective_update_hc(h, c, zero_one, feats, embedding):
     h = torch.where(zero_one, local_edge_feats, h)
     c = torch.where(zero_one, local_edge_feats, c)
     print("nz_idx: ", nz_idx)
-    print("local_edge_feats: ", local_edge_feats))
+    print("local_edge_feats: ", local_edge_feats)
     print("zero_one: ", zero_one)
     print("new h: ", h)
     print(TOFU)

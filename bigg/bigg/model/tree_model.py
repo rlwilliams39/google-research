@@ -215,6 +215,7 @@ class FenwickTree(nn.Module):
         row_embeds = [(self.init_h0, self.init_c0)]
         if self.has_edge_feats or self.has_node_feats:
             feat_dict = c_bot
+            print(feat_dict)
             if 'node' in feat_dict:
                 node_feats, is_tree_trivial, t_lch, t_rch = feat_dict['node']
                 sel_feat = node_feats[is_tree_trivial]
@@ -236,7 +237,7 @@ class FenwickTree(nn.Module):
                                 h_past=prev_rowsum_h, c_past=prrev_rowsum_c, fn_all_ids=fn_ids, cell=self.merge_cell)
             if i == 0:
                 if self.has_edge_feats or self.has_node_feats:
-                    new_states = lstm_func(feat_dict, h_bot, c_bot, cell_node=None if not self.has_node_feats else self.node_feat_update, embedding = None)#embedding)
+                    new_states = lstm_func(feat_dict, h_bot, c_bot, cell_node=None if not self.has_node_feats else self.node_feat_update, embedding = embedding)
                 else:
                     new_states = lstm_func(h_bot, c_bot)
             else:

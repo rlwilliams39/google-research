@@ -609,9 +609,7 @@ class RecurTreeGen(nn.Module):
         all_ids = TreeLib.PrepareTreeEmbed()
         if self.has_node_feats:
             node_feats = self.embed_node_feats(torch.log(node_feats))
-        #if self.has_edge_feats:
-        #    edge_feats = self.embed_edge_feats(edge_feats)
-
+        
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
             c_bot = torch.cat([self.empty_c0, self.leaf_c0], dim=0)
@@ -734,11 +732,6 @@ class RecurTreeGen(nn.Module):
                 new_states.append(new_s)
             cur_states = tuple(new_states)
             lv += 1
-        print(next_states)
-        print(next_states[0].size())
-        print(TOFU)
-        
-        
         return ll, next_states
 
 

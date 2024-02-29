@@ -640,7 +640,7 @@ class RecurTreeGen(nn.Module):
                 #print(c_buf)
                 #print(fn_ids)
                 #print(STOP)
-                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test)
+                new_h, new_c, edge_h, edge_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats, test = test)
                 print(TOFU)
             else:
                 new_h, new_c, edge_h, edge_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)

@@ -610,6 +610,9 @@ class RecurTreeGen(nn.Module):
         max_level = len(all_ids) - 1
         h_buf_list = [None] * (len(all_ids) + 1)
         c_buf_list = [None] * (len(all_ids) + 1)
+        
+        print(all_ids)
+        print(STOP)
 
         for d in range(len(all_ids) - 1, -1, -1):
             fn_ids = lambda i: all_ids[d][i]
@@ -654,9 +657,6 @@ class RecurTreeGen(nn.Module):
     def forward_train(self, graph_ids, node_feats=None, edge_feats=None,
                       list_node_starts=None, num_nodes=-1, prev_rowsum_states=[None, None], list_col_ranges=None):
         ll = 0.0
-        print(list_node_starts)
-        print(num_nodes)
-        print(list_col_ranges)
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats)

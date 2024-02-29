@@ -116,7 +116,7 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
                 local_hbot, local_cbot, edge_h, edge_c = selective_update_hc(local_hbot, local_cbot, leaf_check, edge_feats[i], embedding, test)
                 edge_h, edge_c = torch.split(edge_h, 1), torch.split(edge_c, 1)
                 for k in range(len(edge_feats[i])):
-                    edge = edge_feats[i][k]
+                    edge = edge_feats[i][k].item()
                     edge_h_dict[edge] = edge_h[k]
                     edge_c_dict[edge] = edge_c[k]
             else:

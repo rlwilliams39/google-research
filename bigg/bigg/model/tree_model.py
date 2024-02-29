@@ -623,14 +623,14 @@ class RecurTreeGen(nn.Module):
             if self.has_edge_feats:
                 edge_idx, is_rch = TreeLib.GetEdgeAndLR(d + 1)
                 local_edge_feats = edge_feats[edge_idx]
-                print(local_edge_feats)
-                print(is_rch)
-                print(h_bot)
-                print(c_bot)
-                print(h_buf)
-                print(c_buf)
-                print(fn_ids)
-                print(STOP)
+                #print(local_edge_feats)
+                #print(is_rch)
+                #print(h_bot)
+                #print(c_bot)
+                #print(h_buf)
+                #print(c_buf)
+                #print(fn_ids)
+                #print(STOP)
                 new_h, new_c = featured_batch_tree_lstm2(local_edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell, embedding = self.embed_edge_feats)
             else:
                 new_h, new_c = batch_tree_lstm2(h_bot, c_bot, h_buf, c_buf, fn_ids, self.lr2p_cell)
@@ -665,7 +665,7 @@ class RecurTreeGen(nn.Module):
         ll = 0.0
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
-        row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states, embedding = self.embed_edge_feats)
+        row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)#, embedding = self.embed_edge_feats)
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
             ll = ll + ll_node_feats
@@ -683,7 +683,7 @@ class RecurTreeGen(nn.Module):
                 edge_of_lv = TreeLib.GetEdgeOf(lv)
                 edge_state = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])
                 target_feats = edge_feats[edge_of_lv]
-                print("target feats: ", target_feats)
+                #print("target feats: ", target_feats)
                 edge_ll, _ = self.predict_edge_feats(edge_state, target_feats)
                 cur_states = selective_update_hc(cur_states[0], cur_states[1], ~is_nonleaf, target_feats, embedding = self.embed_edge_feats)
                 edge_feats_embed = (cur_states[0][~is_nonleaf], cur_states[1][~is_nonleaf])

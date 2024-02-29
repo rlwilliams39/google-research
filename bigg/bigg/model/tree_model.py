@@ -109,6 +109,7 @@ def featured_batch_tree_lstm2(edge_feats, is_rch, h_bot, c_bot, h_buf, c_buf, fn
     edge_h_list = []
     edge_c_list = []
     edge_indices = []
+    print(test)
     for i in range(2):
         print("ITERATION")
         print(edge_feats[i])

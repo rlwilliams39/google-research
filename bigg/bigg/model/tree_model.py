@@ -260,6 +260,7 @@ class FenwickTree(nn.Module):
                 if self.has_edge_feats or self.has_node_feats:
                     new_h, new_c, edge_h_dict_i, edge_c_dict_i = lstm_func(feat_dict, h_bot, c_bot, cell_node=None if not self.has_node_feats else self.node_feat_update, embedding = embedding)
                     new_states = (new_h, new_c)
+                    print(edge_h_dict_i)
                     print(TOFU)
                 else:
                     new_states = lstm_func(h_bot, c_bot)

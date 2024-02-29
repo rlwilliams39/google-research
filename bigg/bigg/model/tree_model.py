@@ -85,7 +85,7 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, test = False):
     
     print(new_h)
     print(zero_one)
-    edge_h = new_h.select(0, zero_one) 
+    edge_h = new_h.select(0, zero_one[0]) 
     print("EDGE H: ", edge_h)
     
     ##nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)

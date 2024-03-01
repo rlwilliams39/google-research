@@ -180,6 +180,7 @@ class FenwickTree(nn.Module):
         self.list_states[level].append(state)
 
     def forward(self, new_state=None):
+        print("HELLOOOOOOOO")
         if new_state is None:
             if len(self.list_states) == 0:
                 return (self.init_h0, self.init_c0)
@@ -495,7 +496,7 @@ class RecurTreeGen(nn.Module):
                 print("State being admitted: ", state)
                 ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
                 print("State after: ", left_state)
-                print(TEMPBREAK)
+                #print(TEMPBREAK)
                 pred_edge_feats.append(left_edge_feats)
             else:
                 left_state = self.get_empty_state()

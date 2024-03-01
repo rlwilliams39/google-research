@@ -445,6 +445,7 @@ class RecurTreeGen(nn.Module):
             tree_node.has_edge = True
             
         print("Has edge? ", tree_node.has_edge)
+        print("Empty State: ", self.get_empty_state())
 
         if not tree_node.has_edge:  # an empty tree
             return ll, self.get_empty_state(), 0, None

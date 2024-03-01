@@ -465,7 +465,7 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    edge_embed = self.embed_edge_feats(cur_feats, cur_state)
+                    edge_embed = self.embed_edge_feats(cur_feats, state)
                     #edge_embed = self.embed_edge_feats(cur_feats, state)
                     #print(state)
                     #print(edge_embed)

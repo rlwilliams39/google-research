@@ -605,6 +605,7 @@ class RecurTreeGen(nn.Module):
             print("controller state B: ", controller_state)
             edges += [(i, x) for x in col_sm.indices]
             total_ll = total_ll + ll
+        print(TERMINATE)
 
         if self.has_node_feats:
             node_feats = torch.cat(list_pred_node_feats, dim=0)

@@ -563,7 +563,7 @@ class RecurTreeGen(nn.Module):
             lb = 0 if lb_list is None else lb_list[i]
             ub = cur_row.root.n_cols if ub_list is None else ub_list[i]
             cur_pos_embed = self.row_tree.pos_enc([num_nodes - i])
-            print("controller state 0": controller_state)
+            print("controller state 0: ", controller_state)
             controller_state = [x + cur_pos_embed for x in controller_state]
             if self.has_node_feats:
                 target_node_feats = None if node_feats is None else node_feats[[i]]

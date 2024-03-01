@@ -421,7 +421,7 @@ class RecurTreeGen(nn.Module):
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
         assert lb <= ub
-        print(tree_node.is_root)
+        print("is root?", tree_node.is_root)
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
 
@@ -443,6 +443,8 @@ class RecurTreeGen(nn.Module):
         else:
             assert ub > 0
             tree_node.has_edge = True
+            
+        print("Has edge? ", tree_node.has_edge)
 
         if not tree_node.has_edge:  # an empty tree
             return ll, self.get_empty_state(), 0, None

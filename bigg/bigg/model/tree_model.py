@@ -547,7 +547,7 @@ class RecurTreeGen(nn.Module):
                 print("summary state: ", summary_state)
             if self.has_edge_feats:
                 edge_feats = torch.cat(pred_edge_feats, dim=0)
-            print(TERMINATE)
+            #print(TERMINATE)
             return ll, summary_state, num_left + num_right, edge_feats
 
     def forward(self, node_end, edge_list=None, node_feats=None, edge_feats=None, node_start=0, list_states=[], lb_list=None, ub_list=None, col_range=None, num_nodes=None, display=False):

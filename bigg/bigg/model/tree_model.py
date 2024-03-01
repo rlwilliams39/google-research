@@ -494,7 +494,7 @@ class RecurTreeGen(nn.Module):
                 print("State being admitted: ", state)
                 ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
                 print("State after: ", left_state)
-                print(TEMP BREAK)
+                print(TEMPBREAK)
                 pred_edge_feats.append(left_edge_feats)
             else:
                 left_state = self.get_empty_state()

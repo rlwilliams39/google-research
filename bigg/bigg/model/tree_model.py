@@ -468,6 +468,7 @@ class RecurTreeGen(nn.Module):
             tree_node.split()
 
             mid = (tree_node.col_range[0] + tree_node.col_range[1]) // 2
+            print("State to predict has_left: ", state[0])
             left_prob = torch.sigmoid(self.pred_has_left(state[0], tree_node.depth))
 
             if col_sm.supervised:
@@ -481,7 +482,9 @@ class RecurTreeGen(nn.Module):
             ll = ll + (torch.log(left_prob) if has_left else torch.log(1 - left_prob))
             left_pos = self.tree_pos_enc([tree_node.lch.n_cols])
             state = self.cell_topdown(self.topdown_left_embed[[int(has_left)]] + left_pos, state, tree_node.depth)
+            print("State after left state update: ", state)
             pred_edge_feats = []
+            print("Has left", has_left)
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)

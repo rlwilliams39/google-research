@@ -180,7 +180,6 @@ class FenwickTree(nn.Module):
         self.list_states[level].append(state)
 
     def forward(self, new_state=None):
-        print("HELLOOOOOOOO")
         if new_state is None:
             if len(self.list_states) == 0:
                 return (self.init_h0, self.init_c0)
@@ -189,13 +188,18 @@ class FenwickTree(nn.Module):
         pos = 0
         while pos < len(self.list_states):
             if len(self.list_states[pos]) >= 2:
+                print("Hello 1")
                 lch_state, rch_state = self.list_states[pos]  # assert the length is 2
                 new_state = self.merge_cell(lch_state, rch_state)
+                print("lch_state", lch_state)
+                print("rch_State", rch_state)
+                print(new_state)
                 self.list_states[pos] = []
                 self.append_state(new_state, pos + 1)
             pos += 1
         state = None
         for pos in range(len(self.list_states)):
+            print("Hello 2")
             if len(self.list_states[pos]) == 0:
                 continue
             cur_state = self.list_states[pos][0]

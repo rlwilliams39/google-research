@@ -161,6 +161,7 @@ if __name__ == '__main__':
     
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
     serialized = True
+    print("Serialized? ", serialized)
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))

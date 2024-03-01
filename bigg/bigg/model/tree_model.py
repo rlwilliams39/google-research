@@ -421,6 +421,7 @@ class RecurTreeGen(nn.Module):
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
         assert lb <= ub
+        print(tre_node.is_root)
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
 
@@ -520,6 +521,7 @@ class RecurTreeGen(nn.Module):
                 summary_state = self.lr2p_cell(left_state, right_state)
             if self.has_edge_feats:
                 edge_feats = torch.cat(pred_edge_feats, dim=0)
+            print(TERMINATE)
             return ll, summary_state, num_left + num_right, edge_feats
 
     def forward(self, node_end, edge_list=None, node_feats=None, edge_feats=None, node_start=0, list_states=[], lb_list=None, ub_list=None, col_range=None, num_nodes=None, display=False):
@@ -538,6 +540,7 @@ class RecurTreeGen(nn.Module):
         list_pred_node_feats = []
         list_pred_edge_feats = []
         for i in pbar:
+            print("index: ", i)
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)
             else:

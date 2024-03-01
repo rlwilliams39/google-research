@@ -445,7 +445,7 @@ class RecurTreeGen(nn.Module):
             tree_node.has_edge = True
             
         print("Has edge? ", tree_node.has_edge)
-        print("Empty State: ", self.get_empty_state())
+        #print("Empty State: ", self.get_empty_state())
 
         if not tree_node.has_edge:  # an empty tree
             return ll, self.get_empty_state(), 0, None
@@ -491,7 +491,10 @@ class RecurTreeGen(nn.Module):
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)
+                print("State being admitted: " state)
                 ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
+                print("State after: ", left_state)
+                print(TEMP BREAK)
                 pred_edge_feats.append(left_edge_feats)
             else:
                 left_state = self.get_empty_state()
@@ -563,7 +566,7 @@ class RecurTreeGen(nn.Module):
             lb = 0 if lb_list is None else lb_list[i]
             ub = cur_row.root.n_cols if ub_list is None else ub_list[i]
             cur_pos_embed = self.row_tree.pos_enc([num_nodes - i])
-            print("controller state 0: ", controller_state)
+            #print("controller state 0: ", controller_state)
             controller_state = [x + cur_pos_embed for x in controller_state]
             if self.has_node_feats:
                 target_node_feats = None if node_feats is None else node_feats[[i]]

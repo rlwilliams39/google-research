@@ -206,7 +206,11 @@ class FenwickTree(nn.Module):
             if state is None:
                 state = cur_state
             else:
+                print("state A: ", state)
+                print("state B: ", cur_state)
                 state = self.summary_cell(state, cur_state)
+                print("resulting state: ", state)
+        print("returned state0")
         return state
 
     def forward_train(self, h_bot, c_bot, h_buf0, c_buf0, prev_rowsum_h, prrev_rowsum_c, embedding = None):

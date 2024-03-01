@@ -541,9 +541,10 @@ class RecurTreeGen(nn.Module):
             if tree_node.col_range[1] - tree_node.col_range[0] <= self.bits_compress:
                 summary_state = self.bit_rep_net(tree_node.bits_rep, tree_node.n_cols)
             else:
-                print(left_state)
-                print(right_state)
+                print("left state: ", left_state)
+                print("right state: ", right_state)
                 summary_state = self.lr2p_cell(left_state, right_state)
+                print("summary state: ", summary_state)
             if self.has_edge_feats:
                 edge_feats = torch.cat(pred_edge_feats, dim=0)
             print(TERMINATE)

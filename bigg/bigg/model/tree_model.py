@@ -507,9 +507,13 @@ class RecurTreeGen(nn.Module):
                 num_left = 0
 
             right_pos = self.tree_pos_enc([tree_node.rch.n_cols])
+            print("State going in: ", state)
+            print("Left State: ", left_state)
             topdown_state = self.l2r_cell(state, (left_state[0] + right_pos, left_state[1] + right_pos), tree_node.depth)
+            print("Topdown: ", topdown_state)
             rlb = max(0, lb - num_left)
             rub = min(tree_node.rch.n_cols, ub - num_left)
+            print("Has Left", has_left)
             if not has_left:
                 has_right = True
             else:
@@ -525,6 +529,8 @@ class RecurTreeGen(nn.Module):
                 ll = ll + (torch.log(right_prob) if has_right else torch.log(1 - right_prob))
 
             topdown_state = self.cell_topright(self.topdown_right_embed[[int(has_right)]], topdown_state, tree_node.depth)
+            print("topdown state: ", topdown_state)
+            print("Has_right", has_right)
 
             if has_right:  # has edge in right child
                 ll, right_state, num_right, right_edge_feats = self.gen_row(ll, topdown_state, tree_node.rch, col_sm, rlb, rub, edge_feats)

@@ -82,8 +82,8 @@ if __name__ == '__main__':
     
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     print(path)
-    with open(path, 'rb') as f:
-        train_graphs = cp.load(f)
+    #with open(path, 'rb') as f:
+    #    train_graphs = cp.load(f)
     
     ## Try with this:
     train_graphs = graph_generator(n = 15, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)

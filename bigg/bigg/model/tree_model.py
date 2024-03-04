@@ -470,8 +470,8 @@ class RecurTreeGen(nn.Module):
                     #print(state)
                     #print(edge_embed)
                     #print(cur_feats)
-                    #return ll, (edge_embed, edge_embed), 1, cur_feats
-                    return ll, edge_embed, 1, cur_feats
+                    return ll, (edge_embed, edge_embed), 1, cur_feats
+                    #return ll, edge_embed, 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:

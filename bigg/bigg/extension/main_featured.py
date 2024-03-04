@@ -113,10 +113,11 @@ if __name__ == '__main__':
         
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
         
-        with open(path, 'rb') as f:
-            gt_graphs = cp.load(f)
+        #with open(path, 'rb') as f:
+        #    gt_graphs = cp.load(f)
         print('# gt graphs', len(gt_graphs))
         
+        gt_graphs = None
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):

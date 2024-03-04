@@ -86,7 +86,7 @@ if __name__ == '__main__':
     #    train_graphs = cp.load(f)
     
     ## Try with this:
-    train_graphs = graph_generator(n = 15, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    train_graphs = graph_generator(n = 25, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]
@@ -116,8 +116,9 @@ if __name__ == '__main__':
         #with open(path, 'rb') as f:
         #    gt_graphs = cp.load(f)
         #print('# gt graphs', len(gt_graphs))
+        gt_graphs = train_graphs
         
-        gt_graphs = None
+        #gt_graphs = None
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
@@ -161,7 +162,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
-    serialized = True
+    serialized = False
     print("Serialized? ", serialized)
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)

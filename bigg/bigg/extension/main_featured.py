@@ -115,7 +115,7 @@ if __name__ == '__main__':
         
         #with open(path, 'rb') as f:
         #    gt_graphs = cp.load(f)
-        print('# gt graphs', len(gt_graphs))
+        #print('# gt graphs', len(gt_graphs))
         
         gt_graphs = None
         gen_graphs = []

@@ -162,8 +162,7 @@ if __name__ == '__main__':
     #########################################################################################################
     
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
-    serialized = True
-    print("Serialized? ", serialized)
+    print("Serialized? ", cmd_args.serialized)
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     indices = list(range(len(train_graphs)))
@@ -184,7 +183,7 @@ if __name__ == '__main__':
             node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
             edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
             
-            if serialized:
+            if cmd_args.serialized:
                 ll = 0
                 for ind in batch_indices:
                     g = train_graphs[ind]

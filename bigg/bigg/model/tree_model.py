@@ -338,6 +338,8 @@ class RecurTreeGen(nn.Module):
 
     def __init__(self, args):
         super(RecurTreeGen, self).__init__()
+        
+        self.alt_update = args.alt_update
 
         self.directed = args.directed
         self.self_loop = args.self_loop
@@ -465,13 +467,12 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    #edge_embed = self.embed_edge_feats(cur_feats, state)
+                    if self.alt_update:
+                        edge_embed = self.embed_edge_feats(cur_feats, state, True)
+                        return ll, edge_embed, 1, cur_feats
+                    
                     edge_embed = self.embed_edge_feats(cur_feats)
-                    #print(state)
-                    #print(edge_embed)
-                    #print(cur_feats)
-                    return ll, (edge_embed, edge_embed), 1, cur_feats
-                    #return ll, edge_embed, 1, cur_feats
+                    return ll, (edge_embed, edge_embed), 1, 
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:

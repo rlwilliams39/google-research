@@ -96,11 +96,7 @@ if __name__ == '__main__':
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
     
     list_node_feats = None #[torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
-    if cmd_args.has_edge_feats:
-        list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
-    
-    else:
-        list_edge_feats = None
+    list_edge_feats = [torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs]
     
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
     

@@ -39,6 +39,7 @@ from bigg.extension.eval_.graph_stats import *
 from bigg.extension.eval_.mmd import *
 from bigg.extension.eval_.mmd_stats import *
 from bigg.train_creator.train_data_generator import *
+from bigg.train_creator.data_util import *
 
 
 def get_node_feats(g):
@@ -86,7 +87,11 @@ if __name__ == '__main__':
     #    train_graphs = cp.load(f)
     
     ## Try with this:
-    train_graphs = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    train_graphs = []
+    for g in train_graphs_gen:
+        cano_g = get_graph_data(g, node_order = 'time', leaves_last = False, order_only = False)
+        train_graphs.append(cano_g)
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]

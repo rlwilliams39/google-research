@@ -91,7 +91,7 @@ if __name__ == '__main__':
     train_graphs = []
     for g in train_graphs_gen:
         cano_g = get_graph_data(g, node_order = 'time', leaves_last = False, order_only = False)
-        train_graphs.append(cano_g)
+        train_graphs += cano_g
     print(train_graphs[0].edges(data=True))
     
     [TreeLib.InsertGraph(g) for g in train_graphs]

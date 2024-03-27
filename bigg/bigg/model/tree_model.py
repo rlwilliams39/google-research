@@ -430,8 +430,8 @@ class RecurTreeGen(nn.Module):
         return p
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
-        print(lb)
-        print(ub)
+        #print(lb)
+        #print(ub)
         assert lb <= ub
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
@@ -498,8 +498,8 @@ class RecurTreeGen(nn.Module):
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)
-                print("lub", lub)
-                print("llb", llb)
+                #print("lub", lub)
+                #print("llb", llb)
                 ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
                 pred_edge_feats.append(left_edge_feats)
             else:
@@ -508,11 +508,11 @@ class RecurTreeGen(nn.Module):
 
             right_pos = self.tree_pos_enc([tree_node.rch.n_cols])
             topdown_state = self.l2r_cell(state, (left_state[0] + right_pos, left_state[1] + right_pos), tree_node.depth)
-            print(num_left)
-            print(tree_node.rch)
-            print(tree_node.rch.n_cols)
-            print(tree_node.col_range)
-            print(tree_node.rch.col_range)
+            #print(num_left)
+            #print(tree_node.rch)
+            #print(tree_node.rch.n_cols)
+            #print(tree_node.col_range)
+            #print(tree_node.rch.col_range)
             rlb = max(0, lb - num_left)
             rub = min(tree_node.rch.n_cols, ub - num_left)
             if not has_left:
@@ -532,8 +532,8 @@ class RecurTreeGen(nn.Module):
             topdown_state = self.cell_topright(self.topdown_right_embed[[int(has_right)]], topdown_state, tree_node.depth)
 
             if has_right:  # has edge in right child
-                print("rlb ", rlb)
-                print("rub", rub)
+                #print("rlb ", rlb)
+                #print("rub", rub)
                 ll, right_state, num_right, right_edge_feats = self.gen_row(ll, topdown_state, tree_node.rch, col_sm, rlb, rub, edge_feats)
                 pred_edge_feats.append(right_edge_feats)
             else:
@@ -577,8 +577,8 @@ class RecurTreeGen(nn.Module):
             cur_row = AdjRow(i, self.directed, self.self_loop, col_range=col_range)
             lb = 0 if lb_list is None else lb_list[i]
             ub = cur_row.root.n_cols if ub_list is None else ub_list[i]
-            print("lb: ", lb)
-            print("ub: ", ub)
+            #print("lb: ", lb)
+            #print("ub: ", ub)
             k = np.sum(np.array(list_col_indices) == i)
             lb -= k
             ub -= k
@@ -599,10 +599,10 @@ class RecurTreeGen(nn.Module):
             if self.has_node_feats:
                 target_feat_embed = self.embed_node_feats(torch.log(target_node_feats))
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
-            print(edge_list)
-            print(lb)
-            print(col_sm.indices)
-            print(ub)
+            #print(edge_list)
+            #print(lb)
+            #print(col_sm.indices)
+            #print(ub)
             new_indices = [x for x in col_sm.indices]
             list_col_indices += new_indices
             #print(list_col_indices)

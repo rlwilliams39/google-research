@@ -152,11 +152,10 @@ if __name__ == '__main__':
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
-                if cmd_args.g_type != "tree":
-                    num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
-                print(n)
+                num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
+                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display, num_nodes = num_nodes)
+                print(pred_edges)
                 print(STOP)
-                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display, num_nodes = 19)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []

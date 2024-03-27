@@ -96,9 +96,9 @@ if __name__ == '__main__':
     
     #[TreeLib.InsertGraph(g) for g in train_graphs]
     n = int(cmd_args.leaves - 1) ## number of internal nodes + root
-    m = int(2 * cmd_args.leaves - 1) ## number of nodes
-    #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
-    [TreeLib.InsertGraph(g) for g in train_graphs]
+    m = int(cmd_args.leaves) ## number of leaves
+    [TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
+    #[TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
@@ -130,7 +130,7 @@ if __name__ == '__main__':
             degree_list = [gt_graphs[0].degree(i) for i in range(n)]
             lb_lst = degree_list
             up_lst = degree_list
-            col_rng = (0, m)
+            col_rng = (0, int(2*m-1))
         
         else:
             lb_list = None
@@ -223,11 +223,11 @@ if __name__ == '__main__':
                     ll = ll_i + ll
             else:
                 if cmd_args.g_type == "tree":
-                    list_col_rnges = [(0, m) for i in batch_indices]
+                    list_col_rnges = [(0, int(2*m-1)) for i in batch_indices]
                 else:
                     list_col_rnges = None
                     
-                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)#, list_col_ranges = list_col_rnges)
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = list_col_rnges)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

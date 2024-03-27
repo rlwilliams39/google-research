@@ -119,7 +119,7 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
         edge_list[y].push_back(x);
     }
     
-    std::cout << edge_list
+    std::cout << edge_list;
     
     
 

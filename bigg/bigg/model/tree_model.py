@@ -571,6 +571,8 @@ class RecurTreeGen(nn.Module):
                     pos += 1
                 indices.sort()
                 col_sm = ColAutomata(supervised=True, indices=indices)
+            
+            col_range = (i+1, num_nodes)
 
             cur_row = AdjRow(i, self.directed, self.self_loop, col_range=col_range)
             lb = 0 if lb_list is None else lb_list[i]

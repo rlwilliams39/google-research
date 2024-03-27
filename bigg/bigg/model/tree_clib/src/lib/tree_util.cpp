@@ -86,8 +86,8 @@ void AdjRow::init(int row, int col_start, int col_end)
         max_col += 1;
     if (col_start < 0 || col_end < 0)
     {
-        col_start = 0;
-        col_end = max_col;
+        col_start = row;
+        col_end = 19;
     }
     this->root = node_holder.get_pt(nullptr, row, col_start, col_end, 0);
 }

@@ -181,6 +181,7 @@ if __name__ == '__main__':
                         print(edge)
                         fixed_edges.append(edge)
                     pred_g.add_weighted_edges_from(fixed_edges)
+                    print(pred_g.edges())
                     gen_graphs.append(pred_g)
         
         for idx in range(10):

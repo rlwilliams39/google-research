@@ -542,6 +542,7 @@ class RecurTreeGen(nn.Module):
         edges = []
         print(node_end)
         self.row_tree.reset(list_states)
+        print(node_end)
         controller_state = self.row_tree()
         if num_nodes is None:
             num_nodes = node_end

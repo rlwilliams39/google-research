@@ -12,6 +12,14 @@
 std::vector<GraphStruct*> graph_list = std::vector<GraphStruct*>();
 std::vector<GraphStruct*> active_graphs;
 
+using namespace std;
+
+int tmain(void* edge_list)
+{
+    edge_list << strMytestString;
+    return 0;
+}
+
 BitSet::BitSet()
 {
     n_bits = n_macros = 0;
@@ -119,9 +127,7 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
         edge_list[y].push_back(x);
     }
     
-    std::cout << edge_list;
-    
-    wef-0rgi9htjo43p9giut4032
+    tmain(edge_list)
 
     for (auto it = edge_list.begin(); it != edge_list.end(); ++it)
         std::sort(it->second.begin(), it->second.end());

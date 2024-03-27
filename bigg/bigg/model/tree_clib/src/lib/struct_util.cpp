@@ -127,7 +127,7 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
         edge_list[y].push_back(x);
     }
     
-    tmain(edge_list)
+    tmain(edge_list);
 
     for (auto it = edge_list.begin(); it != edge_list.end(); ++it)
         std::sort(it->second.begin(), it->second.end());

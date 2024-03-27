@@ -495,6 +495,7 @@ class RecurTreeGen(nn.Module):
             left_pos = self.tree_pos_enc([tree_node.lch.n_cols])
             state = self.cell_topdown(self.topdown_left_embed[[int(has_left)]] + left_pos, state, tree_node.depth)
             pred_edge_feats = []
+            print(has_left)
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)

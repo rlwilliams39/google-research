@@ -102,12 +102,12 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
         int y = edge_pairs[i * 2 + 1];
         if (n_left < 0 || n_right < 0)
         {
-            if (x < y)
+            if (x > y)
             {
                 int t = x; x = y; y = t;
             }
         } else {
-            if (x > y)
+            if (x < y)
             {
                 int t = x; x = y; y = t;
             }

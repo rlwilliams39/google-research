@@ -81,14 +81,12 @@ void AdjRow::init(int row, int col_start, int col_end)
 {
     this->row = row;
     assert(!cfg::directed);
-    col_start = row+1
-    col_end = 19
     int max_col = row;
     if (cfg::self_loop)
         max_col += 1;
     if (col_start < 0 || col_end < 0)
     {
-        col_start = row+1;
+        col_start = row + 1;
         col_end = 19;
     }
     this->root = node_holder.get_pt(nullptr, row, col_start, col_end, 0);

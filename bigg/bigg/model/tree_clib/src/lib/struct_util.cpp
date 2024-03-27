@@ -89,49 +89,7 @@ int num_ones(int n)
     return cnt;
 }
 
-GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
-                         void* _edge_pairs, int n_left, int n_right)
-{
-    this->num_nodes = num_nodes;
-    this->num_edges = num_edges;
-    this->graph_id = graph_id;
 
-    edge_list.clear();
-    active_rows.clear();
-    idx_map.clear();
-
-    if (_edge_pairs == nullptr)
-        return;
-    int* edge_pairs = static_cast<int*>(_edge_pairs);
-    for (int i = 0; i < num_edges; ++i)
-    {
-        int x = edge_pairs[i * 2];
-        int y = edge_pairs[i * 2 + 1];
-        if (n_left < 0 || n_right < 0)
-        {
-            if (x < y)
-            {
-                int t = x; x = y; y = t;
-            }
-        } else {
-            if (x > y)
-            {
-                int t = x; x = y; y = t;
-            }
-            assert(x < n_left);
-            y -= n_left;
-            assert(y >= 0 && y < n_right);
-        }
-        if (!edge_list.count(y))
-            edge_list[y] = std::vector<int>();
-        edge_list[y].push_back(x);
-    }
-    
-    tmain(edge_list);
-
-    for (auto it = edge_list.begin(); it != edge_list.end(); ++it)
-        std::sort(it->second.begin(), it->second.end());
-}
 
 
 GraphStruct* GraphStruct::permute()

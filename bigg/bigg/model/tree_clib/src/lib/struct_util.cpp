@@ -95,10 +95,7 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
     if (_edge_pairs == nullptr)
         return;
     int* edge_pairs = static_cast<int*>(_edge_pairs);
-    int value = printf("GeeksForGeeks\n"); 
-    cout << "Integer printf(\"GeeksForGeeks\\n\") = "
-         << value << endl; 
-    std::cout << edge_pairs;
+    int value = printf("GeeksForGeeks\n");
     for (int i = 0; i < num_edges; ++i)
     {
         int x = edge_pairs[i * 2];

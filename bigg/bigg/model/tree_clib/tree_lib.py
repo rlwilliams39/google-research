@@ -35,8 +35,8 @@ class CtypeGraph(object):
 
         self.edge_pairs = np.zeros((self.num_edges * 2, ), dtype=np.int32)
         for i, (x, y) in enumerate(g.edges()):
-            self.edge_pairs[i * 2] = y
-            self.edge_pairs[i * 2 + 1] = x
+            self.edge_pairs[i * 2] = x
+            self.edge_pairs[i * 2 + 1] = y
 
 
 class _tree_lib(object):

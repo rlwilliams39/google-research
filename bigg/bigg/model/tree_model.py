@@ -583,6 +583,7 @@ class RecurTreeGen(nn.Module):
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
             new_edges = [(i, x) for x in col_sm.indices]
+            print(col_sm.indices)
             print(new_edges)
             edges += [(i, x) for x in col_sm.indices]
             #print("column index: ", i)

@@ -12,14 +12,6 @@
 std::vector<GraphStruct*> graph_list = std::vector<GraphStruct*>();
 std::vector<GraphStruct*> active_graphs;
 
-using namespace std;
-
-int tmain(void* edge_list)
-{
-    edge_list << strMytestString;
-    return 0;
-}
-
 BitSet::BitSet()
 {
     n_bits = n_macros = 0;

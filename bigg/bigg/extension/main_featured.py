@@ -97,7 +97,8 @@ if __name__ == '__main__':
     #[TreeLib.InsertGraph(g) for g in train_graphs]
     n = int(cmd_args.leaves - 1) ## number of internal nodes + root
     m = int(2 * cmd_args.leaves - 1) ## number of nodes
-    [TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
+    #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
+    [TreeLib.InsertGraph(g) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes

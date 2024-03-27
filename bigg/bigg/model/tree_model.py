@@ -586,7 +586,7 @@ class RecurTreeGen(nn.Module):
             print(col_sm.indices)
             print(ub)
             new_indices = [x for x in col_sm.indices]
-            list_col_indices += new_indicies
+            list_col_indices += new_indices
             k = sum(list_col_indices == i)
             print(k)
             assert lb <= len(col_sm.indices) + k <= ub

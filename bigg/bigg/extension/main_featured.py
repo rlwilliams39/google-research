@@ -141,7 +141,7 @@ if __name__ == '__main__':
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
-                if cmd_args.g_type != tree:
+                if cmd_args.g_type != "tree":
                     num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                    
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display)
@@ -226,7 +226,7 @@ if __name__ == '__main__':
                 if cmd_args.g_type == "tree":
                     list_col_rnges = [(0, m) for i in batch_indices]
                 else:
-                    list_col_ranges = None
+                    list_col_rnges = None
                     
                 ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = list_col_rnges)
             loss = -ll / num_nodes

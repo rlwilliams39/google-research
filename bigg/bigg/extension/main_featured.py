@@ -241,11 +241,6 @@ if __name__ == '__main__':
                     ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
                     #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
-            else:
-                if cmd_args.g_type == "tree":
-                    list_col_rnges = [(0, int(2*m-1)) for i in batch_indices]
-                else:
-                    list_col_rnges = None
                     
                 ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = None)
             loss = -ll / num_nodes

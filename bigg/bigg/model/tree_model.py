@@ -550,6 +550,7 @@ class RecurTreeGen(nn.Module):
         list_pred_node_feats = []
         list_pred_edge_feats = []
         for i in pbar:
+            print(i)
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)
             else:

@@ -227,7 +227,7 @@ if __name__ == '__main__':
                 else:
                     list_col_rnges = None
                     
-                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = list_col_rnges)
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)#, list_col_ranges = list_col_rnges)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

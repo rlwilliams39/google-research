@@ -90,7 +90,7 @@ if __name__ == '__main__':
     train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
     train_graphs = []
     for g in train_graphs_gen:
-        cano_g = get_graph_data(g, node_order = 'time', leaves_last = False, order_only = False)
+        cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
         train_graphs += cano_g
     print(train_graphs[0].edges(data=True))
     
@@ -230,7 +230,7 @@ if __name__ == '__main__':
                     
                     ### Compute log likelihood, loss
                     print(lb_lst)
-                    print(ub_lst)
+                    print(up_lst)
                     ll_i, _, _, _, _ = model.forward(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
                     #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll

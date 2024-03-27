@@ -94,7 +94,10 @@ if __name__ == '__main__':
         train_graphs += cano_g
     print(train_graphs[0].edges(data=True))
     
-    [TreeLib.InsertGraph(g) for g in train_graphs]
+    #[TreeLib.InsertGraph(g) for g in train_graphs]
+    n = cmd_args.num_leaves - 1 ## number of internal nodes + root
+    m = 2 * cmd_args.num_leaves - 1 ## number of nodes
+    [TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
@@ -122,13 +125,25 @@ if __name__ == '__main__':
         #    gt_graphs = cp.load(f)
         #print('# gt graphs', len(gt_graphs))
         gt_graphs = train_graphs[0:10]
+        if cmd_args.g_type == "tree":
+            degree_list = [gt_graphs[0].degree(i) for i in range(n)]
+            lb_lst = degree_list
+            up_lst = degree_list
+            col_rng = (0, m)
+        
+        else:
+            lb_list = None
+            up_list = None
+            col_rng = None
         
         #gt_graphs = None
         gen_graphs = []
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
-                num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
-                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(num_nodes)
+                if cmd_args.g_type != tree:
+                    num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
+                    
+                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
@@ -207,7 +222,12 @@ if __name__ == '__main__':
                     ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:
-                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
+                if cmd_args.g_type == "tree":
+                    list_col_rnges = [(0, m) for i in batch_indices]
+                else:
+                    list_col_ranges = None
+                    
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = list_col_rnges)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

@@ -601,8 +601,9 @@ class RecurTreeGen(nn.Module):
             #print(list_col_indices)
             #print(list_col_indices == i)
             k = np.sum(np.array(list_col_indices) == i)
-            #print(k)
-            assert lb <= len(col_sm.indices) + k <= ub
+            lb -= k
+            ub -= k
+            assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
             new_edges = [(i, x) for x in col_sm.indices]
             edges += [(i, x) for x in col_sm.indices]

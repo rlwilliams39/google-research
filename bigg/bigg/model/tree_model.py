@@ -549,6 +549,9 @@ class RecurTreeGen(nn.Module):
             pbar = tqdm(pbar)
         list_pred_node_feats = []
         list_pred_edge_feats = []
+        print(node_start)
+        print(node_end)
+        print(pbar)
         for i in pbar:
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)

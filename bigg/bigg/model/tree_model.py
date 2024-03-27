@@ -540,9 +540,7 @@ class RecurTreeGen(nn.Module):
         pos = 0
         total_ll = 0.0
         edges = []
-        print(node_end)
         self.row_tree.reset(list_states)
-        print(node_end)
         controller_state = self.row_tree()
         if num_nodes is None:
             num_nodes = node_end
@@ -551,9 +549,6 @@ class RecurTreeGen(nn.Module):
             pbar = tqdm(pbar)
         list_pred_node_feats = []
         list_pred_edge_feats = []
-        print(node_start)
-        print(node_end)
-        print(pbar)
         for i in pbar:
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)

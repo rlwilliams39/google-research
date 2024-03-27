@@ -172,6 +172,7 @@ if __name__ == '__main__':
                     pred_g = nx.Graph()
                     fixed_edges = []
                     for e in pred_edges:
+                        print(e)
                         w = 1.0
                         if e[0] < e[1]:
                             edge = (e[0], e[1], w)

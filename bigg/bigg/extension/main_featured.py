@@ -154,8 +154,8 @@ if __name__ == '__main__':
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, num_nodes = num_nodes)
-                print(pred_edges)
-                print(STOP)
+                #print(pred_edges)
+                #print(STOP)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
@@ -173,16 +173,16 @@ if __name__ == '__main__':
                     pred_g = nx.Graph()
                     fixed_edges = []
                     for e in pred_edges:
-                        print(e)
+                        #print(e)
                         w = 1.0
                         if e[0] < e[1]:
                             edge = (e[0], e[1], w)
                         else:
                             edge = (e[1], e[0], w)
-                        print(edge)
+                        #print(edge)
                         fixed_edges.append(edge)
                     pred_g.add_weighted_edges_from(fixed_edges)
-                    print(pred_g.edges())
+                    #print(pred_g.edges())
                     gen_graphs.append(pred_g)
         
         for idx in range(10):

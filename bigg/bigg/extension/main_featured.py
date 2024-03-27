@@ -95,7 +95,7 @@ if __name__ == '__main__':
     print(train_graphs[0].edges(data=True))
     
     #[TreeLib.InsertGraph(g) for g in train_graphs]
-    n = int(2 * cmd_args.leaves - 1) ## number of internal nodes + root
+    n = int(cmd_args.leaves - 1) ## number of internal nodes + root
     m = int(cmd_args.leaves) ## number of leaves
     #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
     [TreeLib.InsertGraph(g) for g in train_graphs]

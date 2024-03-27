@@ -599,10 +599,6 @@ class RecurTreeGen(nn.Module):
             if self.has_node_feats:
                 target_feat_embed = self.embed_node_feats(torch.log(target_node_feats))
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
-            #print(edge_list)
-            print(lb)
-            print(col_sm.indices)
-            print(ub)
             new_indices = [x for x in col_sm.indices]
             list_col_indices += new_indices
             #print(list_col_indices)

@@ -238,7 +238,7 @@ if __name__ == '__main__':
                     ### Compute log likelihood, loss
                     #print(lb_lst)
                     #print(up_lst)
-                    ll_i, _, _, _, _ = model.forward(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
+                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
                     #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:

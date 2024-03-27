@@ -589,7 +589,7 @@ class RecurTreeGen(nn.Module):
             list_col_indices += new_indices
             print(list_col_indices)
             print(list_col_indices == i)
-            k = np.sum(np.array(list_col_indices == i))
+            k = np.sum(np.array(list_col_indices) == i)
             print(k)
             assert lb <= len(col_sm.indices) + k <= ub
             controller_state = self.row_tree(cur_state)

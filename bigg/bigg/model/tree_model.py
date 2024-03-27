@@ -549,6 +549,7 @@ class RecurTreeGen(nn.Module):
             pbar = tqdm(pbar)
         list_pred_node_feats = []
         list_pred_edge_feats = []
+        list_col_indices = []
         for i in pbar:
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)
@@ -584,7 +585,11 @@ class RecurTreeGen(nn.Module):
             print(lb)
             print(col_sm.indices)
             print(ub)
-            assert lb <= len(col_sm.indices) <= ub
+            new_indices = [x for x in col_sm.indices]
+            list_col_indices += new_indicies
+            k = sum(list_col_indices == i)
+            print(k)
+            assert lb <= len(col_sm.indices) + k <= ub
             controller_state = self.row_tree(cur_state)
             new_edges = [(i, x) for x in col_sm.indices]
             edges += [(i, x) for x in col_sm.indices]

@@ -197,7 +197,7 @@ void GraphStruct::realize_nodes(int node_start, int node_end, int col_start,
 {
     active_rows.clear();
     for (int i = node_start; i < node_end; ++i)
-        active_rows.push_back(row_holder.get_pt(i, col_start, col_end));
+        active_rows.push_back(row_holder.get_pt(i, i, node_end));
 
     for (int i = node_start; i < node_end; ++i)
     {

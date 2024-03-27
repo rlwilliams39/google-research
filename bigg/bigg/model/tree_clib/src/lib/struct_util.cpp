@@ -95,10 +95,11 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
     if (_edge_pairs == nullptr)
         return;
     int* edge_pairs = static_cast<int*>(_edge_pairs);
+    int value = printf("GeeksForGeeks\n");
     for (int i = 0; i < num_edges; ++i)
     {
-        int x = edge_pairs[i * 2 + 1];
-        int y = edge_pairs[i * 2];
+        int x = edge_pairs[i * 2];
+        int y = edge_pairs[i * 2 + 1];
         if (n_left < 0 || n_right < 0)
         {
             if (x < y)

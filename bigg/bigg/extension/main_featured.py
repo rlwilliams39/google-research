@@ -219,7 +219,8 @@ if __name__ == '__main__':
                     edgelist.sort(key = lambda x: x[0])
                     
                     ### Compute log likelihood, loss
-                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    ll_i, _, _, _, _ = model.forward(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=col_rng, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
+                    #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             else:
                 if cmd_args.g_type == "tree":

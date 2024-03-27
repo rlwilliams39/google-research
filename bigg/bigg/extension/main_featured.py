@@ -173,7 +173,10 @@ if __name__ == '__main__':
                     fixed_edges = []
                     for e in pred_edges:
                         w = 1.0
-                        edge = (e[0], e[1], w)
+                        if e[0] < e[1]:
+                            edge = (e[0], e[1], w)
+                        else:
+                            edge = (e[1], e[0], w)
                         fixed_edges.append(edge)
                     pred_g.add_weighted_edges_from(fixed_edges)
                     gen_graphs.append(pred_g)

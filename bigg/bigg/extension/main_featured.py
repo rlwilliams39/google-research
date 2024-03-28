@@ -95,21 +95,21 @@ if __name__ == '__main__':
     print(train_graphs[0].edges(data=True))
     
     #[TreeLib.InsertGraph(g) for g in train_graphs]
-    n = int(cmd_args.leaves - 1) ## number of internal nodes + root
-    m = int(cmd_args.leaves) ## number of leaves
+    #n = int(cmd_args.leaves - 1) ## number of internal nodes + root
+    #m = int(cmd_args.leaves) ## number of leaves
     #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
     [TreeLib.InsertGraph(g) for g in train_graphs]
     
-    if cmd_args.g_type == "tree":
-        degree_list = [train_graphs[0].degree(i) for i in range(n)]
-        lb_lst = degree_list
-        up_lst = degree_list
-        col_rng = (0, int(2*m-1))
-        
-    else:
-        lb_list = None
-        up_list = None
-        col_rng = None
+    #if cmd_args.g_type == "tree":
+    #    degree_list = [train_graphs[0].degree(i) for i in range(n)]
+    #    lb_lst = degree_list
+    #    up_lst = degree_list
+    #    col_rng = (0, int(2*m-1))
+    #    
+    #else:
+    #    lb_list = None
+    #    up_list = None
+    #    col_rng = None
 
     max_num_nodes = max([len(gg.nodes) for gg in train_graphs])
     cmd_args.max_num_nodes = max_num_nodes
@@ -137,17 +137,17 @@ if __name__ == '__main__':
         #    gt_graphs = cp.load(f)
         #print('# gt graphs', len(gt_graphs))
         gt_graphs = train_graphs[0:10]
-        if cmd_args.g_type == "tree":
-            degree_list = [gt_graphs[0].degree(i) for i in range(n)]
-            lb_lst = degree_list
-            up_lst = degree_list
-            col_rng = (0, int(2*m-1))
-        
-        else:
-            lb_list = None
-            up_list = None
-            col_rng = None
-        
+        #if cmd_args.g_type == "tree":
+        #    degree_list = [gt_graphs[0].degree(i) for i in range(n)]
+        #    lb_lst = degree_list
+        #    up_lst = degree_list
+        #    col_rng = (0, int(2*m-1))
+        #
+        #else:
+        #    lb_list = None
+        #    up_list = None
+        #    col_rng = None
+        #
         #gt_graphs = None
         gen_graphs = []
         with torch.no_grad():

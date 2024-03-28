@@ -574,7 +574,7 @@ class RecurTreeGen(nn.Module):
             
             #col_range = (i+1, num_nodes)
 
-            cur_row = AdjRow(i, self.directed, self.self_loop, col_range= (i+1, num_nodes))
+            cur_row = AdjRow(i, self.directed, self.self_loop, col_range= col_range)
             lb = 0 if lb_list is None else lb_list[i]
             ub = cur_row.root.n_cols if ub_list is None else ub_list[i]
             #k = np.sum(np.array(list_col_indices) == i)

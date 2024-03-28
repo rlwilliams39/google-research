@@ -153,7 +153,8 @@ if __name__ == '__main__':
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
-                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, num_nodes = num_nodes)
+                #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, num_nodes = num_nodes)
+                _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = num_nodes, display=cmd_args.display)
                 #print(pred_edges)
                 #print(STOP)
                 
@@ -238,12 +239,12 @@ if __name__ == '__main__':
                     ### Compute log likelihood, loss
                     #print(lb_lst)
                     #print(up_lst)
-                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
-                    #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
+                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
                     ll = ll_i + ll
             
             else:    
-                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats, list_col_ranges = None)
+                ll, _ = model.forward_train(batch_indices, node_feats = node_feats, edge_feats = edge_feats)
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()

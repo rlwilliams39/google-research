@@ -577,11 +577,9 @@ class RecurTreeGen(nn.Module):
             cur_row = AdjRow(i, self.directed, self.self_loop, col_range= (i+1, num_nodes))
             lb = 0 if lb_list is None else lb_list[i]
             ub = cur_row.root.n_cols if ub_list is None else ub_list[i]
-            #print("lb: ", lb)
-            #print("ub: ", ub)
-            k = np.sum(np.array(list_col_indices) == i)
-            lb -= k
-            ub -= k
+            #k = np.sum(np.array(list_col_indices) == i)
+            #lb -= k
+            #ub -= k
             cur_pos_embed = self.row_tree.pos_enc([num_nodes - i])
             controller_state = [x + cur_pos_embed for x in controller_state]
             if self.has_node_feats:
@@ -601,14 +599,10 @@ class RecurTreeGen(nn.Module):
                 cur_state = self.row_tree.node_feat_update(target_feat_embed, cur_state)
             new_indices = [x for x in col_sm.indices]
             list_col_indices += new_indices
-            #print(list_col_indices)
-            #print(list_col_indices == i)
             assert lb <= len(col_sm.indices) <= ub
             controller_state = self.row_tree(cur_state)
             new_edges = [(i, x) for x in col_sm.indices]
             edges += [(i, x) for x in col_sm.indices]
-            #print("column index: ", i)
-            #print("edges: ", edges)
             total_ll = total_ll + ll
 
         if self.has_node_feats:

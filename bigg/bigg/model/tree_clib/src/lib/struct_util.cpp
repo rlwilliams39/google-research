@@ -114,9 +114,9 @@ GraphStruct::GraphStruct(int graph_id, int num_nodes, int num_edges,
             y -= n_left;
             assert(y >= 0 && y < n_right);
         }
-        if (!edge_list.count(y))
-            edge_list[y] = std::vector<int>();
-        edge_list[y].push_back(x);
+        if (!edge_list.count(x))
+            edge_list[x] = std::vector<int>();
+        edge_list[x].push_back(y);
     }
 
     for (auto it = edge_list.begin(); it != edge_list.end(); ++it)

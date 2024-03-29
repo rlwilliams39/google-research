@@ -92,8 +92,9 @@ if __name__ == '__main__':
     for g in train_graphs_gen:
         cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
         train_graphs += cano_g
-    print(train_graphs[0].edges(data=True))
+    #print(train_graphs[0].edges(data=True))
     
+    print(torch.cuda.memory_summary(device=None, abbreviated=False))
     #[TreeLib.InsertGraph(g) for g in train_graphs]
     #n = int(cmd_args.leaves - 1) ## number of internal nodes + root
     #m = int(cmd_args.leaves) ## number of leaves

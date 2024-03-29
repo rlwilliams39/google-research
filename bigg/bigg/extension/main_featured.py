@@ -41,7 +41,6 @@ from bigg.extension.eval_.mmd_stats import *
 from bigg.train_creator.train_data_generator import *
 from bigg.train_creator.data_util import *
 
-
 def get_node_feats(g):
     length = []
     for i, (idx, feat) in enumerate(g.nodes(data=True)):
@@ -80,6 +79,7 @@ if __name__ == '__main__':
     setup_treelib(cmd_args)
     assert cmd_args.blksize < 0  # assume graph is not that large, otherwise model parallelism is needed
     has_node_feats = False
+    print(torch.cuda.memory_summary(device=None, abbreviated=False))
     
     path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
     print(path)
@@ -227,6 +227,7 @@ if __name__ == '__main__':
                 ll = 0
                 for ind in batch_indices:
                     g = train_graphs[ind]
+                    n = len(g)
                     
                     ### Obtaining edge list 
                     edgelist = []

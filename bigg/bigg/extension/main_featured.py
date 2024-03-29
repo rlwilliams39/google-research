@@ -94,12 +94,14 @@ if __name__ == '__main__':
         train_graphs += cano_g
     #print(train_graphs[0].edges(data=True))
     
-    print(torch.cuda.memory_summary(device=None, abbreviated=False))
     #[TreeLib.InsertGraph(g) for g in train_graphs]
     #n = int(cmd_args.leaves - 1) ## number of internal nodes + root
     #m = int(cmd_args.leaves) ## number of leaves
     #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
     [TreeLib.InsertGraph(g) for g in train_graphs]
+    
+    
+    print(torch.cuda.memory_summary(device=None, abbreviated=False))
     
     #if cmd_args.g_type == "tree":
     #    degree_list = [train_graphs[0].degree(i) for i in range(n)]

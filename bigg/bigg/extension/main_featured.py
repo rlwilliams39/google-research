@@ -124,7 +124,7 @@ if __name__ == '__main__':
         print('loading from', cmd_args.model_dump)
         model.load_state_dict(torch.load(cmd_args.model_dump))
 
-    
+    print(torch.cuda.memory_summary(device=None, abbreviated=False))
     #########################################################################################################
     if cmd_args.phase != 'train':
         # get num nodes dist

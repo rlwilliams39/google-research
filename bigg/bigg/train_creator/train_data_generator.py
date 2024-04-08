@@ -5,6 +5,7 @@ import random
 from torch import nn
 from torch.nn.parameter import Parameter
 import os
+import scipy
 from bigg.train_creator.data_util import *
 
 def tree_generator(n):

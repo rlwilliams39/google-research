@@ -228,8 +228,12 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
         if weighted:
             xbars = []
             vars_ = []
+            num_nodes = []
+            num_edges = []
             for lobster in true_lobsters:
                 weights = []
+                num_nodes.append(len(lobster))
+                num_edges.append(len(lobster.edges()))
                 for (n1, n2, w) in lobster.edges(data=True):
                     w = np.log(np.exp(w['weight']) - 1)
                     weights.append(w)
@@ -244,6 +248,8 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
             
             print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
             print("Var Estimates: ", np.mean(vars_)**0.5, (var_lo**0.5, var_up**0.5))
+            print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
+            print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
     
     elif graph_type == "grid":
         prop, true_lobsters = correct_grid_topology_check(gen_graphs)

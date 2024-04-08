@@ -205,6 +205,9 @@ if __name__ == '__main__':
             print("edges: ", gen_graphs[idx].edges(data=True))
         
         print(cmd_args.g_type)
+        print("Training Graph Stats")
+        get_graph_stats(train_graphs, gt_graphs, cmd_args.g_type, cmd_args.has_edge_feats)
+        print("Generated Graph Stats")
         get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type, cmd_args.has_edge_feats)
         
         print('saving graphs')

@@ -9,6 +9,7 @@ from torch import nn
 from torch.nn.parameter import Parameter
 import pandas as pd
 import os
+import scipy
 from bigg.extension.eval_.mmd import *
 from bigg.extension.eval_.mmd_stats import *
 
@@ -224,6 +225,25 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
     elif graph_type == "lobster":
         prop, true_lobsters = correct_lobster_topology_check(gen_graphs)
         print("Proportion Correct Topology: ", prop)
+        if weighted:
+            xbars = []
+            vars_ = []
+            for lobster in true_lobsters:
+                weights = []
+                for (n1, n2, w) in lobster.edges(data=True):
+                    w = np.log(np.exp(w['weight']) - 1)
+                    weights.append(w)
+                xbars.append(np.mean(weights))
+                vars_.append(np.var(weights, ddof = 1))
+            
+            mu_lo = np.mean(x_bars) - 1.96 * np.std(x_bars) / len(x_bars)**0.5
+            mu_up = np.mean(x_bars) + 1.96 * np.std(x_bars) / len(x_bars)**0.5
+            
+            var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
+            var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
+            
+            print("Mean Estimates: ", np.mean(x_bars), (mu_lo, mu_up))
+            print("Var Estimates: ", np.mean(vars_), (var_lo, var_up))
     
     elif graph_type == "grid":
         prop, true_lobsters = correct_grid_topology_check(gen_graphs)

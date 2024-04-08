@@ -85,6 +85,7 @@ cmd_opt.add_argument('-has_edge_feats', default=False, type=eval, help='has edge
 cmd_opt.add_argument('-has_node_feats', default=False, type=eval, help='has node features?')
 
 cmd_opt.add_argument('-leaves', default=10, type=int, help='leaves in trees')
+cmd_opt.add_argument('-by_time', default=False, type=bool, help='order tree by time?')
 cmd_opt.add_argument('-alt_update', default=False, type=eval, help='LSTM Weight Update?')
 cmd_opt.add_argument('-serialized', default=True, type=eval, help='LSTM Weight Update?')
 

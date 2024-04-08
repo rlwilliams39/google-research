@@ -234,20 +234,23 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
                 weights = []
                 num_nodes.append(len(lobster))
                 num_edges.append(len(lobster.edges()))
-                for (n1, n2, w) in lobster.edges(data=True):
-                    w = np.log(np.exp(w['weight']) - 1)
-                    weights.append(w)
-                xbars.append(np.mean(weights))
-                vars_.append(np.var(weights, ddof = 1))
+                if weighted:
+                    for (n1, n2, w) in lobster.edges(data=True):
+                        w = np.log(np.exp(w['weight']) - 1)
+                        weights.append(w)
+                    xbars.append(np.mean(weights))
+                    vars_.append(np.var(weights, ddof = 1))
             
-            mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
-            mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
+            if weighted:
+                mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
+                mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
+                
+                var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
+                var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
+                
+                print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
+                print("Var Estimates: ", np.mean(vars_)**0.5, (var_lo**0.5, var_up**0.5))
             
-            var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
-            var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
-            
-            print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
-            print("Var Estimates: ", np.mean(vars_)**0.5, (var_lo**0.5, var_up**0.5))
             print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
             print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
     

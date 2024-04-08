@@ -236,13 +236,13 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
                 xbars.append(np.mean(weights))
                 vars_.append(np.var(weights, ddof = 1))
             
-            mu_lo = np.mean(x_bars) - 1.96 * np.std(x_bars) / len(x_bars)**0.5
-            mu_up = np.mean(x_bars) + 1.96 * np.std(x_bars) / len(x_bars)**0.5
+            mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
+            mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
             
             var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
             var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
             
-            print("Mean Estimates: ", np.mean(x_bars), (mu_lo, mu_up))
+            print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
             print("Var Estimates: ", np.mean(vars_), (var_lo, var_up))
     
     elif graph_type == "grid":

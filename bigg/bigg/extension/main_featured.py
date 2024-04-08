@@ -236,7 +236,7 @@ if __name__ == '__main__':
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
             node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
-            edge_feats = torch.cat([list_edge_feats[i] for i in batch_indices], dim=0)
+            edge_feats = (torch.cat([list_edge_feats[i] for i in batch_indices], dim=0) if cmd_args.has_edge_feats else None)
             
             if cmd_args.serialized:
                 ll = 0
@@ -256,7 +256,10 @@ if __name__ == '__main__':
                     #print(lb_lst)
                     #print(up_lst)
                     #ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, edge_feats = list_edge_feats[ind], num_nodes = 19)
-                    ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    if cmd_args.has_edge_feats:
+                        ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = list_edge_feats[ind])
+                    else: 
+                        ll_i, _, _, _, _ = model.forward(node_end = n, edge_list = edgelist, edge_feats = None)
                     ll = ll_i + ll
             
             else:    

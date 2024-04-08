@@ -94,7 +94,7 @@ def get_rand_lobster(n, p1, p2, num_graphs, min_nodes = 1, max_nodes = 9999, wei
                 #     scale = abs(n1 - n2 + 1) / 2
                 #w = weight_distributions(dist = dist, loc = loc, scale = scale)
                 w = scipy.stats.norm.rvs(loc = 1, scale = 0.5, size = 1)
-                w = np.log(np.exp(w) + 1)
+                w = np.log(np.exp(w) + 1).item()
                 edge_dict.append((n1, n2, w))
             graphs[-1].add_weighted_edges_from(edge_dict) 
     return graphs

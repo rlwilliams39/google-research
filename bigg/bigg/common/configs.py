@@ -88,6 +88,12 @@ cmd_opt.add_argument('-leaves', default=10, type=int, help='leaves in trees')
 cmd_opt.add_argument('-alt_update', default=False, type=eval, help='LSTM Weight Update?')
 cmd_opt.add_argument('-serialized', default=True, type=eval, help='LSTM Weight Update?')
 
+cmd_opt.add_argument('-num_lobster_nodes', default=10, type=int, help='leaves in trees')
+cmd_opt.add_argument('-p1', default=0.4, type=float, help='leaves in trees')
+cmd_opt.add_argument('-p2', default=0.2, type=float, help='leaves in trees')
+cmd_opt.add_argument('-min_nodes', default=-1, type=int, help='leaves in trees')
+cmd_opt.add_argument('-max_nodes', default=99999, type=int, help='leaves in trees')
+
 
 cmd_args, _ = cmd_opt.parse_known_args()
 

@@ -87,12 +87,24 @@ if __name__ == '__main__':
     #    train_graphs = cp.load(f)
     
     ## Try with this:
-    train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    
+    if cmd_args.g_type == "tree":
+        train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = cmd_args.has_edge_feats)
+        #train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = True)
+    
+    if cmd_args.g_type == "lobster":
+        train_graphs_gen = get_rand_lobster(n = cmd_args.num_lobster_nodes, p1 = cmd_args.p1, p2 = cmd_args.p2, num_graphs = 1000, min_nodes = cmd_args.min_nodes, max_nodes = cmd_args.max_nodes, weighted = False)
+    
     train_graphs = []
     for g in train_graphs_gen:
-        cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
+        if cmd_args.g_type == "tree": 
+            cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
+        else:
+            cano_g = get_graph_data(g, node_order = 'BFS', order_only = False)
+            
         train_graphs += cano_g
-    #print(train_graphs[0].edges(data=True))
+    
+    print(train_graphs[0].edges(data=True))
     
     #[TreeLib.InsertGraph(g) for g in train_graphs]
     #n = int(cmd_args.leaves - 1) ## number of internal nodes + root

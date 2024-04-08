@@ -64,7 +64,37 @@ def graph_generator(n = 5, num_graphs = 5000, constant_topology = False,
 
         graphs.append(g)
     return graphs
+
+def get_rand_lobster(n, p1, p2, num_graphs, min_nodes = 1, max_nodes = 9999, weighted = False):
+    num_nodes = n
+    p1 = p1
+    p2 = p2
+    #num_graphs = 100
+    #local = False
+    #dist = "Uniform"
+    #loc = 1
+    #scale = 2
+    min_nodes = min_nodes
+    max_nodes = max_nodes
     
+    graphs = []
+    for _ in range(num_graphs):
+        x = nx.random_lobster(num_nodes, p1, p2)
+        while len(x) not in range(min_nodes, max_nodes + 1):
+            x = nx.random_lobster(num_nodes, p1, p2)
+        
+        graphs.append(x)
+        
+        #if weighted:
+        #    edge_dict = []
+        #    for (n1, n2) in x.edges():
+        #       if local:
+        #            loc = (n1 + n2) / 2 
+        #            scale = abs(n1 - n2 + 1) / 2
+        #        w = weight_distributions(dist = dist, loc = loc, scale = scale)
+        #        edge_dict.append((n1, n2, w))
+        #    graphs[-1].add_weighted_edges_from(edge_dict) 
+    return graphs
 
 def adj_vec(g, as_torch = True, weighted = True, normalize = False):
     '''

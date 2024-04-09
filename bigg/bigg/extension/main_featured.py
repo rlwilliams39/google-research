@@ -79,10 +79,10 @@ if __name__ == '__main__':
     setup_treelib(cmd_args)
     assert cmd_args.blksize < 0  # assume graph is not that large, otherwise model parallelism is needed
     has_node_feats = False
-    print(torch.cuda.memory_summary(device=None, abbreviated=False))
+    #print(torch.cuda.memory_summary(device=None, abbreviated=False))
     
-    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
-    print(path)
+    #path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
+    #print(path)
     #with open(path, 'rb') as f:
     #    train_graphs = cp.load(f)
     
@@ -112,7 +112,6 @@ if __name__ == '__main__':
     #[TreeLib.InsertGraph(g, bipart_stats=(n, m)) for g in train_graphs]
     [TreeLib.InsertGraph(g) for g in train_graphs]
     
-    
     #print(torch.cuda.memory_summary(device=None, abbreviated=False))
     
     #if cmd_args.g_type == "tree":
@@ -130,7 +129,7 @@ if __name__ == '__main__':
     cmd_args.max_num_nodes = max_num_nodes
     print('# graphs', len(train_graphs), 'max # nodes', max_num_nodes)
     
-    list_node_feats = None #[torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] 
+    list_node_feats = ([torch.from_numpy(get_node_feats(g)).to(cmd_args.device) for g in train_graphs] if cmd_args.has_node_feats else None)
     list_edge_feats = ([torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs] if cmd_args.has_edge_feats else None)
     
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
@@ -170,8 +169,6 @@ if __name__ == '__main__':
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist)) 
                 #_, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = n, lb_list=lb_lst, ub_list=up_lst, col_range=None, display=cmd_args.display, num_nodes = num_nodes)
                 _, pred_edges, _, pred_node_feats, pred_edge_feats = model(node_end = num_nodes, display=cmd_args.display)
-                #print(pred_edges)
-                #print(STOP)
                 
                 if cmd_args.has_edge_feats:
                     weighted_edges = []
@@ -238,7 +235,7 @@ if __name__ == '__main__':
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
 
-            node_feats = None #torch.cat([list_node_feats[i] for i in batch_indices], dim=0)
+            node_feats = (torch.cat([list_node_feats[i] for i in batch_indices], dim=0) if cmd_args.has_node_feats else None)
             edge_feats = (torch.cat([list_edge_feats[i] for i in batch_indices], dim=0) if cmd_args.has_edge_feats else None)
             
             if cmd_args.serialized:

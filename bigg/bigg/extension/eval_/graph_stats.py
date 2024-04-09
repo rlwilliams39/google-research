@@ -224,7 +224,7 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
     
     elif graph_type == "lobster":
         prop, true_lobsters = correct_lobster_topology_check(gen_graphs)
-        print("Proportion Correct Topology: ", prop)
+        print("Proportion Correct Lobster Topology: ", prop)
         if weighted or not weighted:
             xbars = []
             vars_ = []

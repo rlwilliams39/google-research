@@ -339,6 +339,7 @@ class RecurTreeGen(nn.Module):
         super(RecurTreeGen, self).__init__()
         
         self.alt_update = args.alt_update
+        print("Alternate Update? ", self.alt_update)
 
         self.directed = args.directed
         self.self_loop = args.self_loop
@@ -470,11 +471,13 @@ class RecurTreeGen(nn.Module):
                     ll = ll + edge_ll
                     #print("Testing alt update: ", self.alt_update)
                     if self.alt_update:
-                        edge_embed = self.embed_edge_feats(cur_feats, state, True)
+                        #edge_embed = self.embed_edge_feats(cur_feats, state, True)
+                        edge_embed = self.embed_edge_feats(cur_feats, (self.leaf_h0, self.leaf_c0), True)
                         return ll, edge_embed, 1, cur_feats
                     
-                    edge_embed = self.embed_edge_feats(cur_feats)
-                    return ll, (edge_embed, edge_embed), 1, cur_feats
+                    else:
+                        edge_embed = self.embed_edge_feats(cur_feats)
+                        return ll, (edge_embed, edge_embed), 1, cur_feats
                 else:
                     return ll, (self.leaf_h0, self.leaf_c0), 1, None
         else:

@@ -234,8 +234,8 @@ if __name__ == '__main__':
             random.shuffle(indices)
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
-
             node_feats = (torch.cat([list_node_feats[i] for i in batch_indices], dim=0) if cmd_args.has_node_feats else None)
+
             edge_feats = (torch.cat([list_edge_feats[i] for i in batch_indices], dim=0) if cmd_args.has_edge_feats else None)
             
             if cmd_args.serialized:
@@ -277,7 +277,7 @@ if __name__ == '__main__':
         
         print('epoch complete')
         cur = epoch + 1
-        if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
+        if cur % 5 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:

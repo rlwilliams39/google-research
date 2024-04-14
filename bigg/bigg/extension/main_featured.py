@@ -97,7 +97,7 @@ if __name__ == '__main__':
     train_graphs = []
     for g in train_graphs_gen:
         if cmd_args.by_time:
-            cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
+            cano_g = get_graph_data(g, node_order = 'time', leaves_last = False, order_only = False)
         
         else:
             cano_g = get_graph_data(g, node_order = 'BFS', order_only = False)

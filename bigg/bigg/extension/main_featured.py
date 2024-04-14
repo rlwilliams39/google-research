@@ -234,7 +234,7 @@ if __name__ == '__main__':
         pbar = tqdm(range(epoch_save))
 
         optimizer.zero_grad()
-        best_loss = 0
+        best_loss = 99999
         for idx in pbar:
             random.shuffle(indices)
             batch_indices = indices[:cmd_args.batch_size]
@@ -287,7 +287,7 @@ if __name__ == '__main__':
         
         print('epoch complete')
         cur = epoch + 1
-        if cur % 5 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
+        if cur % 1 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:

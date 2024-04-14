@@ -3,7 +3,9 @@
     "",
     "\\bigg",
     "\\bigg\\bigg",
-    "\\bigg\\bigg\\extension"
+    "\\bigg\\bigg\\common",
+    "\\bigg\\bigg\\extension",
+    "\\bigg\\bigg\\model"
   ],
   "SelectedNode": "\\bigg\\bigg\\extension\\main_featured.py",
   "PreviewInSolutionExplorer": false

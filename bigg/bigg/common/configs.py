@@ -40,6 +40,7 @@ cmd_opt.add_argument('-model_dump', default=None, help='load model dump')
 cmd_opt.add_argument('-gpu', type=int, default=-1, help='-1: cpu; 0 - ?: specific gpu index')
 cmd_opt.add_argument('-num_proc', type=int, default=1, help='number of processes')
 cmd_opt.add_argument('-node_order', default='default', help='default/DFS/BFS/degree_descent/degree_accent/k_core/all, or any of them concat by +')
+cmd_opt.add_argument('-first_idea', default=False, type=bool)
 
 cmd_opt.add_argument('-dist_backend', default='gloo', help='dist package backend', choices=['gloo', 'nccl']) ###
 

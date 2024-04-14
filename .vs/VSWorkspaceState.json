@@ -1,6 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\bigg",
+    "\\bigg\\bigg",
+    "\\bigg\\bigg\\extension"
   ],
+  "SelectedNode": "\\bigg\\bigg\\extension\\main_featured.py",
   "PreviewInSolutionExplorer": false
 }

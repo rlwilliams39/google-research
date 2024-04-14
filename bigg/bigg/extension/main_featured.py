@@ -234,6 +234,7 @@ if __name__ == '__main__':
         pbar = tqdm(range(epoch_save))
 
         optimizer.zero_grad()
+        best_loss = 0
         for idx in pbar:
             random.shuffle(indices)
             batch_indices = indices[:cmd_args.batch_size]
@@ -271,6 +272,11 @@ if __name__ == '__main__':
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()
+
+            if loss < best_loss:
+                print('Lowest Training Loss Achieved')
+                best_loss = loss
+                torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'best_model'))
 
             if (idx + 1) % cmd_args.accum_grad == 0:
                 if cmd_args.grad_clip > 0:

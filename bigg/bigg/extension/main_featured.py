@@ -274,7 +274,7 @@ if __name__ == '__main__':
             loss = loss.item()
 
             if loss < best_loss:
-                print('Lowest Training Loss Achieved')
+                print('Lowest Training Loss Achieved: ', loss)
                 best_loss = loss
                 torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'best_model'))
 

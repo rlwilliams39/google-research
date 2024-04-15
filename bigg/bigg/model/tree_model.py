@@ -479,7 +479,9 @@ class RecurTreeGen(nn.Module):
         print(outpt_h)
         print(outpt_h.shape)
         outpt_h = torch.split(outpt_h, H, dim=1)
+        outpt_h = torch.cat(outpt_h, dim = 0)
         print(outpt_h)
+        print(outpt_h.shape)
         print(CANElL)
         return outpt_h, outpt_c  
 

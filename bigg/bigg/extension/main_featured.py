@@ -174,10 +174,10 @@ if __name__ == '__main__':
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         assert e[0] > e[1]
-                        w = w.item()
-                        w = np.round(w, 4)
-                        edge = (e[1], e[0], w)
-                        weighted_edges.append(edge)
+                        #w = w.item()
+                        #w = np.round(w, 4)
+                        #edge = (e[1], e[0], w)
+                        weighted_edges.append((e[1], e[0], np.round(w.item(), 4)))
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)
                     gen_graphs.append(pred_g)
@@ -276,7 +276,7 @@ if __name__ == '__main__':
             if loss < best_loss:
                 print('Lowest Training Loss Achieved: ', loss)
                 best_loss = loss
-                torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'best_model'))
+                torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'best-model'))
 
             if (idx + 1) % cmd_args.accum_grad == 0:
                 if cmd_args.grad_clip > 0:

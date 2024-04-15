@@ -464,7 +464,7 @@ class RecurTreeGen(nn.Module):
         outpt = torch.zeros((num_edges, self.batch_size * H)).to(inpt.device)
         for idx in range(num_edges):
             cur_edges = torch.split(inpt[idx], self.batch_size)
-            cur_edges = input[idx]
+            cur_edges = inpt[idx]
             print(cur_edges.shape)
             cur_edges = self.embed_edge_feats(cur_edges)
             weight_state = self.merge_weight(cur_edges, weight_state)

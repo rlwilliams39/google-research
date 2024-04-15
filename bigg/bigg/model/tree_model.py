@@ -476,13 +476,10 @@ class RecurTreeGen(nn.Module):
             weight_state = self.merge_weight((edge_embed, edge_embed), weight_state)
             outpt_h[idx] = weight_state[0].flatten()
             outpt_c[idx] = weight_state[1].flatten()
-        print(outpt_h)
-        print(outpt_h.shape)
         outpt_h = torch.split(outpt_h, H, dim=1)
         outpt_h = torch.cat(outpt_h, dim = 0)
-        print(outpt_h)
-        print(outpt_h.shape)
-        print(CANElL)
+        outpt_c = torch.split(outpt_c, H, dim=1)
+        outpt_c = torch.cat(outpt_c, dim = 0)
         return outpt_h, outpt_c  
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
@@ -524,7 +521,7 @@ class RecurTreeGen(nn.Module):
                     ll = ll + edge_ll
                     if self.alt_update:
                         if weight_state is not None:
-                            print(cur_feats)
+                            #print(cur_feats)
                             edge_embed = self.embed_edge_feats(cur_feats)
                             edge_embed = self.merge_weight((edge_embed, edge_embed), weight_state)
                             weight_state = edge_embed
@@ -684,12 +681,17 @@ class RecurTreeGen(nn.Module):
         if self.has_node_feats:
             node_feats = self.embed_node_feats(torch.log(node_feats))
         if self.has_edge_feats:
-            edge_feats = self.embed_edge_feats(edge_feats)
+            edge_feats_embed = self.embed_edge_feats(edge_feats)
             if self.alt_update:
-                E = edge_feats.shape[0] ## ADDED
-                edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1))) ## ADDED
+                #E = edge_feats.shape[0] ## ADDED
+                #edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1))) ## ADDED
+                H = edge_feats_embed.shape[1]
+                outpt_h, outpt_c = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(self.batch_size, 1), self.leaf_c0.repeat(self.batch_size, 1)), H)
+                edge_feats = (outpt_h, outpt_c)
                 #edge_feats_c = self.embed_edge_feats_c(edge_feats)
                 #edge_feats = (edge_feats, edge_feats_c)
+            else:
+                edge_feats = edge_feats_embed
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -764,19 +766,11 @@ class RecurTreeGen(nn.Module):
         if self.has_edge_feats:
             edge_feats_embed = self.embed_edge_feats(edge_feats)
             if self.alt_update:
-                #print(edge_feats)
-                #print(graph_ids)
-                #print(edge_feats.shape)
-                #test = torch.split(edge_feats, 8)
-                #test = torch.cat(test, dim=1)
-                #print(test)
-                #print(test.shape)
-                #K = int(edge_feats_embed.shape[0] / self.batch_size)
                 H = edge_feats_embed.shape[1]
-                test = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(self.batch_size, 1), self.leaf_c0.repeat(self.batch_size, 1)), H)
-                
-                E = edge_feats_embed.shape[0]
-                edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
+                outpt_h, outpt_c = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(self.batch_size, 1), self.leaf_c0.repeat(self.batch_size, 1)), H)
+                edge_feats_embed = (outpt_h, outpt_c)
+                #E = edge_feats_embed.shape[0]
+                #edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)
                 #edge_feats_embed = (edge_feats_embed, edge_feats_embed_c)
         logit_has_edge = self.pred_has_ch(row_states[0])

@@ -158,6 +158,7 @@ class FenwickTree(nn.Module):
             self.node_feat_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         self.merge_cell = BinaryTreeLSTMCell(args.embed_dim)
         self.summary_cell = BinaryTreeLSTMCell(args.embed_dim)
+        self.merge_weight = BinaryTreeLSTMCell(args.embed_dim)
         if args.pos_enc:
             self.pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base)
         else:
@@ -432,8 +433,6 @@ class RecurTreeGen(nn.Module):
         return p
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None):
-        #print(lb)
-        #print(ub)
         assert lb <= ub
         if tree_node.is_root:
             prob_has_edge = torch.sigmoid(self.pred_has_ch(state[0]))
@@ -470,13 +469,12 @@ class RecurTreeGen(nn.Module):
                     cur_feats = edge_feats[col_sm.pos - 1].unsqueeze(0) if col_sm.supervised else None
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
-                    #print("Testing alt update: ", self.alt_update)
                     if self.alt_update:
-                        #edge_embed = self.embed_edge_feats(cur_feats, state, True)
                         if self.first_idea:
                             edge_embed = self.embed_edge_feats(cur_feats, state, True)
                         else:
-                            edge_embed = self.embed_edge_feats(cur_feats, (self.leaf_h0, self.leaf_c0), True)
+                            edge_embed = self.embed_edge_feats(cur_feats)
+                            edge_embed = self.merge_weight((edge_embed, edge_embed), (self.leaf_h0, self.leaf_c0))
                         return ll, edge_embed, 1, cur_feats
                     
                     else:
@@ -505,8 +503,6 @@ class RecurTreeGen(nn.Module):
             if has_left:
                 lub = min(tree_node.lch.n_cols, ub)
                 llb = max(0, lb - tree_node.rch.n_cols)
-                #print("lub", lub)
-                #print("llb", llb)
                 ll, left_state, num_left, left_edge_feats = self.gen_row(ll, state, tree_node.lch, col_sm, llb, lub, edge_feats)
                 pred_edge_feats.append(left_edge_feats)
             else:
@@ -515,11 +511,6 @@ class RecurTreeGen(nn.Module):
 
             right_pos = self.tree_pos_enc([tree_node.rch.n_cols])
             topdown_state = self.l2r_cell(state, (left_state[0] + right_pos, left_state[1] + right_pos), tree_node.depth)
-            #print(num_left)
-            #print(tree_node.rch)
-            #print(tree_node.rch.n_cols)
-            #print(tree_node.col_range)
-            #print(tree_node.rch.col_range)
             rlb = max(0, lb - num_left)
             rub = min(tree_node.rch.n_cols, ub - num_left)
             if not has_left:
@@ -539,8 +530,6 @@ class RecurTreeGen(nn.Module):
             topdown_state = self.cell_topright(self.topdown_right_embed[[int(has_right)]], topdown_state, tree_node.depth)
 
             if has_right:  # has edge in right child
-                #print("rlb ", rlb)
-                #print("rub", rub)
                 ll, right_state, num_right, right_edge_feats = self.gen_row(ll, topdown_state, tree_node.rch, col_sm, rlb, rub, edge_feats)
                 pred_edge_feats.append(right_edge_feats)
             else:
@@ -558,8 +547,6 @@ class RecurTreeGen(nn.Module):
         pos = 0
         total_ll = 0.0
         edges = []
-        #print(edge_list)
-        #print(edge_feats)
         self.row_tree.reset(list_states)
         controller_state = self.row_tree()
         if num_nodes is None:
@@ -569,7 +556,6 @@ class RecurTreeGen(nn.Module):
             pbar = tqdm(pbar)
         list_pred_node_feats = []
         list_pred_edge_feats = []
-        #list_col_indices = []
         for i in pbar:
             if edge_list is None:
                 col_sm = ColAutomata(supervised=False)

@@ -34,6 +34,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        self.combine_states = nn.Linear(2 * args.embed_dim, args.embed_dim)
 
     # to be customized
     def embed_node_feats(self, node_feats):
@@ -43,6 +44,9 @@ class BiggWithEdgeLen(RecurTreeGen):
         if alt_update:
             return self.edgelen_encoding_test(edge_feats, state)
         return self.edgelen_encoding(edge_feats)
+    
+    def combine_states(self, state):
+        return (self.combine_states(state[0]), self.combine_states(state[1]))
 
     def predict_node_feats(self, state, node_feats=None):
         """

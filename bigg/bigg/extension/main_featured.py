@@ -230,11 +230,11 @@ if __name__ == '__main__':
     B = cmd_args.batch_size
     epoch_save = int(N / B)
     print("Epoch Save: ", epoch_save)
+    best_loss = 99999
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
         pbar = tqdm(range(epoch_save))
 
         optimizer.zero_grad()
-        best_loss = 99999
         for idx in pbar:
             random.shuffle(indices)
             batch_indices = indices[:cmd_args.batch_size]

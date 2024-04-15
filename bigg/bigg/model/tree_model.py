@@ -740,7 +740,7 @@ class RecurTreeGen(nn.Module):
                 print(edge_feats)
                 print(graph_ids)
                 print(edge_feats.shape)
-                test = torch.split(edge_feats, 2)
+                test = torch.split(edge_feats, 8)
                 print(test)
                 print(test[0].shape)
                 E = edge_feats_embed.shape[0]

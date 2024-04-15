@@ -32,8 +32,12 @@ from bigg.model.tree_clib.tree_lib import TreeLib
 from bigg.torch_ops import multi_index_select, PosEncoding
 from functools import partial
 
-def weight_state_update(embedded_edge_feats):
-    ...
+#def weight_state_update(embedded_edge_feats, weight_state):
+#    N = embedded_edge_feats.shape[0]
+#    batch_size = 10
+#    num_trees = int(N / batch_size)
+#    return_tensor = torch.zeros(embedded_edge_feats.shape)
+#    for idx in range(num_trees):
 
 def hc_multi_select(ids_from, ids_to, h_froms, c_froms):
     h_vecs = multi_index_select(ids_from,
@@ -735,6 +739,9 @@ class RecurTreeGen(nn.Module):
             if self.alt_update:
                 print(edge_feats)
                 print(graph_ids)
+                test = torch.split(edge_feats, 2)
+                print(test)
+                print(test.shape)
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)

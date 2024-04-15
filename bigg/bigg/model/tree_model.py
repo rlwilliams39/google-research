@@ -625,6 +625,7 @@ class RecurTreeGen(nn.Module):
             node_feats = self.embed_node_feats(torch.log(node_feats))
         if self.has_edge_feats:
             edge_feats = self.embed_edge_feats(edge_feats)
+            edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0, self.leaf_c0))
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -688,6 +689,7 @@ class RecurTreeGen(nn.Module):
             ll = ll + ll_node_feats
         if self.has_edge_feats:
             edge_feats_embed = self.embed_edge_feats(edge_feats)
+            edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0, self.leaf_c0))
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)

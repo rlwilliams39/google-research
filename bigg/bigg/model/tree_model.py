@@ -490,11 +490,11 @@ class RecurTreeGen(nn.Module):
                     edge_ll, cur_feats = self.predict_edge_feats(state, cur_feats)
                     ll = ll + edge_ll
                     if self.alt_update:
-                        #edge_embed = self.embed_edge_feats(cur_feats)
-                        #edge_embed = self.merge_weight((edge_embed, edge_embed), (self.leaf_h0, self.leaf_c0))
-                        edge_embed_h = self.embed_edge_feats(cur_feats)
-                        edge_embed_c = self.embed_edge_feats_c(cur_feats)
-                        edge_embed = (edge_embed_h, edge_embed_c)
+                        edge_embed = self.embed_edge_feats(cur_feats)
+                        edge_embed = self.merge_weight((edge_embed, edge_embed), (self.leaf_h0, self.leaf_c0))
+                        #edge_embed_h = self.embed_edge_feats(cur_feats)
+                        #edge_embed_c = self.embed_edge_feats_c(cur_feats)
+                        #edge_embed = (edge_embed_h, edge_embed_c)
                         return ll, edge_embed, 1, cur_feats
                     
                     else:
@@ -646,10 +646,10 @@ class RecurTreeGen(nn.Module):
         if self.has_edge_feats:
             edge_feats = self.embed_edge_feats(edge_feats)
             if self.alt_update:
-                #E = edge_feats.shape[0] ## ADDED
-                #edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1))) ## ADDED
-                edge_feats_c = self.embed_edge_feats_c(edge_feats)
-                edge_feats = (edge_feats, edge_feats_c)
+                E = edge_feats.shape[0] ## ADDED
+                edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1))) ## ADDED
+                #edge_feats_c = self.embed_edge_feats_c(edge_feats)
+                #edge_feats = (edge_feats, edge_feats_c)
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)
@@ -723,10 +723,10 @@ class RecurTreeGen(nn.Module):
         if self.has_edge_feats:
             edge_feats_embed = self.embed_edge_feats(edge_feats)
             if self.alt_update:
-                #E = edge_feats_embed.shape[0]
-                #edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
-                edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)
-                edge_feats_embed = (edge_feats_embed, edge_feats_embed_c)
+                E = edge_feats_embed.shape[0]
+                edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
+                #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)
+                #edge_feats_embed = (edge_feats_embed, edge_feats_embed_c)
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)

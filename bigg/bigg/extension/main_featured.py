@@ -89,9 +89,9 @@ if __name__ == '__main__':
     ## Try with this:
     
     if cmd_args.g_type == "tree":
-        train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = cmd_args.has_edge_feats)
+        train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 2, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = cmd_args.has_edge_feats)
     
-    if cmd_args.g_type == "lobster":
+    if cmd_args.g_type == "lobster"
         train_graphs_gen = get_rand_lobster(n = cmd_args.num_lobster_nodes, p1 = cmd_args.p1, p2 = cmd_args.p2, num_graphs = 1000, min_nodes = cmd_args.min_nodes, max_nodes = cmd_args.max_nodes, weighted = cmd_args.has_edge_feats)
     
     train_graphs = []

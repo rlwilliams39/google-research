@@ -468,7 +468,10 @@ class RecurTreeGen(nn.Module):
             #print(cur_edges)
             #print(cur_edges.shape)
             edge_embed = self.embed_edge_feats(cur_edges)
-            #print(cur_edges)
+            print(edge_embed)
+            print(edge_embed.shape)
+            print(weight_state[0])
+            print(weight_state[0].shape)
             weight_state = self.merge_weight((edge_embed, edge_embed), weight_state)
             outpt[idx] = weight_state
         print(outpt)

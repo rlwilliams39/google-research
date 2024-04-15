@@ -461,7 +461,8 @@ class RecurTreeGen(nn.Module):
         inpt = torch.split(inpt, int(N / self.batch_size))
         inpt = torch.cat(inpt, dim=1)
         num_edges = inpt.shape[0]
-        outpt = torch.zeros((num_edges, self.batch_size * H)).to(inpt.device)
+        outpt_h = torch.zeros((num_edges, self.batch_size * H)).to(inpt.device)
+        outpt_c = torch.zeros((num_edges, self.batch_size * H)).to(inpt.device)
         for idx in range(num_edges):
             cur_edges = torch.split(inpt[idx], self.batch_size)
             cur_edges = inpt[idx].unsqueeze(-1)
@@ -473,10 +474,11 @@ class RecurTreeGen(nn.Module):
             print(weight_state[0])
             print(weight_state[0].shape)
             weight_state = self.merge_weight((edge_embed, edge_embed), weight_state)
-            outpt[idx] = weight_state
-        print(outpt)
+            outpt_h[idx] = weight_state[0]
+            outpt_c[idx] = weight_state[1]
+        print(outpt_h)
         print(CANElL)
-        return outpt    
+        return outpt_h, outpt_c  
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
@@ -767,6 +769,7 @@ class RecurTreeGen(nn.Module):
                 #K = int(edge_feats_embed.shape[0] / self.batch_size)
                 H = edge_feats_embed.shape[1]
                 test = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(self.batch_size, 1), self.leaf_c0.repeat(self.batch_size, 1)), H)
+                
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)

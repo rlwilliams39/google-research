@@ -627,6 +627,10 @@ class RecurTreeGen(nn.Module):
             node_feats = self.embed_node_feats(torch.log(node_feats))
         if self.has_edge_feats:
             edge_feats = self.embed_edge_feats(edge_feats)
+            print(edge_feats)
+            print(edge_feats.shape)
+            print(self.leaf_0)
+            print(self.leaf_0.shape)
             edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0, self.leaf_c0))
 
         if not self.bits_compress:

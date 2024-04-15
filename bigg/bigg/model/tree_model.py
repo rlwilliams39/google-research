@@ -491,6 +491,7 @@ class RecurTreeGen(nn.Module):
                     ll = ll + edge_ll
                     if self.alt_update:
                         if weight_state is not None:
+                            print(cur_feats)
                             edge_embed = self.embed_edge_feats(cur_feats)
                             edge_embed = self.merge_weight((edge_embed, edge_embed), weight_state)
                             weight_state = edge_embed

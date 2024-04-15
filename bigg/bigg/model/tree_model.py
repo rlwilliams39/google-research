@@ -717,8 +717,9 @@ class RecurTreeGen(nn.Module):
             ll = ll + ll_node_feats
         if self.has_edge_feats:
             edge_feats_embed = self.embed_edge_feats(edge_feats)
-            E = edge_feats_embed.shape[0]
-            edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
+            if self.alt_update:
+                E = edge_feats_embed.shape[0]
+                edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
         logit_has_edge = self.pred_has_ch(row_states[0])
         has_ch, _ = TreeLib.GetChLabel(0, dtype=bool)
         ll = ll + self.binary_ll(logit_has_edge, has_ch)

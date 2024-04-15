@@ -452,7 +452,7 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
 
-    def weight_state_update(self, inpt, weight_state):
+    def weight_state_update(self, inpt, weight_state, H):
         #N = embedded_edge_feats.shape[0]
         #batch_size = 10
         #num_trees = int(N / batch_size)
@@ -461,7 +461,7 @@ class RecurTreeGen(nn.Module):
         inpt = torch.split(inpt, int(N / self.batch_size))
         inpt = torch.cat(inpt, dim=1)
         num_edges = inpt.shape[0]
-        outpt = torch.zeros((num_edges, self.batch_size * self.embed_dim)).to(inpt.device)
+        outpt = torch.zeros((num_edges, self.batch_size * H)).to(inpt.device)
         for idx in range(num_edges):
             cur_edges = torch.split(inpt[idx], self.batch_size)
             cur_edges = self.embed_edge_feats(cur_edges)
@@ -758,7 +758,8 @@ class RecurTreeGen(nn.Module):
                 #print(test)
                 #print(test.shape)
                 K = int(edge_feats_embed.shape[0] / self.batch_size)
-                test = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(K, 1), self.leaf_c0.repeat(K, 1)))
+                H = edge_feats_embed.shape[1]
+                test = self.weight_state_update(edge_feats, (self.leaf_h0.repeat(K, 1), self.leaf_c0.repeat(K, 1)), H)
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)

@@ -631,7 +631,8 @@ class RecurTreeGen(nn.Module):
             print(edge_feats.shape)
             print(self.leaf_h0)
             print(self.leaf_h0.shape)
-            edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0, self.leaf_c0))
+            E = edge_feats.shape[0]
+            edge_feats = self.merge_weight((edge_feats, edge_feats), (self.leaf_h0.repeat(E), self.leaf_c0.repeat(E)))
 
         if not self.bits_compress:
             h_bot = torch.cat([self.empty_h0, self.leaf_h0], dim=0)

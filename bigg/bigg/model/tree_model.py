@@ -158,7 +158,6 @@ class FenwickTree(nn.Module):
             self.node_feat_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         self.merge_cell = BinaryTreeLSTMCell(args.embed_dim)
         self.summary_cell = BinaryTreeLSTMCell(args.embed_dim)
-        self.merge_weight = BinaryTreeLSTMCell(args.embed_dim)
         if args.pos_enc:
             self.pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base)
         else:
@@ -373,6 +372,9 @@ class RecurTreeGen(nn.Module):
             self.m_pred_has_right = MLP(args.embed_dim, [2 * args.embed_dim, 1])
             self.m_cell_topdown = nn.LSTMCell(args.embed_dim, args.embed_dim)
             self.m_cell_topright = nn.LSTMCell(args.embed_dim, args.embed_dim)
+            self.merge_weight = BinaryTreeLSTMCell(args.embed_dim) ### ADDED
+
+
         else:
             fn_pred = lambda: MLP(args.embed_dim, [2 * args.embed_dim, 1])
             fn_tree_cell = lambda: BinaryTreeLSTMCell(args.embed_dim)

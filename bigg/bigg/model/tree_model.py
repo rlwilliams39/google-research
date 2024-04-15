@@ -739,9 +739,10 @@ class RecurTreeGen(nn.Module):
             if self.alt_update:
                 print(edge_feats)
                 print(graph_ids)
+                print(edge_feats.shape)
                 test = torch.split(edge_feats, 2)
                 print(test)
-                print(test.shape)
+                print(test[0].shape)
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)

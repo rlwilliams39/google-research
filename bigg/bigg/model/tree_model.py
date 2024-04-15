@@ -757,7 +757,7 @@ class RecurTreeGen(nn.Module):
                 #test = torch.cat(test, dim=1)
                 #print(test)
                 #print(test.shape)
-                K = int(edge_feats_embed.shape / self.batch_size)
+                K = int(edge_feats_embed.shape[0] / self.batch_size)
                 test = weight_state_update(edge_feats, (self.leaf_h0.repeat(K, 1), self.leaf_c0.repeat(K, 1)))
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))

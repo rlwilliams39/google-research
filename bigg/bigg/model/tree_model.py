@@ -478,6 +478,8 @@ class RecurTreeGen(nn.Module):
             outpt_c[idx] = weight_state[1].flatten()
         print(outpt_h)
         print(outpt_h.shape)
+        outpt_h = torch.split(outpt_h, self.batch_size, dim=1)
+        print(outpt_h)
         print(CANElL)
         return outpt_h, outpt_c  
 

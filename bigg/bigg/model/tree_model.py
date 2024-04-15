@@ -470,7 +470,7 @@ class RecurTreeGen(nn.Module):
             weight_state = self.merge_weight(cur_edges, weight_state)
             outpt[idx] = weight_state
         print(outpt)
-        print(CANEL)
+        print(CANElL)
         return outpt    
 
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):

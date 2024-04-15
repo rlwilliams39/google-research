@@ -173,7 +173,7 @@ class FenwickTree(nn.Module):
             self.node_feat_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         self.merge_cell = BinaryTreeLSTMCell(args.embed_dim)
         self.summary_cell = BinaryTreeLSTMCell(args.embed_dim)
-        self.alt_update = alt_update
+        self.alt_update = args.alt_update
         if args.pos_enc:
             self.pos_enc = PosEncoding(args.embed_dim, args.device, args.pos_base)
         else:

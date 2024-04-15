@@ -32,13 +32,6 @@ from bigg.model.tree_clib.tree_lib import TreeLib
 from bigg.torch_ops import multi_index_select, PosEncoding
 from functools import partial
 
-#def weight_state_update(embedded_edge_feats, weight_state):
-#    N = embedded_edge_feats.shape[0]
-#    batch_size = 10
-#    num_trees = int(N / batch_size)
-#    return_tensor = torch.zeros(embedded_edge_feats.shape)
-#    for idx in range(num_trees):
-
 def hc_multi_select(ids_from, ids_to, h_froms, c_froms):
     h_vecs = multi_index_select(ids_from,
                                 ids_to,
@@ -459,6 +452,25 @@ class RecurTreeGen(nn.Module):
             p += self.greedy_frac
         return p
 
+    def weight_state_update(self, inpt, weight_state):
+        #N = embedded_edge_feats.shape[0]
+        #batch_size = 10
+        #num_trees = int(N / batch_size)
+        #return_tensor = torch.zeros(embedded_edge_feats.shape)
+        N = inpt.shape[0]
+        inpt = torch.split(inpt, int(N / self.batch_size))
+        inpt = torch.cat(inpt, dim=1)
+        num_edges = inpt.shape[0]
+        outpt = torch.zeros((num_edges, self.batch_size * self.embed_dim)).to(inpt.device)
+        for idx in range(num_edges):
+            cur_edges = torch.split(inpt[idx], self.batch_size)
+            cur_edges = self.embed_edge_feats(cur_edges)
+            weight_state = self.merge_weight(cur_edges, weight_state)
+            outpt[idx] = weight_state
+        print(outpt)
+        print(CANEL)
+        return outpt    
+
     def gen_row(self, ll, state, tree_node, col_sm, lb, ub, edge_feats=None, weight_state=None):
         assert lb <= ub
         if tree_node.is_root:
@@ -730,6 +742,7 @@ class RecurTreeGen(nn.Module):
         ll = 0.0
         hc_bot, fn_hc_bot, h_buf_list, c_buf_list = self.forward_row_trees(graph_ids, node_feats, edge_feats,
                                                                            list_node_starts, num_nodes, list_col_ranges)
+        self.batch_size = len(graph_ids)
         row_states, next_states = self.row_tree.forward_train(*hc_bot, h_buf_list[0], c_buf_list[0], *prev_rowsum_states)
         if self.has_node_feats:
             row_states, ll_node_feats, _ = self.predict_node_feats(row_states, node_feats)
@@ -737,13 +750,15 @@ class RecurTreeGen(nn.Module):
         if self.has_edge_feats:
             edge_feats_embed = self.embed_edge_feats(edge_feats)
             if self.alt_update:
-                print(edge_feats)
-                print(graph_ids)
-                print(edge_feats.shape)
-                test = torch.split(edge_feats, 8)
-                test = torch.cat(test, dim=1)
-                print(test)
-                print(test.shape)
+                #print(edge_feats)
+                #print(graph_ids)
+                #print(edge_feats.shape)
+                #test = torch.split(edge_feats, 8)
+                #test = torch.cat(test, dim=1)
+                #print(test)
+                #print(test.shape)
+                K = int(edge_feats_embed.shape / self.batch_size)
+                test = weight_state_update(edge_feats, (self.leaf_h0.repeat(K, 1), self.leaf_c0.repeat(K, 1)))
                 E = edge_feats_embed.shape[0]
                 edge_feats_embed = self.merge_weight((edge_feats_embed, edge_feats_embed), (self.leaf_h0.repeat(E, 1), self.leaf_c0.repeat(E, 1)))
                 #edge_feats_embed_c = self.embed_edge_feats_c(edge_feats)

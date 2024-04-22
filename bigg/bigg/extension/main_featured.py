@@ -229,7 +229,6 @@ if __name__ == '__main__':
     N = len(train_graphs)
     B = cmd_args.batch_size
     num_iter = int(N / B)
-    print("Epoch Save: ", epoch_save)
     best_loss = 99999
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
         pbar = tqdm(range(num_iter))

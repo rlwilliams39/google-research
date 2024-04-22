@@ -228,16 +228,21 @@ if __name__ == '__main__':
     prev = datetime.now()
     N = len(train_graphs)
     B = cmd_args.batch_size
-    epoch_save = int(N / B)
+    num_iter = int(N / B)
     print("Epoch Save: ", epoch_save)
     best_loss = 99999
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
-        pbar = tqdm(range(epoch_save))
+        pbar = tqdm(range(num_iter))
+        random.shuffle(indices)
 
         optimizer.zero_grad()
+        start = 0
         for idx in pbar:
-            random.shuffle(indices)
-            batch_indices = indices[:cmd_args.batch_size]
+            start = idx * B
+            stop = start + B
+            batch_indices = indices[start:stop]
+            #batch_indices = indices[:cmd_args.batch_size]
+            
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
             node_feats = (torch.cat([list_node_feats[i] for i in batch_indices], dim=0) if cmd_args.has_node_feats else None)
 
@@ -283,11 +288,11 @@ if __name__ == '__main__':
                     torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=cmd_args.grad_clip)
                 optimizer.step()
                 optimizer.zero_grad()
-            pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / epoch_save, loss))
+            pbar.set_description('epoch %.2f, loss: %.4f' % (epoch + (idx + 1) / num_iter, loss))
         
         print('epoch complete')
         cur = epoch + 1
-        if cur % 1 == cmd_args.epoch_save or cur == cmd_args.num_epochs: #save every 10th / last epoch
+        if cur % cmd_args.epoch_save == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:

@@ -71,7 +71,7 @@ cmd_opt.add_argument('-tree_pos_enc', default=False, type=eval, help='pos enc fo
 cmd_opt.add_argument('-blksize', default=-1, type=int, help='num blksize steps')
 cmd_opt.add_argument('-accum_grad', default=1, type=int, help='accumulate grad for batching purpose') 
 
-cmd_opt.add_argument('-epoch_save', default=100, type=int, help='num epochs between save')
+cmd_opt.add_argument('-epoch_save', default=10, type=int, help='num epochs between save')
 cmd_opt.add_argument('-epoch_load', default=None, type=int, help='epoch for loading')
 
 cmd_opt.add_argument('-batch_exec', default=False, type=eval, help='run with dynamic batching?') #####

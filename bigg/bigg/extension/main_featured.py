@@ -81,19 +81,19 @@ if __name__ == '__main__':
     has_node_feats = False
     #print(torch.cuda.memory_summary(device=None, abbreviated=False))
     
-    #path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
-    #print(path)
-    #with open(path, 'rb') as f:
-    #    train_graphs = cp.load(f)
+    path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'train')
+    print(path)
+    with open(path, 'rb') as f:
+        train_graphs = cp.load(f)
     
     ## Try with this:
     
-    if cmd_args.g_type == "tree":
-        train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = cmd_args.has_edge_feats)
-    
-    if cmd_args.g_type == "lobster":
-        train_graphs_gen = get_rand_lobster(n = cmd_args.num_lobster_nodes, p1 = cmd_args.p1, p2 = cmd_args.p2, num_graphs = 1000, min_nodes = cmd_args.min_nodes, max_nodes = cmd_args.max_nodes, weighted = cmd_args.has_edge_feats)
-    
+    #if cmd_args.g_type == "tree":
+    #    train_graphs_gen = graph_generator(n = cmd_args.leaves, num_graphs = 1000, constant_topology = False, constant_weights = False, mu_weight = 10, scale = 1, weighted = cmd_args.has_edge_feats)
+    #
+    #if cmd_args.g_type == "lobster":
+    #    train_graphs_gen = get_rand_lobster(n = cmd_args.num_lobster_nodes, p1 = cmd_args.p1, p2 = cmd_args.p2, num_graphs = 1000, min_nodes = cmd_args.min_nodes, max_nodes = cmd_args.max_nodes, weighted = cmd_args.has_edge_feats)
+    #
     train_graphs = []
     for g in train_graphs_gen:
         if cmd_args.by_time:
@@ -147,10 +147,10 @@ if __name__ == '__main__':
         
         path = os.path.join(cmd_args.data_dir, '%s-graphs.pkl' % 'test')
         
-        #with open(path, 'rb') as f:
-        #    gt_graphs = cp.load(f)
-        #print('# gt graphs', len(gt_graphs))
-        gt_graphs = train_graphs[0:10]
+        with open(path, 'rb') as f:
+            gt_graphs = cp.load(f)
+        print('# gt graphs', len(gt_graphs))
+        #gt_graphs = train_graphs[0:10]
         #if cmd_args.g_type == "tree":
         #    degree_list = [gt_graphs[0].degree(i) for i in range(n)]
         #    lb_lst = degree_list

@@ -27,22 +27,28 @@ class BiggWithEdgeLen(RecurTreeGen):
     def __init__(self, args):
         super().__init__(args)
         self.edgelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
-        self.edgelen_encoding_test = nn.LSTMCell(1, args.embed_dim)
+        self.edgelen_encoding_c = MLP(1, [2 * args.embed_dim, args.embed_dim])
+        #self.edgelen_encoding_test = nn.LSTMCell(1, args.embed_dim)
         #self.edgelen_encodingLSTM = nn.LSTMCell(1, args.embed_dim)
         self.nodelen_encoding = MLP(1, [2 * args.embed_dim, args.embed_dim])
         self.nodelen_pred = MLP(args.embed_dim, [2 * args.embed_dim, 2])
         self.edgelen_mean = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
+        self.combine_states = nn.Linear(2 * args.embed_dim, args.embed_dim)
 
     # to be customized
     def embed_node_feats(self, node_feats):
         return self.nodelen_encoding(node_feats)
 
-    def embed_edge_feats(self, edge_feats, state=None, alt_update=False):
-        if alt_update:
-            return self.edgelen_encoding_test(edge_feats, state)
+    def embed_edge_feats(self, edge_feats):
         return self.edgelen_encoding(edge_feats)
+    
+    def embed_edge_feats_c(self, edge_feats):
+        return self.edgelen_encoding_c(edge_feats)
+    
+    def combine_states(self, state):
+        return (self.combine_states(state[0]), self.combine_states(state[1]))
 
     def predict_node_feats(self, state, node_feats=None):
         """
@@ -119,12 +125,11 @@ class BiggWithEdgeLen(RecurTreeGen):
         
         if edge_feats is None:
             ll = 0
-            pred_mean = mus.item()
+            pred_mean = mus
             pred_lvar = lvars
-            ## Try exponentiation instead of softplus for var...
-            pred_sd = torch.exp(0.5 * pred_lvar).item()
-            edge_feats = torch.FloatTensor([[np.random.normal(pred_mean, pred_sd)]])
-            
+            ## Try exponentiation instead of softplus for ar...
+            pred_sd = torch.exp(0.5 * pred_lvar)
+            edge_feats = torch.normal(pred_mean, pred_sd)
             edge_feats = torch.nn.functional.softplus(edge_feats)
             
         else:

@@ -97,7 +97,7 @@ if __name__ == '__main__':
     train_graphs = []
     for g in train_graphs_gen:
         if cmd_args.by_time:
-            cano_g = get_graph_data(g, node_order = 'time', leaves_last = True, order_only = False)
+            cano_g = get_graph_data(g, node_order = 'time', leaves_last = False, order_only = False)
         
         else:
             cano_g = get_graph_data(g, node_order = 'BFS', order_only = False)
@@ -174,10 +174,10 @@ if __name__ == '__main__':
                     weighted_edges = []
                     for e, w in zip(pred_edges, pred_edge_feats):
                         assert e[0] > e[1]
-                        w = w.item()
-                        w = np.round(w, 4)
-                        edge = (e[1], e[0], w)
-                        weighted_edges.append(edge)
+                        #w = w.item()
+                        #w = np.round(w, 4)
+                        #edge = (e[1], e[0], w)
+                        weighted_edges.append((e[1], e[0], np.round(w.item(), 4)))
                     pred_g = nx.Graph()
                     pred_g.add_weighted_edges_from(weighted_edges)
                     gen_graphs.append(pred_g)
@@ -226,16 +226,21 @@ if __name__ == '__main__':
         cmd_args.epoch_load = 0
     
     prev = datetime.now()
+    N = len(train_graphs)
+    B = cmd_args.batch_size
+    epoch_save = int(N / B)
+    print("Epoch Save: ", epoch_save)
+    best_loss = 99999
     for epoch in range(cmd_args.epoch_load, cmd_args.num_epochs):
-        pbar = tqdm(range(cmd_args.epoch_save))
+        pbar = tqdm(range(epoch_save))
 
         optimizer.zero_grad()
         for idx in pbar:
             random.shuffle(indices)
             batch_indices = indices[:cmd_args.batch_size]
             num_nodes = sum([len(train_graphs[i]) for i in batch_indices])
-
             node_feats = (torch.cat([list_node_feats[i] for i in batch_indices], dim=0) if cmd_args.has_node_feats else None)
+
             edge_feats = (torch.cat([list_edge_feats[i] for i in batch_indices], dim=0) if cmd_args.has_edge_feats else None)
             
             if cmd_args.serialized:
@@ -268,6 +273,11 @@ if __name__ == '__main__':
             loss.backward()
             loss = loss.item()
 
+            if loss < best_loss:
+                print('Lowest Training Loss Achieved: ', loss)
+                best_loss = loss
+                torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'best-model'))
+
             if (idx + 1) % cmd_args.accum_grad == 0:
                 if cmd_args.grad_clip > 0:
                     torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=cmd_args.grad_clip)
@@ -277,7 +287,7 @@ if __name__ == '__main__':
         
         print('epoch complete')
         cur = epoch + 1
-        if cur % 10 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
+        if cur % 1 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:

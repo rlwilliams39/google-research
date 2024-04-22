@@ -191,8 +191,8 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
         #### TESTING MMD
         #test = degree_stats(out_graphs, ordered_train_graphs)
         #print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(gen_graphs, gt_graphs)
-        print("MMD on Specta of L Normalized: ", test2)
+        #test2 = spectral_stats(gen_graphs, gt_graphs)
+        #print("MMD on Specta of L Normalized: ", test2)
         #test3 = clustering_stats(out_graphs, ordered_train_graphs)
         #print("MMD on Clustering Coefficient: ", test3)
         

@@ -22,7 +22,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_scatter import scatter
+#from torch_scatter import scatter
 from collections import defaultdict
 from torch.nn.parameter import Parameter
 from bigg.common.pytorch_util import glorot_uniform, MLP, BinaryTreeLSTMCell
@@ -71,10 +71,10 @@ def selective_update_hc(h, c, zero_one, feats, embedding = None, alt_update = Fa
     #### Here, I want to update using the weights LSTM. And then only for those that are 1.
     nz_idx = torch.tensor(np.nonzero(zero_one)[0]).to(h.device)
     if alt_update:
-        local_edge_feats_h = scatter(feats[0], nz_idx, dim=0, dim_size=h.shape[0]) ## ADDED
-        local_edge_feats_c = scatter(feats[1], nz_idx, dim=0, dim_size=c.shape[0]) ## ADDED
+        local_edge_feats_h = torch.scatter(feats[0], nz_idx, dim=0, dim_size=h.shape[0]) ## ADDED
+        local_edge_feats_c = torch.scatter(feats[1], nz_idx, dim=0, dim_size=c.shape[0]) ## ADDED
     else:
-        local_edge_feats = scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
+        local_edge_feats = torch.scatter(feats, nz_idx, dim=0, dim_size=h.shape[0])
         
     zero_one = torch.tensor(zero_one, dtype=torch.bool).to(h.device).unsqueeze(1)
     
@@ -277,7 +277,7 @@ class FenwickTree(nn.Module):
                 sub_states = (cur_state[0][needs_base_nodes], cur_state[1][needs_base_nodes])
                 sub_states = self.node_feat_update(node_feats[base_nodes], sub_states)
                 nz_idx = torch.tensor(np.nonzero(needs_base_nodes)[0]).to(node_feats.device)
-                new_cur = [scatter(x, nz_idx, dim=0, dim_size=init_select.shape[0]) for x in sub_states]
+                new_cur = [torch.scatter(x, nz_idx, dim=0, dim_size=init_select.shape[0]) for x in sub_states]
                 needs_base_nodes = torch.tensor(needs_base_nodes, dtype=torch.bool).to(node_feats.device).unsqueeze(1)
                 cur_state = [torch.where(needs_base_nodes, new_cur[i], cur_state[i]) for i in range(2)]
                 cur_state = tuple(cur_state)

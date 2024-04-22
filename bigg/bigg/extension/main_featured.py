@@ -287,7 +287,7 @@ if __name__ == '__main__':
         
         print('epoch complete')
         cur = epoch + 1
-        if cur % 1 == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
+        if cur % 1 == cmd_args.epoch_save or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
             torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:

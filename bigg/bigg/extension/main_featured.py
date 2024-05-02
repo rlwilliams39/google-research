@@ -238,7 +238,7 @@ if __name__ == '__main__':
         start = 0
         for idx in pbar:
             start = idx * B
-            stop = start + B
+            stop = (idx + 1) * B
             batch_indices = indices[start:stop]
             #batch_indices = indices[:cmd_args.batch_size]
             
@@ -293,7 +293,8 @@ if __name__ == '__main__':
         cur = epoch + 1
         if cur % cmd_args.epoch_save == 0 or cur == cmd_args.num_epochs: #save every 10th / last epoch
             print('saving epoch')
-            torch.save(model.state_dict(), os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
+            checkpoint = {'epoch': epoch, 'model': model.state_dict(), 'optimizer': optimizer.state_dict()}
+            torch.save(checkpoint, os.path.join(cmd_args.save_dir, 'epoch-%d.ckpt' % (epoch + 1)))
             #if cmd_args.lin_model:
             #    with open(cmd_args.save_dir + 'lin_model.pkl', 'wb') as f:
             #        cp.dump(lin_model, f, cp.HIGHEST_PROTOCOL)

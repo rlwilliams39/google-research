@@ -276,6 +276,7 @@ if __name__ == '__main__':
             loss = -ll / num_nodes
             loss.backward()
             loss = loss.item()
+            #loss = loss / num_nodes
 
             if loss < best_loss:
                 print('Lowest Training Loss Achieved: ', loss)

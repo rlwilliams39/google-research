@@ -193,7 +193,7 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
         #print("MMD Test on Degree Stats: ", test)
         test2 = spectral_stats(gen_graphs, gt_graphs[0:100])
         print("MMD on Specta of L Normalized: ", test2)
-        test3 = clustering_stats(gen_Graphs, gt_graphs)
+        test3 = clustering_stats(gen_graphs, gt_graphs[0:100])
         print("MMD on Clustering Coefficient: ", test3)
         
         #if len(true_trees) > 10000:

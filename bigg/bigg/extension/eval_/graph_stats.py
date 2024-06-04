@@ -153,10 +153,10 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         true_train_edges = []
         
         #### TESTING MMD
-        test = degree_stats(out_graphs, test_graphs)
-        print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(out_graphs, test_graphs)
-        print("MMD on Specta of L Normalized: ", test2)
+        #test = degree_stats(out_graphs, test_graphs)
+        #print("MMD Test on Degree Stats: ", test)
+        #test2 = spectral_stats(out_graphs, test_graphs)
+        #print("MMD on Specta of L Normalized: ", test2)
         #test3 = clustering_stats(out_graphs, ordered_train_graphs)
         #print("MMD on Clustering Coefficient: ", test3)
         
@@ -183,8 +183,8 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         #    print("New trees: ", len(true_trees_edges) - in_train)
         #    print(true_train_edges)
         #    print("Test Check: ", test_check)
-        if cmd_args.weighted:
-            test_stats = tree_weight_statistics(true_trees)
+        if True: #cmd_args.weighted:
+            #test_stats = tree_weight_statistics(true_trees)
             print("Weight stats of ALL graphs")
             test_stats2 = tree_weight_statistics(out_graphs)
     

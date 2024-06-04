@@ -91,8 +91,8 @@ def is_grid(graph):
 def tree_weight_statistics(graphs, transform = False):
   ## Returns summary statistics on weights for graphs
   weights = []
-  tree_var = []
-  tree_mean = []
+  tree_vars = []
+  tree_means = []
 
   for T in graphs:
     T_weights = []
@@ -103,8 +103,8 @@ def tree_weight_statistics(graphs, transform = False):
         t = w['weight']
       T_weights.append(t)
       weights.append(t)
-    tree_var.append(np.var(T_weights, ddof = 1))
-    tree_mean.append(np.mean(T_weights))
+    tree_vars.append(np.var(T_weights, ddof = 1))
+    tree_means.append(np.mean(T_weights))
 
   xbar = np.mean(weights)
   s = np.std(weights, ddof = 1)
@@ -116,85 +116,49 @@ def tree_weight_statistics(graphs, transform = False):
   s_lo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
   s_up = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
 
-  mean_tree_var = np.mean(tree_var)
-  tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
-  tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
+  mean_tree_var = np.mean(tree_vars)
+  tree_var_lo = mean_tree_var - 1.96 * np.std(tree_vars, ddof = 1) / len(tree_vars)**0.5
+  tree_var_up = mean_tree_var + 1.96 * np.std(tree_vars, ddof = 1) / len(tree_vars)**0.5
+  
+  mu_t_lo = np.percentile(tree_means, 2.5)
+  mu_t_hi = np.percentile(tree_means, 97.5)
+  
+  s_t_lo = np.percentile(tree_vars, 2.5)**0.5
+  s_t_hi = np.percentile(tree_vars, 97.5)**0.5
+  
 
   #print("mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
   results = [xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
   results_rounded = np.round(results, 3)
+  print("Num of trees")
+  print(len(graphs))
   print("Mean Estimates")
   print(results_rounded[0])
   print('95% CI: ', ' (' + str(results_rounded[1]) + ',' + str(results_rounded[2]), ')')
+  print('Empirical Interval: ', ' (' + str(mu_t_lo) + ',' + str(mu_t_hi) + ')')
   print("SD Estimates")
   print(results_rounded[3])
   print('95% CI: ', ' (' + str(results_rounded[4]) + ',' + str(results_rounded[5]), ')')  
   print("Within Tree Variability")
   print(results_rounded[6])
   print('95% CI: ', ' (' + str(results_rounded[7]) + ',' + str(results_rounded[8]), ')')
-  return results
-
-
-def tree_weight_statistics(graphs, transform = False):
-  ## Returns summary statistics on weights for graphs
-  weights = []
-  tree_var = []
-  tree_mean = []
-
-  for T in graphs:
-    T_weights = []
-    for (n1, n2, w) in T.edges(data = True):
-      if transform:
-        t = np.log(np.exp(w['weight']) - 1)
-      else:
-        t = w['weight']
-      T_weights.append(t)
-      weights.append(t)
-    tree_var.append(np.var(T_weights, ddof = 1))
-    tree_mean.append(np.mean(T_weights))
-
-  xbar = np.mean(weights)
-  s = np.std(weights, ddof = 1)
-  n = len(weights)
-
-  mu_lo = np.round(xbar - 1.96 * s / n**0.5, 3)
-  mu_up = np.round(xbar + 1.96 * s / n**0.5, 3)
-
-  s_lo = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.975, df = n-1))**0.5, 3)
-  s_up = np.round(s * (n-1)**0.5 * (1/chi2.ppf(0.025, df = n-1))**0.5, 3)
-
-  mean_tree_var = np.mean(tree_var)
-  tree_var_lo = mean_tree_var - 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
-  tree_var_up = mean_tree_var + 1.96 * np.std(tree_var, ddof = 1) / len(tree_var)**0.5
-
-  #print("mu-hat, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var, tree_var_lo, tree_var_up")
-  results = [xbar, mu_lo, mu_up, s, s_lo, s_up, mean_tree_var**0.5, tree_var_lo**0.5, tree_var_up**0.5]
-  results_rounded = np.round(results, 3)
-  print("Mean Estimates")
-  print(results_rounded[0])
-  print('95% CI: ', ' (' + str(results_rounded[1]) + ',' + str(results_rounded[2]), ')')
-  print("SD Estimates")
-  print(results_rounded[3])
-  print('95% CI: ', ' (' + str(results_rounded[4]) + ',' + str(results_rounded[5]), ')')  
-  print("Within Tree Variability")
-  print(results_rounded[6])
-  print('95% CI: ', ' (' + str(results_rounded[7]) + ',' + str(results_rounded[8]), ')')
+  print('Empirical Interval: ', ' (' + str(s_t_lo) + ',' + str(s_t_hi) + ')')
   return results
   
-def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
+def get_graph_stats(out_graphs, test_graphs, graph_type):
     if graph_type == "tree":
-        prop, true_trees = correct_tree_topology_check(gen_graphs)
+        prop, true_trees = correct_tree_topology_check(out_graphs)
         print("Proportion Correct Topology: ", prop)
         true_trees_edges = []
         true_train_edges = []
         
         #### TESTING MMD
-        #test = degree_stats(gen_graphs, gt_graphs)
-        #print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(gen_graphs, gt_graphs[0:100])
+        test = degree_stats(out_graphs, test_graphs)
+        print("MMD Test on Degree Stats: ", test)
+        test2 = spectral_stats(out_graphs, test_graphs)
         print("MMD on Specta of L Normalized: ", test2)
-        test3 = clustering_stats(gen_graphs, gt_graphs[0:100])
-        print("MMD on Clustering Coefficient: ", test3)
+        #test3 = clustering_stats(out_graphs, ordered_train_graphs)
+        #print("MMD on Clustering Coefficient: ", test3)
         
         #if len(true_trees) > 10000:
         #    for tree in true_trees:
@@ -219,50 +183,50 @@ def get_graph_stats(gen_graphs, gt_graphs, graph_type, weighted = False):
         #    print("New trees: ", len(true_trees_edges) - in_train)
         #    print(true_train_edges)
         #    print("Test Check: ", test_check)
-        if weighted:
+        if cmd_args.weighted:
             test_stats = tree_weight_statistics(true_trees)
+            print("Weight stats of ALL graphs")
+            test_stats2 = tree_weight_statistics(out_graphs)
     
     elif graph_type == "lobster":
-        prop, true_lobsters = correct_lobster_topology_check(gen_graphs)
-        print("Proportion Correct Lobster Topology: ", prop)
-        if weighted or not weighted:
-            xbars = []
-            vars_ = []
-            num_nodes = []
-            num_edges = []
-            for lobster in true_lobsters:
-                weights = []
-                num_nodes.append(len(lobster))
-                num_edges.append(len(lobster.edges()))
-                if weighted:
-                    for (n1, n2, w) in lobster.edges(data=True):
-                        w = np.log(np.exp(w['weight']) - 1)
-                        weights.append(w)
-                    xbars.append(np.mean(weights))
-                    vars_.append(np.var(weights, ddof = 1))
+        prop, true_lobsters = correct_lobster_topology_check(out_graphs)
+        xbars = []
+        vars_ = []
+        num_nodes = []
+        num_edges = []
+        for lobster in true_lobsters:
+            weights = []
+            num_nodes.append(len(lobster))
+            num_edges.append(len(lobster.edges()))
+            if cmd_args.weighted:
+                for (n1, n2, w) in lobster.edges(data=True):
+                    w = np.log(np.exp(w['weight']) - 1)
+                    weights.append(w)
+                xbars.append(np.mean(weights))
+                vars_.append(np.var(weights, ddof = 1))
+        
+        if cmd_args.weighted:
+            mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
+            mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
             
-            if weighted:
-                mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
-                mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
-                
-                var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
-                var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
-                
-                print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
-                print("Var Estimates: ", np.mean(vars_)**0.5, (var_lo**0.5, var_up**0.5))
+            var_lo = np.mean(vars_) - 1.96 * np.std(vars_) / len(vars_)**0.5
+            var_up = np.mean(vars_) + 1.96 * np.std(vars_) / len(vars_)**0.5
             
-            print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
-            print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
+            print("Mean Estimates: ", np.mean(xbars), (mu_lo, mu_up))
+            print("Var Estimates: ", np.mean(vars_)**0.5, (var_lo**0.5, var_up**0.5))
+            
+        print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
+        print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
+        print("Proportion Correct Topology: ", prop)
     
     elif graph_type == "grid":
-        prop, true_lobsters = correct_grid_topology_check(gen_graphs)
+        prop, true_lobsters = correct_grid_topology_check(out_graphs)
         print("Proportion Correct Topology: ", prop)
     
     else:
         print("Graph Type not yet implemented")
     return 0
-
-
+    
 
 
 

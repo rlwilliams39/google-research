@@ -153,12 +153,12 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         true_train_edges = []
         
         #### TESTING MMD
-        #test = degree_stats(out_graphs, test_graphs)
-        #print("MMD Test on Degree Stats: ", test)
-        #test2 = spectral_stats(out_graphs, test_graphs)
-        #print("MMD on Specta of L Normalized: ", test2)
-        #test3 = clustering_stats(out_graphs, ordered_train_graphs)
-        #print("MMD on Clustering Coefficient: ", test3)
+        test = degree_stats(out_graphs, test_graphs)
+        print("MMD Test on Degree Stats: ", test)
+        test2 = spectral_stats(out_graphs, test_graphs)
+        print("MMD on Specta of L Normalized: ", test2)
+        test3 = clustering_stats(out_graphs, test_graphs)
+        print("MMD on Clustering Coefficient: ", test3)
         
         #if len(true_trees) > 10000:
         #    for tree in true_trees:
@@ -194,13 +194,13 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         vars_ = []
         num_nodes = []
         num_edges = []
-        for lobster in true_lobsters:
+        for lobster in out_graphs:
             weights = []
             num_nodes.append(len(lobster))
             num_edges.append(len(lobster.edges()))
             if cmd_args.weighted:
                 for (n1, n2, w) in lobster.edges(data=True):
-                    w = np.log(np.exp(w['weight']) - 1)
+                    w = w['weight'] #np.log(np.exp(w['weight']) - 1)
                     weights.append(w)
                 xbars.append(np.mean(weights))
                 vars_.append(np.var(weights, ddof = 1))
@@ -218,6 +218,13 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
         print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
         print("Proportion Correct Topology: ", prop)
+        
+        test = degree_stats(out_graphs, test_graphs)
+        print("MMD Test on Degree Stats: ", test)
+        test2 = spectral_stats(out_graphs, test_graphs)
+        print("MMD on Specta of L Normalized: ", test2)
+        test3 = clustering_stats(out_graphs, test_graphs)
+        print("MMD on Clustering Coefficient: ", test3)
     
     elif graph_type == "grid":
         prop, true_lobsters = correct_grid_topology_check(out_graphs)
@@ -227,8 +234,11 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         print("Graph Type not yet implemented")
     return 0
     
-
-
+    
+    
+    
+    
+    
 
 
 

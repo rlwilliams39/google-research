@@ -198,14 +198,14 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
             weights = []
             num_nodes.append(len(lobster))
             num_edges.append(len(lobster.edges()))
-            if cmd_args.weighted:
+            if True:
                 for (n1, n2, w) in lobster.edges(data=True):
                     w = w['weight'] #np.log(np.exp(w['weight']) - 1)
                     weights.append(w)
                 xbars.append(np.mean(weights))
                 vars_.append(np.var(weights, ddof = 1))
         
-        if cmd_args.weighted:
+        if True:
             mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
             mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
             

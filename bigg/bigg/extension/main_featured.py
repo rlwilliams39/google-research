@@ -133,10 +133,13 @@ if __name__ == '__main__':
     list_edge_feats = ([torch.from_numpy(get_edge_feats(g)).to(cmd_args.device) for g in train_graphs] if cmd_args.has_edge_feats else None)
     
     model = BiggWithEdgeLen(cmd_args).to(cmd_args.device)
+    optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
     
     if cmd_args.model_dump is not None and os.path.isfile(cmd_args.model_dump):
         print('loading from', cmd_args.model_dump)
-        model.load_state_dict(torch.load(cmd_args.model_dump))
+        checkpoint = torch.load(cmd_args.model_dump)
+        model.load_state_dict(checkpoint['model'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
 
     #print(torch.cuda.memory_summary(device=None, abbreviated=False))
     #########################################################################################################
@@ -218,8 +221,7 @@ if __name__ == '__main__':
     #debug_model(model, train_graphs[0], None, list_edge_feats[0])
     print("Serialized? ", cmd_args.serialized)
     print("Alt Update?", cmd_args.alt_update)
-
-    optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)
+    
     indices = list(range(len(train_graphs)))
     
     if cmd_args.epoch_load is None:

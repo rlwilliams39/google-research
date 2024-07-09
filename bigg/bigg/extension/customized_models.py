@@ -36,6 +36,7 @@ class BiggWithEdgeLen(RecurTreeGen):
         self.edgelen_lvar = MLP(args.embed_dim, [2 * args.embed_dim, 1]) ## Changed
         self.node_state_update = nn.LSTMCell(args.embed_dim, args.embed_dim)
         #self.combine_states = nn.Linear(2 * args.embed_dim, args.embed_dim)
+        self.max_num_nodes = 199
 
     # to be customized
     def embed_node_feats(self, node_feats):
@@ -138,16 +139,13 @@ class BiggWithEdgeLen(RecurTreeGen):
             ### Trying with softplus parameterization...
             edge_feats_invsp = torch.log(torch.special.expm1(edge_feats))
             
-            ## MEAN AND VARIANCE OF LOGNORMAL
-            var = torch.exp(lvars) #torch.nn.functional.softplus(lvars, beta = b)
-            
             ## diff_sq = (mu - softminusw)^2
             diff_sq = torch.square(torch.sub(mus, edge_feats_invsp))
             
             ## diff_sq2 = v^-1*diff_sq
-            diff_sq2 = torch.div(diff_sq, var)
+            diff_sq2 = torch.mul(diff_sq, torch.exp(-lvars))
             
             ## add to ll
-            ll = - torch.mul(lvars, 0.5) - torch.mul(diff_sq2, 0.5) + edge_feats - edge_feats_invsp - 0.5 * np.log(2*np.pi)
+            ll = - torch.mul(lvars, 0.5) - torch.mul(diff_sq2, 0.5) #+ edge_feats - edge_feats_invsp - 0.5 * np.log(2*np.pi)
             ll = torch.sum(ll)
         return ll, edge_feats

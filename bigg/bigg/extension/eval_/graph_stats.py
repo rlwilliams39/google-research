@@ -9,9 +9,11 @@ from torch import nn
 from torch.nn.parameter import Parameter
 import pandas as pd
 import os
-import scipy
-from bigg.extension.eval_.mmd import *
-from bigg.extension.eval_.mmd_stats import *
+import sys
+sys.path.append('/u/home/r/rlwillia/VAE-LSTM/VAE_LSTM') ##workaround temporarily...
+from common.configs import cmd_args
+from eval_.mmd import *
+from eval_.mmd_stats import *
 
 		## Topology Check Functions
 def correct_tree_topology_check(graphs):
@@ -51,6 +53,8 @@ def is_bifurcating_tree(g):
     return False
 
 def is_lobster(graph):
+    if not nx.is_tree(graph):
+        return False
     g = nx.Graph(graph.edges())
     leaves = [l for l in g.nodes() if g.degree(l) == 1]
     g.remove_nodes_from(leaves)
@@ -61,6 +65,92 @@ def is_lobster(graph):
         if len(big_neighbors) > 2:
      	    return False
     return True  
+
+def compute_probs(g, print_results = False):
+    g_prime = nx.Graph(g.edges)
+    leaves1 = [l for l in g_prime.nodes() if g_prime.degree(l) == 1]
+    g_prime.remove_nodes_from(leaves1)
+    leaves2 = [l for l in g_prime.nodes() if g_prime.degree(l) == 1]
+    g_prime.remove_nodes_from(leaves2)
+    
+    backbone = sorted(list(g_prime.nodes))
+    #non_backbone = list(reversed(sorted([n for n in g.nodes() if n not in backbone])))
+    one_hop = []
+    two_hop = []
+    
+    for n in leaves2:
+        neighbors = list(g.neighbors(n))
+        if n-1 in neighbors and n+1 in neighbors:
+            backbone += [n]
+        elif n-1 in neighbors and n-1 in backbone:
+            backbone += [n]
+        elif n+1 in neighbors and n+1 in backbone:
+            backbone += [n]
+        else:
+            k = min(neighbors)
+            if k in backbone:
+                one_hop += [n]
+            else:
+                two_hop += [n]
+    
+    for n in leaves1:
+        neighbors = list(g.neighbors(n))
+        if n-1 in neighbors and n+1 in neighbors:
+            backbone += [n]
+        elif n-1 in neighbors and n-1 in backbone:
+            backbone += [n]
+        elif n+1 in neighbors and n+1 in backbone:
+            backbone += [n]
+        else:
+            k = min(neighbors)
+            if k in backbone:
+                one_hop += [n]
+            else:
+                two_hop += [n]
+    
+    if print_results:
+        print("backbone: ", backbone)
+        print("one hop: ", one_hop)
+        print("two hop: ", two_hop)
+    
+    if len(g) == len(two_hop):
+        print(g.edges())
+        p1_hat = 0.0
+    
+    else:
+        p1_hat = len(one_hop) / (len(g) - len(two_hop))
+    
+    if p1_hat == 0.0:
+        p2_hat = 0.0
+    
+    else:
+        p2_hat = len(two_hop) / (len(one_hop) + len(two_hop))
+    
+    if print_results:
+        print("p1_hat: ", p1_hat)
+        print("p2_hat: ", p2_hat)
+    
+    return p1_hat, p2_hat
+
+
+
+def estimate_p(graphs):
+    p1s = []
+    p2s = []
+    
+    for g in graphs:
+        p1_hat, p2_hat = compute_probs(g)
+        p1s += [p1_hat]
+        p2s += [p2_hat]
+    
+    p1  = sum(p1s) / len(p1s)
+    p2 = sum(p2s) / len(p2s)
+    
+    print("P1 est: ", p1)
+    print("P2 est: ", p2)
+    return p1, p2
+
+
 
 def is_grid(graph):
     res = True
@@ -155,10 +245,14 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         #### TESTING MMD
         test = degree_stats(out_graphs, test_graphs)
         print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(out_graphs, test_graphs)
-        print("MMD on Specta of L Normalized: ", test2)
-        test3 = clustering_stats(out_graphs, test_graphs)
-        print("MMD on Clustering Coefficient: ", test3)
+        test2 = spectral_stats(out_graphs, test_graphs, False)
+        print("MMD on Specta of L Normalized, Unweighted: ", test2)
+        test3 = spectral_stats(out_graphs, test_graphs, True)
+        print("MMD on Specta of L Normalized, Weighted: ", test3)
+        test4 = mmd_weights_only(out_graphs, test_graphs, gaussian_emd)
+        print("MMD on Weights Only: ", test4)
+        #test3 = clustering_stats(out_graphs, test_graphs)
+        #print("MMD on Clustering Coefficient: ", test3)
         
         #if len(true_trees) > 10000:
         #    for tree in true_trees:
@@ -190,6 +284,7 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
     
     elif graph_type == "lobster":
         prop, true_lobsters = correct_lobster_topology_check(out_graphs)
+        print("Proportion Correct Lobster Graphs: ", prop)
         xbars = []
         vars_ = []
         num_nodes = []
@@ -198,14 +293,14 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
             weights = []
             num_nodes.append(len(lobster))
             num_edges.append(len(lobster.edges()))
-            if True:
+            if cmd_args.weighted:
                 for (n1, n2, w) in lobster.edges(data=True):
                     w = w['weight'] #np.log(np.exp(w['weight']) - 1)
                     weights.append(w)
                 xbars.append(np.mean(weights))
                 vars_.append(np.var(weights, ddof = 1))
         
-        if True:
+        if cmd_args.weighted:
             mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
             mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
             
@@ -217,26 +312,42 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
             
         print("Num Nodes: ", np.mean(num_nodes), (min(num_nodes), max(num_nodes)))
         print("Num Edges: ", np.mean(num_edges), (min(num_edges), max(num_edges)))
-        print("Proportion Correct Topology: ", prop)
         
+        #p1, p2 = estimate_p(true_lobsters)
         test = degree_stats(out_graphs, test_graphs)
         print("MMD Test on Degree Stats: ", test)
-        test2 = spectral_stats(out_graphs, test_graphs)
-        print("MMD on Specta of L Normalized: ", test2)
-        test3 = clustering_stats(out_graphs, test_graphs)
-        print("MMD on Clustering Coefficient: ", test3)
+        test2 = spectral_stats(out_graphs, test_graphs, False)
+        print("MMD on Specta of L Normalized, Unweighted: ", test2)
+        test3 = spectral_stats(out_graphs, test_graphs, True)
+        print("MMD on Specta of L Normalized, Weighted: ", test3)
+        test4 = mmd_weights_only(out_graphs, test_graphs, gaussian_emd)
+        print("MMD on Weights Only: ", test4)
+        #test3 = clustering_stats(out_graphs, test_graphs)
+        #print("MMD on Clustering Coefficient: ", test3)
     
     elif graph_type == "grid":
         prop, true_lobsters = correct_grid_topology_check(out_graphs)
         print("Proportion Correct Topology: ", prop)
     
+    elif graph_type == "db":
+        #test = degree_stats(out_graphs, test_graphs)
+        #print("MMD Test on Degree Stats: ", test)
+        #test2 = spectral_stats(out_graphs, test_graphs, False)
+        #print("MMD on Specta of L Normalized, Unweighted: ", test2)
+        #test3 = spectral_stats(out_graphs, test_graphs, True)
+        #print("MMD on Specta of L Normalized, Weighted: ", test3)
+        #test4 = mmd_weights_only(out_graphs, test_graphs, gaussian_emd)
+        #print("MMD on Weights Only: ", test4)
+        #test5 = clustering_stats(out_graphs, test_graphs)
+        #print("MMD on Clustering Coefficient: ", test5)
+        test6 = motif_stats(out_graphs, test_graphs)
+        print("MMD on Orbit: ", test6)    
     else:
         print("Graph Type not yet implemented")
     return 0
     
     
-    
-    
+
     
     
 

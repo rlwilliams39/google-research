@@ -201,7 +201,7 @@ if __name__ == '__main__':
                     #print(pred_g.edges())
                     gen_graphs.append(pred_g)
         
-        for idx in range(10):
+        for idx in range(0):
             print("edges: ", gen_graphs[idx].edges(data=True))
         
         print(cmd_args.g_type)

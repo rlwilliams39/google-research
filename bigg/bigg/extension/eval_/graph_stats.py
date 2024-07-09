@@ -1,4 +1,3 @@
-### Training Functions
 from scipy.stats.distributions import chi2
 import networkx as nx
 import numpy as np
@@ -9,11 +8,9 @@ from torch import nn
 from torch.nn.parameter import Parameter
 import pandas as pd
 import os
-import sys
-sys.path.append('/u/home/r/rlwillia/VAE-LSTM/VAE_LSTM') ##workaround temporarily...
-from common.configs import cmd_args
-from eval_.mmd import *
-from eval_.mmd_stats import *
+import scipy
+from bigg.extension.eval_.mmd import *
+from bigg.extension.eval_.mmd_stats import *
 
 		## Topology Check Functions
 def correct_tree_topology_check(graphs):

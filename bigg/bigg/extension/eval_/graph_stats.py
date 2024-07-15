@@ -293,7 +293,7 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
             weights = []
             num_nodes.append(len(lobster))
             num_edges.append(len(lobster.edges()))
-            if cmd_args.weighted:
+            if False:
                 for (n1, n2, w) in lobster.edges(data=True):
                     w = w['weight'] #np.log(np.exp(w['weight']) - 1)
                     weights.append(w)
@@ -320,8 +320,9 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
         print("MMD on Specta of L Normalized, Unweighted: ", test2)
         test3 = spectral_stats(out_graphs, test_graphs, True)
         print("MMD on Specta of L Normalized, Weighted: ", test3)
-        test4 = mmd_weights_only(out_graphs, test_graphs, gaussian_emd)
-        print("MMD on Weights Only: ", test4)
+        if False:
+            test4 = mmd_weights_only(out_graphs, test_graphs, gaussian_emd)
+            print("MMD on Weights Only: ", test4)
         #test3 = clustering_stats(out_graphs, test_graphs)
         #print("MMD on Clustering Coefficient: ", test3)
     

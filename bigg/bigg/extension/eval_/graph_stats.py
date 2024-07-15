@@ -11,6 +11,7 @@ import os
 import scipy
 from bigg.extension.eval_.mmd import *
 from bigg.extension.eval_.mmd_stats import *
+from bigg.common.configs import cmd_args, set_device
 
 		## Topology Check Functions
 def correct_tree_topology_check(graphs):
@@ -60,6 +61,8 @@ def is_lobster(graph):
     for n in big_n:
         big_neighbors = [x for x in g.neighbors(n) if g.degree(x) >= 2]
         if len(big_neighbors) > 2:
+            print("Not a lobster graph")
+            print(graph.edges())
      	    return False
     return True  
 
@@ -297,7 +300,7 @@ def get_graph_stats(out_graphs, test_graphs, graph_type):
                 xbars.append(np.mean(weights))
                 vars_.append(np.var(weights, ddof = 1))
         
-        if cmd_args.weighted:
+        if False: #cmd_args.weighted:
             mu_lo = np.mean(xbars) - 1.96 * np.std(xbars) / len(xbars)**0.5
             mu_up = np.mean(xbars) + 1.96 * np.std(xbars) / len(xbars)**0.5
             

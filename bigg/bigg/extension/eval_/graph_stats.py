@@ -63,7 +63,7 @@ def is_lobster(graph):
         if len(big_neighbors) > 2:
             print("Not a lobster graph")
             print(graph.edges())
-     	    return False
+            return False
     return True  
 
 def compute_probs(g, print_results = False):

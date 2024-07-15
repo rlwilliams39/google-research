@@ -42,8 +42,8 @@ def load_graphs(graph_pkl):
                 g = cp.load(f)
             except:
                 break
-            graphs.append(g)
-    print(graphs)
+            graphs += g
+    #print(graphs)
     for g in graphs:
         TreeLib.InsertGraph(g)
     return graphs

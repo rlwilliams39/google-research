@@ -74,7 +74,7 @@ if __name__ == '__main__':
         with torch.no_grad():
             for _ in tqdm(range(cmd_args.num_test_gen)):
                 num_nodes = np.argmax(np.random.multinomial(1, num_node_dist))
-                _, pred_edges, _ = model(num_nodes, display=cmd_args.display)
+                _, pred_edges, _, _, _ = model(num_nodes, display=cmd_args.display)
                 for e in pred_edges:
                     assert e[0] > e[1]
                 pred_g = nx.Graph()

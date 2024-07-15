@@ -32,7 +32,12 @@ from bigg.common.configs import cmd_args, set_device
 from bigg.model.tree_model import RecurTreeGen
 from bigg.model.tree_clib.tree_lib import setup_treelib, TreeLib
 from bigg.experiments.train_utils import sqrtn_forward_backward, get_node_dist
-
+from scipy.stats.distributions import chi2
+from bigg.extension.eval_.graph_stats import *
+from bigg.extension.eval_.mmd import *
+from bigg.extension.eval_.mmd_stats import *
+from bigg.train_creator.train_data_generator import *
+from bigg.train_creator.data_util import *
 
 def load_graphs(graph_pkl):
     graphs = []
@@ -85,7 +90,8 @@ if __name__ == '__main__':
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
-        print('evaluating')
+        print("Generated Graph Stats")
+        get_graph_stats(gen_graphs, gt_graphs, cmd_args.g_type)
         sys.exit()
 
     optimizer = optim.Adam(model.parameters(), lr=cmd_args.learning_rate, weight_decay=1e-4)

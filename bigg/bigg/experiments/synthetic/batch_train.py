@@ -43,6 +43,7 @@ def load_graphs(graph_pkl):
             except:
                 break
             graphs.append(g)
+    print(graphs)
     for g in graphs:
         TreeLib.InsertGraph(g)
     return graphs

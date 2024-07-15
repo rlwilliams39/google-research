@@ -80,6 +80,8 @@ if __name__ == '__main__':
                 pred_g = nx.Graph()
                 pred_g.add_edges_from(pred_edges)
                 gen_graphs.append(pred_g)
+        for idx in range(10):
+            print(gen_graphs[idx].edges())
         print('saving graphs')
         with open(cmd_args.model_dump + '.graphs-%s' % str(cmd_args.greedy_frac), 'wb') as f:
             cp.dump(gen_graphs, f, cp.HIGHEST_PROTOCOL)
